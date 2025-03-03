@@ -43,24 +43,26 @@ class Parser:
         # Get boards list for each date
         lend = len(dates)
         for i, date in enumerate(dates):
-            path = ArtifactoryPath(
-                self.root_repo_url + self.repo + folder + "/" + date,
-            )
+            # path = ArtifactoryPath(
+            #     self.root_repo_url + self.repo + folder + "/" + date,
+            # )
+            path_date = path / date
             print(f"Processing {i}/{lend} - {date}")
-            boards = [x.name for x in path]
+            boards = [x.name for x in path_date]
             for board in boards:
                 if board not in table:
                     table[board] = {}
-                properties = ArtifactoryPath(
-                    self.root_repo_url
-                    + self.repo
-                    + folder
-                    + "/"
-                    + date
-                    + "/"
-                    + board
-                    + "/bootgen_sysfiles.tgz",
-                )
+                # properties = ArtifactoryPath(
+                #     self.root_repo_url
+                #     + self.repo
+                #     + folder
+                #     + "/"
+                #     + date
+                #     + "/"
+                #     + board
+                #     + "/bootgen_sysfiles.tgz",
+                # )
+                properties = path_date / board / "bootgen_sysfiles.tgz"
                 if not properties.exists():
                     continue
                 properties = properties.properties

@@ -4,29 +4,37 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 import datetime
+import json
 
-df = pd.read_csv(
-    "https://raw.githubusercontent.com/plotly/datasets/master/gapminder_unfiltered.csv"
-)
+# df = pd.read_csv(
+#     "https://raw.githubusercontent.com/plotly/datasets/master/gapminder_unfiltered.csv"
+# )
+# Import json
+filename = "hdl_metadata.json"
+with open(filename, "r") as f:
+    data = json.load(f)
+
+# print(data.keys())
+
+## Flatten json data
+data_filtered = []
+for key, value in data.items():
+    builds_per_date: dict = value
+    dates = list(builds_per_date.keys())
+    if len(dates) == 0:
+        continue
+    print(builds_per_date[dates[0]])
+    commit = builds_per_date[dates[0]]["git_sha"][0]
+
+    data_filtered.append({"board": key, "commit": commit, "date": dates[0]})
+
+data = data_filtered
+
+
 
 filter_base = [1, 2, 3]
 
-# Generate some basic table data
-table = []
-for i in range(10):
-    # table.append({'index': i, 'square': i**2, 'cube': i**3})
-    table.append(
-        {
-            "index": i,
-            "type": "hdl",
-            "build_start_date": str(datetime.datetime.now()),
-            "commit": "dsafewafeawef",
-            "repo": "https://github.com/analogdevicesinc/hdl",
-            "branch": "main",
-            "project": "ad9084_fmca_ebz",
-            "carrier": "vcu118",
-        }
-    )
+table = data
 
 app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -49,7 +57,7 @@ app.layout = [
         children=dash_table.DataTable(
             id="table-content",
             columns=[{"name": i, "id": i} for i in table[0].keys()],
-            data=table,
+            data=data,
         ),
     ),
 ]
@@ -65,8 +73,8 @@ def update_graph(value):
     # return px.line(dff, x='year', y='pop')
     print(value)
 
-    if value == None:
-        return table
+    # if value == None:
+    return table
 
     value = int(value)
 
