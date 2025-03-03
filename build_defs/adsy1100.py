@@ -23,7 +23,7 @@ ghdl_zu4eg = build.gen_ghdl_project("apollo_som", "dev_selmap")
 b.add_software(ghdl_zu4eg, vivado)
 
 # Run the build
-a,c = b.build()
+a, c = b.build()
 print(a)
 print(c)
 
@@ -45,6 +45,25 @@ b.add_software(linux, vivado)
 ghdl_vu11p = build.gen_ghdl_project("apollo_som", "xilinx_project_generate_bin")
 b.add_software(ghdl_vu11p, vivado)
 
+
+def copy_hsci(self):
+    print("Copying HSCI")
+    import os
+
+    source_dir = os.path.join(
+        self.parent.build_dir,
+        self.hdl_clone_folder_name,
+        "projects",
+        "apollo_som_vu11p",
+        "axi_hsci",
+    )
+    target_dir = os.path.join(self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name)
+    os.system(f"cp -r {source_dir} {target_dir}")
+
+
+b.software[1].pre_build_func = copy_hsci
+
+
 # Run the build
-a,c = b.build()
+a, c = b.build()
 print(a)
