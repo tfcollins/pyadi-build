@@ -22,6 +22,7 @@ b.add_software(linux, vivado)
 ghdl_zu4eg = build.gen_ghdl_project("apollo_som", "dev_selmap")
 b.add_software(ghdl_zu4eg, vivado)
 
+
 def rebase_hdl(self):
     import os
 
@@ -32,6 +33,7 @@ def rebase_hdl(self):
     os.system("git checkout dev_selmap")
     os.system("git rebase hdl_2023_r2")
     os.chdir(cwd)
+
 
 b.software[1].pre_build_func = rebase_hdl
 
@@ -70,7 +72,9 @@ def copy_hsci(self):
         "apollo_som_vu11p",
         "axi_hsci",
     )
-    target_dir = os.path.join(self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name)
+    target_dir = os.path.join(
+        self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name, "library"
+    )
     os.system(f"cp -r {source_dir} {target_dir}")
 
 
