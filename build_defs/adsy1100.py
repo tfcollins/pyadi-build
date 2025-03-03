@@ -27,6 +27,7 @@ def rebase_hdl(self):
 
     cwd = os.getcwd()
     os.chdir(os.path.join(self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name))
+    os.system("git fetch")
     os.system("git checkout main")
     os.system("git pull")
     os.system("git checkout dev_selmap")
