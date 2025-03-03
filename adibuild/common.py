@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 class Common:
 
-    timeout = 600
+    timeout = 60*60*4  # 4 hours
 
     _log_output = False
     _log_output_file = "log.txt"
