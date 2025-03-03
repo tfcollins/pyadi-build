@@ -115,7 +115,7 @@ class HDL(Common):
     def get_source(self):
         if self.pre_clone_func:
             log.info("Running pre-clone function")
-            self.pre_clone_func()
+            self.pre_clone_func(self)
         if self.ghdl_project:
             log.info("Getting upstream HDL source")
             # Check if target clone folders are the same
@@ -145,7 +145,7 @@ class HDL(Common):
     def build_source(self):
         if self.pre_build_func:
             log.info("Running pre-build function")
-            self.pre_build_func()
+            self.pre_build_func(self)
         log.info("Building source for HDL")
         cwd = os.getcwd()
         os.chdir(self.parent.build_dir)
