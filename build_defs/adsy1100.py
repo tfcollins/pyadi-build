@@ -27,11 +27,10 @@ def rebase_hdl(self):
 
     cwd = os.getcwd()
     os.chdir(os.path.join(self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name))
-    os.system("git fetch")
-    os.system("git checkout main")
+    os.system("git checkout hdl_2023_r2")
     os.system("git pull")
     os.system("git checkout dev_selmap")
-    os.system("git rebase main")
+    os.system("git rebase hdl_2023_r2")
     os.chdir(cwd)
 
 b.software[1].pre_build_func = rebase_hdl
