@@ -6,7 +6,7 @@ from .common import DeviceType
 @dataclass
 class ADSY1100_VU11P:
     device_type: DeviceType = DeviceType.SOM
-    name: str = "ADSY1100 VU11P Design"
+    name: str = "ADSY1100-VU11P"
     description: str = (
         "4 Tx/4 Rx, 0.1 GHz to 20 GHz Apollo MxFE 3UVPX Tuner + Digitizer + Processor"
     )
@@ -16,7 +16,7 @@ class ADSY1100_VU11P:
     hdl_project_folder = None
     fpga = "apollo_som_vu11p"
     devicetrees_per_carrier = {
-        "apollo_som_vu11p": [
+        "ADSY1100-VU11P": [
             "vu11p-vpx-apollo",
         ]
     }
@@ -46,11 +46,11 @@ class ADSY1100_VU11P:
 
 @dataclass
 class ADSY1100_ZU4EG(ADSY1100_VU11P):
-    name: str = "ADSY1100 ZU4EG Design"
+    name: str = "ADSY1100-ZU4EG"
     hdl_project_folder = None
     fpga = "apollo_som_zu4eg"
     devicetrees_per_carrier = {
-        "apollo_som_zu4eg": [
+        "ADSY1100-ZU4EG": [
             "zynqmp-vpx-apollo",
         ]
     }
