@@ -1,5 +1,5 @@
 import os
-
+from .models.common import DeviceType
 
 class Builder:
     def __init__(self, name="adi_project", build_dir: str = "build"):
@@ -8,13 +8,32 @@ class Builder:
         self.fpga = None
         self.software = []
         self.fmc = None
+        self.som = None
         self.log_dir = os.path.join(os.getcwd(), "logs")
 
+    @property
+    def project_type(self):
+        if self.fmc and self.fpga:
+            return DeviceType.FPGA_FMC
+        elif self.som:
+            return DeviceType.SOM
+        else:
+            raise ValueError("Device not set")
+
     def add_fmc(self, fmc):
+        if self.som:
+            raise ValueError("Cannot have both FMC and SOM in the same project")
         self.fmc = fmc
 
     def add_fpga(self, fpga):
+        if self.som:
+            raise ValueError("Cannot have both FMC and SOM in the same project")
         self.fpga = fpga
+
+    def add_som(self, som):
+        if self.fmc or self.fpga:
+            raise ValueError("Cannot have both FMC and SOM in the same project")
+        self.som = som
 
     def add_software(self, software, tools):
         self.software.append(software(self, tools))
