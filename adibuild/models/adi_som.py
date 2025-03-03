@@ -48,9 +48,7 @@ class ADSY1100_ZU4EG(ADSY1100_VU11P):
     hdl_project_folder = None
     fpga = "apollo_som_zu4eg"
     devicetrees_per_carrier = {
-        "ADSY1100-ZU4EG": [
-            "zynqmp-vpx-apollo",
-        ]
+        "ADSY1100-ZU4EG": "zynqmp-vpx-apollo",
     }
 
     # FPGA Software Info

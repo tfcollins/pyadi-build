@@ -22,6 +22,19 @@ b.add_software(linux, vivado)
 ghdl_zu4eg = build.gen_ghdl_project("apollo_som", "dev_selmap")
 b.add_software(ghdl_zu4eg, vivado)
 
+def rebase_hdl(self):
+    import os
+
+    cwd = os.getcwd()
+    os.chdir(os.path.join(self.parent.build_dir, self.hdl_clone_folder_name))
+    os.system("git checkout main")
+    os.system("git pull")
+    os.system("git checkout dev_selmap")
+    os.system("git rebase main")
+    os.chdir(cwd)
+
+b.software[1].pre_build_func = rebase_hdl
+
 # Run the build
 a, c = b.build()
 print(a)
