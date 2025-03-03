@@ -37,7 +37,8 @@ elif build_type == "GHDL":
     b.add_som(build.models.adi_som.ADSY1100_ZU4EG())
 
     vivado = build.models.vivado.generate_vivado_config("2023.2", "linux")
-    ghdl = build.gen_ghdl_project("apollo_som", "hdl_2023_r2")
+    # ghdl = build.gen_ghdl_project("apollo_som", "xilinx_project_generate_bin")
+    ghdl = build.gen_ghdl_project("apollo_som", "dev_selmap")
 
     def copy_hsci(self):
         print("Copying HSCI")
@@ -53,7 +54,7 @@ elif build_type == "GHDL":
 
     b.add_software(ghdl, vivado)
 
-    b.som.pre_build_func = copy_hsci
+    b.software[0].pre_build_func = copy_hsci
 
     a,c = b.build()
     print(a)
