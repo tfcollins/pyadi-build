@@ -15,7 +15,7 @@ if build_type == "Linux":
     b.add_fpga(build.models.xilinx.ZCU102())
 
     vivado = build.models.vivado.generate_vivado_config("2023.2", "linux")
-    b.add_software(build.Linux, vivado)
+    b.add_software(build.Linux(), vivado)
 
     a,c = b.build()
     print(a)
@@ -26,7 +26,7 @@ elif build_type == "HDL":
     b.add_fpga(build.models.xilinx.ZCU102())
 
     vivado = build.models.vivado.generate_vivado_config("2023.2", "linux")
-    b.add_software(build.HDL, vivado)
+    b.add_software(build.HDL(), vivado)
 
     a,c = b.build()
     print(a)
@@ -52,7 +52,7 @@ elif build_type == "GHDL":
         os.system(f"cp -r {source_dir} {target_dir}")
         
 
-    b.add_software(ghdl, vivado)
+    b.add_software(ghdl(), vivado)
 
     b.software[0].pre_build_func = copy_hsci
 
@@ -64,7 +64,7 @@ elif build_type == "Linux_ADSY":
     b.add_som(build.models.adi_som.ADSY1100_VU11P())
 
     vivado = build.models.vivado.generate_vivado_config("2023.2", "linux")
-    linux = build.Linux
+    linux = build.Linux()
     linux.gitrepo_https = "https://bitbucket.analog.com/scm/sdg/linux-apollo.git"
     linux.branch = "main"
     b.add_software(linux, vivado)

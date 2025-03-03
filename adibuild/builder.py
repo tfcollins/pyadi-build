@@ -36,7 +36,9 @@ class Builder:
         self.som = som
 
     def add_software(self, software, tools):
-        self.software.append(software(self, tools))
+        software.parent = self
+        software.tools = tools
+        self.software.append(software)
 
     def build(self):
 
