@@ -1,5 +1,6 @@
-# import pytest
 import logging
+import shutil
+import os
 
 import adibuild as build
 
@@ -42,6 +43,7 @@ a, c = b.build()
 print(a)
 print(c)
 
+
 ## VU11P
 del b
 b = build.Builder(name="ADSY1100 VU11P", build_dir="build_vu11p")
@@ -82,5 +84,17 @@ b.software[1].pre_build_func = copy_hsci
 
 
 # Run the build
-a, c = b.build()
-print(a)
+a2, c2 = b.build()
+print(a2)
+print(c2)
+
+## Save files
+folder = "outputs"
+if not os.path.exists(folder):
+    os.makedirs(folder)
+for aa in a + a2:
+    print(aa)
+    shutil.move(aa, folder)
+for cc in c + c2:
+    print(cc)
+    shutil.move(cc, folder)
