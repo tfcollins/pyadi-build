@@ -17,9 +17,30 @@ class ADSY1100_VU11P:
     fpga = "apollo_som_vu11p"
     devicetrees_per_carrier = {
         "apollo_som_vu11p": [
-            "apollo_som_vu11p",
+            "vu11p-vpx-apollo",
         ]
     }
+
+    # FPGA Software Info
+    type: str = "COTS Board"
+    vendor: str = "ADI"
+    family: str = "VPX Modules"
+    # device: str = "xczu11"
+    # package: str = "ffvc900"
+    # speedgrade: str = "2"
+
+    # Linux Toolchain
+    cc_compiler: str = "aarch64-linux-gnu-"
+    arch: str = "arm64"
+    def_config: str = "adi_zynqmp_adsy1100_b0_defconfig"
+    make_args: str = "Image UIMAGE_LOADADDR=0x8000"
+
+    # u-boot Toolchain (Share components with Linux)
+    u_boot_def_config: str = 'xilinx_zynqmp_virt_defconfig' #"xilinx_zynqmp_zcu102_rev1_0_defconfig"
+    u_boot_arch: str = "aarch64"
+
+    # General
+    num_cores: int = 4
 
     cores = 4
 
@@ -30,8 +51,29 @@ class ADSY1100_ZU4EG(ADSY1100_VU11P):
     fpga = "apollo_som_zu4eg"
     devicetrees_per_carrier = {
         "apollo_som_zu4eg": [
-            "apollo_som_zu4eg",
+            "zynqmp-vpx-apollo",
         ]
     }
+
+    # FPGA Software Info
+    type: str = "COTS Board"
+    vendor: str = "ADI"
+    family: str = "VPX Modules"
+    # device: str = "xczu4"
+    # package: str = "ffvc900"
+    # speedgrade: str = "2"
+
+    # Linux Toolchain
+    cc_compiler: str = "aarch64-linux-gnu-"
+    arch: str = "arm64"
+    def_config: str = "adi_zynqmp_adsy1100_b0_defconfig"
+    make_args: str = "Image UIMAGE_LOADADDR=0x8000"
+
+    # u-boot Toolchain (Share components with Linux)
+    u_boot_def_config: str = 'xilinx_zynqmp_virt_defconfig' #"xilinx_zynqmp_zcu102_rev1_0_defconfig"
+    u_boot_arch: str = "aarch64"
+
+    # General
+    num_cores: int = 4
 
     cores = 4
