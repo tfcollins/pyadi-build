@@ -29,16 +29,9 @@ def gen_script(func):
 
 class Linux(Common):
 
-    gitrepo_https = "https://github.com/analogdevicesinc/linux.git"
-    gitrepo_ssh = "git@github.com:analogdevicesinc/linux.git"
-    gitrepo_preferred = "https"  # or "ssh" or None
-    git_tool = "cli"  # or "python"
-
-    branch = "main"
-
-    def __init__(self, parent, tools):
-        self.parent = parent
-        self.tools = tools
+    def __init__(self):
+        self.parent = None
+        self.tools = None
         self.log_commands = True
         self.log_output = True
         self.log_file = "linux.log"
@@ -46,6 +39,14 @@ class Linux(Common):
 
         self.pre_clone_func = None
         self.pre_build_func = None
+
+        self.gitrepo_https = "https://github.com/analogdevicesinc/linux.git"
+        self.gitrepo_ssh = "git@github.com:analogdevicesinc/linux.git"
+        self.gitrepo_preferred = "https"  # or "ssh" or None
+        self.git_tool = "cli"  # or "python"
+
+        self.branch = "main"
+
 
     def reset_logs(self):
         full_log_path = os.path.join(self.parent.log_dir, self.log_file)

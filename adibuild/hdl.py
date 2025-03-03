@@ -37,7 +37,7 @@ def gen_ghdl_project(
     hdl_gitrepo_ssh: str = None,
     hdl_gitrepo_preferred: str = "https",
 ):
-    ghdl = HDL
+    ghdl = HDL()
     ghdl.ghdl_project = True
 
     # Take defaults from HDL class
@@ -69,26 +69,9 @@ def gen_ghdl_project(
 
 class HDL(Common):
 
-    gitrepo_https = "https://github.com/analogdevicesinc/hdl.git"
-    gitrepo_ssh = "git@github.com:analogdevicesinc/hdl.git"
-    gitrepo_preferred = "https"  # or "ssh" or None
-    git_tool = "cli"  # or "python"
-
-    branch = "main"
-
-    hdl_clone_folder_name = "hdl"
-
-    # GHDL related
-    ghdl_project = False
-    ghdl_us_hdl_branch = "main"
-    ghdl_us_hdl_clone_folder_name = None
-    ghdl_us_hdl_repo_https = "https://bitbucket.analog.com/scm/sdg/ghdl.git"
-    ghdl_us_hdl_repo_ssh = None
-    ghdl_us_hdl_repo_preferred = "https"
-
-    def __init__(self, parent, tools, pre_clone_func=None, pre_build_func=None):
-        self.parent = parent
-        self.tools = tools
+    def __init__(self, pre_clone_func=None, pre_build_func=None):
+        self.parent = None
+        self.tools = None
         self.log_commands = True
         self.log_output = True
         self.log_file = "hdl.log"
@@ -97,6 +80,24 @@ class HDL(Common):
 
         self.pre_clone_func = pre_clone_func
         self.pre_build_func = pre_build_func
+
+        self.gitrepo_https = "https://github.com/analogdevicesinc/hdl.git"
+        self.gitrepo_ssh = "git@github.com:analogdevicesinc/hdl.git"
+        self.gitrepo_preferred = "https"  # or "ssh" or None
+        self.git_tool = "cli"  # or "python"
+
+        self.branch = "main"
+
+        self.hdl_clone_folder_name = "hdl"
+
+        # GHDL related
+        self.ghdl_project = False
+        self.ghdl_us_hdl_branch = "main"
+        self.ghdl_us_hdl_clone_folder_name = None
+        self.ghdl_us_hdl_repo_https = "https://bitbucket.analog.com/scm/sdg/ghdl.git"
+        self.ghdl_us_hdl_repo_ssh = None
+        self.ghdl_us_hdl_repo_preferred = "https"
+
 
     def reset_logs(self):
         full_log_path = os.path.join(self.parent.log_dir, self.log_file)
