@@ -100,14 +100,16 @@ class Linux(Common):
         print("Collecting metadata for Linux")
         if self.parent.project_type == DeviceType.FPGA_FMC:
             dev = self.parent.fpga
+            dtb_name = self.parent.fmc.devicetrees_per_carrier[dev.name]
         elif self.parent.project_type == DeviceType.SOM:
             dev = self.parent.som
+            dtb_name = self.parent.som.devicetrees_per_carrier[dev.name]
         else:
             raise ValueError("Device not set")
         arch = dev.arch
         image_name = "uImage" if arch == "arm" else "Image"
         dtb_name = (
-            f"{self.parent.fmc.devicetrees_per_carrier[dev.name]}.dtb"
+            f"{dtb_name}.dtb"
         )
         build_artifacts = [
             f"{self.parent.build_dir}/linux/arch/{arch}/boot/{image_name}",
