@@ -44,6 +44,9 @@ class Linux(Common):
         self.log_file = "linux.log"
         self.commands_file = "linux_commands.txt"
 
+        self.pre_clone_func = None
+        self.pre_build_func = None
+
     def reset_logs(self):
         full_log_path = os.path.join(self.parent.log_dir, self.log_file)
         full_cmd_path = os.path.join(self.parent.log_dir, self.commands_file)
@@ -69,6 +72,9 @@ class Linux(Common):
     def build_source(self):
         log.info("Building source for Linux")
         cwd = os.getcwd()
+
+        if self.pre_build_func:
+            self.pre_build_func(self)
 
         if self.parent.project_type == DeviceType.FPGA_FMC:
             dev = self.parent.fpga
