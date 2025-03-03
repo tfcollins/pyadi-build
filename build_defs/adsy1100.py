@@ -13,7 +13,7 @@ b.add_som(build.models.adi_som.ADSY1100_ZU4EG())
 
 # Add Linux build
 vivado = build.models.vivado.generate_vivado_config("2023.2")
-linux = build.Linux
+linux = build.Linux()
 linux.gitrepo_https = "https://bitbucket.analog.com/scm/sdg/linux-apollo.git"
 linux.branch = "main"
 b.add_software(linux, vivado)
@@ -36,7 +36,7 @@ b.add_som(build.models.adi_som.ADSY1100_VU11P())
 
 # Add Linux build
 vivado = build.models.vivado.generate_vivado_config("2023.2")
-linux = build.Linux
+linux = build.Linux()
 linux.gitrepo_https = "https://bitbucket.analog.com/scm/sdg/linux-apollo.git"
 linux.branch = "main"
 b.add_software(linux, vivado)
