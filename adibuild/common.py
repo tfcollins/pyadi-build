@@ -1,10 +1,13 @@
 import subprocess
 import logging
+import time
 
 log = logging.getLogger(__name__)
 
 
 class Common:
+
+    timeout = 600
 
     _log_output = False
     _log_output_file = "log.txt"
@@ -34,17 +37,26 @@ class Common:
 
         # Monitor output and errors in real-time
         stdout = []
-        for line in process.stdout:
-            log.debug(f"STDOUT: {line.strip()}")
-            stdout.append(line.strip())
-
         stderr = []
-        for line in process.stderr:
-            log.debug(f"STDERR: {line.strip()}")
-            stderr.append(line.strip())
+        start_time = time.time()
+        while process.poll() is None:
+            for line in process.stdout:
+                log.debug(f"STDOUT: {line.strip()}")
+                stdout.append(line.strip())
 
+            for line in process.stderr:
+                log.debug(f"STDERR: {line.strip()}")
+                stderr.append(line.strip())
+
+            # Check for timeout
+            elapsed_time = time.time() - start_time
+            if elapsed_time > self.timeout:
+                log.error(f"Command timed out after {self.timeout} seconds")
+                process.kill()
+                raise TimeoutError("Command timed out")
+            
         # Wait for process to complete
-        process.wait()
+        # process.wait()
 
         if self._log_output:
             log.info(f"Logging output to file: {self._log_output_file}")
