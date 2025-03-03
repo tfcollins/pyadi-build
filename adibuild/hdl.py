@@ -176,7 +176,8 @@ class HDL(Common):
             cores = self.parent.fmc.cores
         elif self.parent.project_type == DeviceType.SOM:
             cores = self.parent.som.cores
-        cmd += f" make -j{cores}"
+        # cmd += f" make -j{cores}"
+        cmd += f" make"
         self._run_shell_cmd(cmd)
         os.chdir(cwd)
 
