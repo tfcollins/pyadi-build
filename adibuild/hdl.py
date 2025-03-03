@@ -166,7 +166,7 @@ class HDL(Common):
             upstream_hdl_dir = os.path.join(
                 self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name
             )
-            cmd += f"export ADI_HDL_DIR={upstream_hdl_dir} &&"
+            cmd += f" export ADI_HDL_DIR={upstream_hdl_dir} &&"
         cmd += f" cd {self.hdl_clone_folder_name}/projects/{pc_path} &&"
         if self.make_prepend_commands:
             cmd += " "
