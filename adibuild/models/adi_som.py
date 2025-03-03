@@ -16,9 +16,7 @@ class ADSY1100_VU11P:
     hdl_project_folder = None
     fpga = "apollo_som_vu11p"
     devicetrees_per_carrier = {
-        "ADSY1100-VU11P": [
-            "vu11p-vpx-apollo",
-        ]
+        "ADSY1100-VU11P": "vu11p-vpx-apollo",
     }
 
     # FPGA Software Info
