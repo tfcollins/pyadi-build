@@ -128,7 +128,7 @@ class HDL(Common):
                     self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name
                 )
                 self._run_shell_cmd(
-                    f"git clone --depth=1 {self.ghdl_us_hdl_repo_https} -b {self.ghdl_us_hdl_branch} {dir_loc}"
+                    f"git clone {self.ghdl_us_hdl_repo_https} -b {self.ghdl_us_hdl_branch} {dir_loc}"
                 )
             else:
                 raise NotImplementedError("Only git is supported at this time")
@@ -136,7 +136,7 @@ class HDL(Common):
         if self.git_tool:
             dir_loc = os.path.join(self.parent.build_dir, self.hdl_clone_folder_name)
             self._run_shell_cmd(
-                f"git clone --depth=1 {self.gitrepo_https} -b {self.branch} {dir_loc}"
+                f"git clone {self.gitrepo_https} -b {self.branch} {dir_loc}"
             )
         else:
             raise NotImplementedError("Only git is supported at this time")
