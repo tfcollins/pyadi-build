@@ -3,6 +3,7 @@ import os
 import shutil
 
 from .common import Common
+from .models.common import DeviceType
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ class Linux(Common):
         log.info("Getting source for Linux")
         if self.git_tool:
             dir_loc = os.path.join(self.parent.build_dir, "linux")
-            # self._run_shell_cmd(f"git clone --depth=1 {self.gitrepo_https} -b {self.branch} {dir_loc}")
+            self._run_shell_cmd(f"git clone --depth=1 {self.gitrepo_https} -b {self.branch} {dir_loc}")
         else:
             raise NotImplementedError("Only git is supported at this time")
 
@@ -68,24 +69,39 @@ class Linux(Common):
     def build_source(self):
         log.info("Building source for Linux")
         cwd = os.getcwd()
+
+        if self.parent.project_type == DeviceType.FPGA_FMC:
+            dev = self.parent.fpga
+            dt = self.parent.fmc.devicetrees_per_carrier[dev.name]
+        elif self.parent.project_type == DeviceType.SOM:
+            dev = self.parent.som
+            dt = self.parent.som.devicetrees_per_carrier[dev.name]
+        else:
+            raise ValueError("Device not set")
+        
         os.chdir(self.parent.build_dir)
         cmd = f"{self.tools.source_cmd} &&"
         cmd += " cd linux &&"
-        cmd += f" export ARCH={self.parent.fpga.arch} &&"
-        cmd += f" export CROSS_COMPILE={self.parent.fpga.cc_compiler} &&"
-        cmd += f" make {self.parent.fpga.def_config} &&"
-        cmd += f" make -j{self.parent.fpga.num_cores} {self.parent.fpga.make_args} &&"
-        fpga = self.parent.fpga.name
-        cmd += f" make xilinx/{self.parent.fmc.devicetrees_per_carrier[fpga]}.dtb"
+        cmd += f" export ARCH={dev.arch} &&"
+        cmd += f" export CROSS_COMPILE={dev.cc_compiler} &&"
+        cmd += f" make {dev.def_config} &&"
+        cmd += f" make -j{dev.num_cores} {dev.make_args} &&"
+        cmd += f" make xilinx/{dt}.dtb"
         self._run_shell_cmd(cmd)
         os.chdir(cwd)
 
     def collect_metadata(self):
         print("Collecting metadata for Linux")
-        arch = self.parent.fpga.arch
+        if self.parent.project_type == DeviceType.FPGA_FMC:
+            dev = self.parent.fpga
+        elif self.parent.project_type == DeviceType.SOM:
+            dev = self.parent.som
+        else:
+            raise ValueError("Device not set")
+        arch = dev.arch
         image_name = "uImage" if arch == "arm" else "Image"
         dtb_name = (
-            f"{self.parent.fmc.devicetrees_per_carrier[self.parent.fpga.name]}.dtb"
+            f"{self.parent.fmc.devicetrees_per_carrier[dev.name]}.dtb"
         )
         build_artifacts = [
             f"{self.parent.build_dir}/linux/arch/{arch}/boot/{image_name}",
