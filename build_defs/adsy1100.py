@@ -81,7 +81,9 @@ def copy_hsci(self):
 
 
 b.software[1].pre_build_func = copy_hsci
-
+b.make_postpend_commands = [
+    "JESD_MODE=64B66B RX_RATE=24.75 TX_RATE=24.75 RX_JESD_M=4 TX_JESD_M=4 RX_JESD_L=8 TX_JESD_L=8 RX_JESD_S=1 TX_JESD_S=1 RX_JESD_NP=16 TX_JESD_NP=16 RX_B_RATE=24.75 TX_B_RATE=24.75 RX_B_JESD_M=4 TX_B_JESD_M=4 RX_B_JESD_L=8 TX_B_JESD_L=8 RX_B_JESD_S=1 TX_B_JESD_S=1 RX_B_JESD_NP=16 TX_B_JESD_NP=16"
+]
 
 # Run the build
 a2, c2 = b.build()

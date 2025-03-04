@@ -77,6 +77,7 @@ class HDL(Common):
         self.log_file = "hdl.log"
         self.commands_file = "hdl_commands.txt"
         self.make_prepend_commands = []
+        self.make_postpend_commands = []
 
         self.pre_clone_func = pre_clone_func
         self.pre_build_func = pre_build_func
@@ -178,6 +179,9 @@ class HDL(Common):
             cores = self.parent.som.cores
         # cmd += f" make -j{cores}"
         cmd += f" make"
+        if self.make_postpend_commands:
+            cmd += " "
+            cmd += " ".join(self.make_postpend_commands) + " "
         self._run_shell_cmd(cmd)
         os.chdir(cwd)
 
