@@ -15,3 +15,5 @@ class FMComms2:
         "ZED": "zynq-zed-adv7511-ad9361-fmcomms2-3",
         "ZCU102": "zynqmp-zcu102-rev10-ad9361-fmcomms2-3",
     }
+
+    cores = 4
