@@ -1,7 +1,14 @@
 import os
 from .models.common import DeviceType
+from .db import MongoMetadataDatabase, MinioStorage
+
 
 class Builder:
+
+    metadata_database = "MongoDB"
+    storage_service = "Minio"
+    use_upload_features = False
+
     def __init__(self, name="adi_project", build_dir: str = "build"):
         self.build_dir = build_dir
         self.name = name
@@ -10,6 +17,17 @@ class Builder:
         self.fmc = None
         self.som = None
         self.log_dir = os.path.join(os.getcwd(), "logs")
+
+        if self.use_upload_features:
+            if self.metadata_database == "MongoDB":
+                self.db_meta = MongoMetadataDatabase(db_name="cse_dev")
+            else:
+                raise ValueError("Unsupported metadata database type")
+
+            if self.storage_service == "Minio":
+                self.db_storage = MinioStorage(bucket_name="cse_dev")
+            else:
+                raise ValueError("Unsupported storage service type")
 
     @property
     def project_type(self):
@@ -39,6 +57,17 @@ class Builder:
         software.parent = self
         software.tools = tools
         self.software.append(software)
+
+    def upload_metadata(self, component: str, metadata: dict):
+        self.db_meta.upload_metadata(component, metadata)
+
+    def upload_artifacts(self, component: str, artifacts: list):
+        for artifact in artifacts:
+            if os.path.exists(artifact):
+                object_name = os.path.join(self.name, component, os.path.basename(artifact))
+                self.db_storage.upload_file(component, artifact, object_name)
+            else:
+                raise FileNotFoundError(f"Artifact {artifact} does not exist.")
 
     def build(self):
 

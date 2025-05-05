@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import datetime
 
 from .common import Common
 from .models.common import DeviceType
@@ -25,6 +26,42 @@ def gen_script(func):
         return out
 
     return wrapper
+
+
+def get_ci_info():
+    # Get jenkins CI information if available
+    ci_info = {
+        "BUILD_NUMBER": os.environ.get("BUILD_NUMBER", None),
+        "BUILD_URL": os.environ.get("BUILD_URL", None),
+        "JOB_NAME": os.environ.get("JOB_NAME", None),
+        "NODE_NAME": os.environ.get("NODE_NAME", None),
+    }
+    return ci_info
+
+
+def get_jesd_mode():
+    return {
+        "rx": {
+            "M": 4,
+            "Np": 16,
+            "K": 4,
+            "L": 8,
+            "S": 1,
+            "F": 1,
+            "jesd_class": "204C",
+            "lane_rate_mbps": 20625,
+        },
+        "tx": {
+            "M": 4,
+            "Np": 16,
+            "K": 4,
+            "L": 8,
+            "S": 1,
+            "F": 1,
+            "jesd_class": "204C",
+            "lane_rate_mbps": 20625,
+        },
+    }
 
 
 def gen_ghdl_project(
@@ -91,6 +128,13 @@ class HDL(Common):
 
         self.hdl_clone_folder_name = "hdl"
 
+        # Cache
+        self._logs = None
+        self._build_artifacts = None
+        self._patch = None
+        self._project = None
+        self._carrier = None
+
         # GHDL related
         self.ghdl_project = False
         self.ghdl_us_hdl_branch = "main"
@@ -98,7 +142,6 @@ class HDL(Common):
         self.ghdl_us_hdl_repo_https = "https://bitbucket.analog.com/scm/sdg/ghdl.git"
         self.ghdl_us_hdl_repo_ssh = None
         self.ghdl_us_hdl_repo_preferred = "https"
-
 
     def reset_logs(self):
         full_log_path = os.path.join(self.parent.log_dir, self.log_file)
@@ -155,9 +198,13 @@ class HDL(Common):
             project = self.parent.fmc.hdl_project_folder
             carrier = self.parent.fpga.name.lower()
             pc_path = os.path.join(project, carrier)
+            self._project = project
+            self._carrier = carrier
         elif self.parent.project_type == DeviceType.SOM:
             project = self.parent.som.hdl_project_folder
+            self._project = project
             fpga = self.parent.som.fpga
+            self._carrier = fpga
             if not project:
                 pc_path = fpga
             else:
@@ -242,4 +289,39 @@ class HDL(Common):
         logs += [os.path.join(self.parent.log_dir, self.log_file)]
         logs += [os.path.join(self.parent.log_dir, self.commands_file)]
 
+        self._logs = logs
+        self._build_artifacts = build_artifacts
+
         return build_artifacts, logs
+
+    def upload(self):
+        """Upload HDL metadata and build artifacts to the parent project."""
+        # Define metadata and artifacts
+        assert self._build_artifacts, "No build artifacts found"
+        assert self._logs, "No logs found"
+
+        jesd_configs = get_jesd_mode()
+        ci_info = get_ci_info()
+
+        upload_date_time = datetime.datetime.now().isoformat()
+
+        metadata = {
+            "build_artifacts": self._build_artifacts,
+            "log_files": self._logs,
+            "make_prepend_commands": self.make_prepend_commands,
+            "make_postpend_commands": self.make_postpend_commands,
+            "branch": self.branch,
+            "commit_hash": self.get_commit_hash(),
+            "project_type": self.parent.project_type,
+            "patch": self._patch,
+            "timing_passed": True,
+            "jesd_project": True,
+            "jesd_configs": jesd_configs,
+            "ci_info": ci_info,
+            "upload_date_time": upload_date_time,
+        }
+
+        self.parent.upload_metadata("HDL", metadata)
+
+        self.parent.upload_artifacts("HDL", self._build_artifacts)
+        self.parent.upload_artifacts("HDL", self._logs)

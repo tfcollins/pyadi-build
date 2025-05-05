@@ -28,6 +28,8 @@ maintainers = [
 ]
 dependencies = [
     'dohq-artifactory',
+    'pymongo',
+    'minio',
 ]
 
 [tool.setuptools.dynamic]
