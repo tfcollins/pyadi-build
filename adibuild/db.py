@@ -1,20 +1,23 @@
 from pymongo import MongoClient
 from minio import Minio
 
+
 class MongoMetadataDatabase:
 
-    username: str = 'admin'
-    password: str = 'admin'
-    address: str = 'localhost'
+    username: str = "admin"
+    password: str = "admin"
+    address: str = "localhost"
     port: int = 27017
 
-    db_name: str = "cse_dev"
-    
+    db_name: str = "cse-dev"
+
     def __init__(self, uri: str = None, db_name: str = None):
         if db_name is not None:
             self.db_name = db_name
         if uri is None:
-            uri = f"mongodb://{self.username}:{self.password}@{self.address}:{self.port}/"            
+            uri = (
+                f"mongodb://{self.username}:{self.password}@{self.address}:{self.port}/"
+            )
         self.client = MongoClient(uri)
         self.db = self.client[self.db_name]
 
@@ -27,7 +30,7 @@ class MongoMetadataDatabase:
     def upload_metadata(self, collection_name: str, metadata: dict) -> str:
         """
         Upload metadata to a specified collection in the MongoDB database.
-        
+
         :param collection_name: Name of the collection where metadata will be stored.
         :param metadata: Dictionary containing metadata to be uploaded.
         :return: The result of the insert operation.
@@ -43,21 +46,18 @@ class MongoMetadataDatabase:
 
 class MinioStorage:
 
-    username: str = 'NvulxUKCBb2PBwCQdnkF'
-    password: str = 'fX1kiwCstsWwDIfhd2A2NNiv5hHnFdNvyWbcPYno'
-    address: str = 'localhost'
+    username: str = "NvulxUKCBb2PBwCQdnkF"
+    password: str = "fX1kiwCstsWwDIfhd2A2NNiv5hHnFdNvyWbcPYno"
+    address: str = "localhost"
     port: int = 9000
-    bucket_name: str = "cse_dev"
+    bucket_name: str = "cse-dev"
 
     def __init__(self, uri: str = None, bucket_name: str = None):
         if uri is None:
             uri = f"{self.address}:{self.port}"
         print(f"Connecting to Minio at {uri} with bucket '{self.bucket_name}'")
         self.client = Minio(
-            uri,
-            access_key=self.username,
-            secret_key=self.password,
-            secure=False
+            uri, access_key=self.username, secret_key=self.password, secure=False
         )
         if bucket_name is not None:
             self.bucket_name = bucket_name
@@ -70,7 +70,9 @@ class MinioStorage:
         else:
             print(f"Bucket '{self.bucket_name}' already exists.")
 
-    def upload_file(self, component: str, file_path: str, object_name: str) -> None:
+    def upload_file(
+        self, component: str = None, file_path: str = None, object_name: str = None
+    ) -> None:
         """
         Upload a file to the Minio storage.
 
@@ -79,13 +81,15 @@ class MinioStorage:
         :param object_name: Name of the object in the Minio bucket.
         """
         # Add subdirectory based on component
+        if not object_name:
+            object_name = os.path.basename(file_path)
         if component:
             object_name = f"{component}/{object_name}"
         try:
-            self.client.fput_object(
-                self.bucket_name,
-                object_name,
-                file_path
+            return self.client.fput_object(
+                bucket_name=self.bucket_name,
+                object_name=object_name,
+                file_path=file_path,
             )
         except Exception as e:
             raise Exception(f"Failed to upload file to Minio: {str(e)}")

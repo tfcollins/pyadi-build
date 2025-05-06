@@ -106,9 +106,11 @@ def gen_ghdl_project(
 
 class HDL(Common):
 
-    def __init__(self, pre_clone_func=None, pre_build_func=None):
-        self.parent = None
-        self.tools = None
+    def __init__(
+        self, parent=None, tools=None, pre_clone_func=None, pre_build_func=None
+    ):
+        self.parent = parent
+        self.tools = tools
         self.log_commands = True
         self.log_output = True
         self.log_file = "hdl.log"
@@ -305,14 +307,30 @@ class HDL(Common):
 
         upload_date_time = datetime.datetime.now().isoformat()
 
+        def convert_enum_to_str(enum_value):
+            if isinstance(enum_value, DeviceType):
+                return enum_value.name
+            return str(enum_value)
+
         metadata = {
-            "build_artifacts": self._build_artifacts,
-            "log_files": self._logs,
+            "fpga": (
+                self.parent.fpga.name
+                if self.parent.project_type == DeviceType.FPGA_FMC
+                else self.parent.som.fpga.name
+            ),
+            "fmc": (
+                self.parent.fmc.name
+                if self.parent.project_type == DeviceType.FPGA_FMC
+                else None
+            ),
+            # "build_artifacts": self._build_artifacts,
+            # "log_files": self._logs,
             "make_prepend_commands": self.make_prepend_commands,
             "make_postpend_commands": self.make_postpend_commands,
             "branch": self.branch,
-            "commit_hash": self.get_commit_hash(),
-            "project_type": self.parent.project_type,
+            "commit_hash": self._get_git_commit(),
+            "git_tag": self._get_git_commit(tag_check=True),
+            "project_type": convert_enum_to_str(self.parent.project_type),
             "patch": self._patch,
             "timing_passed": True,
             "jesd_project": True,
@@ -321,7 +339,29 @@ class HDL(Common):
             "upload_date_time": upload_date_time,
         }
 
+        results_bas = self.parent.upload_artifacts("HDL", self._build_artifacts)
+        result_logs = self.parent.upload_artifacts("HDL", self._logs)
+
+        # Update metadata with upload results
+        metadata["build_artifacts"] = []
+        for key in results_bas:
+            metadata["build_artifacts"].append({
+                "file_name": key,
+                "location": results_bas[key].location,
+                "object_name": results_bas[key].object_name,
+                "etag": results_bas[key].etag,
+                "bucket_name": results_bas[key].bucket_name,
+            })
+        metadata["log_files"] = []
+        for key in result_logs:
+            metadata["log_files"].append({
+                "file_name": key,
+                "location": result_logs[key].location,
+                "object_name": result_logs[key].object_name,
+                "etag": result_logs[key].etag,
+                "bucket_name": result_logs[key].bucket_name,
+            })
+
+
         self.parent.upload_metadata("HDL", metadata)
 
-        self.parent.upload_artifacts("HDL", self._build_artifacts)
-        self.parent.upload_artifacts("HDL", self._logs)

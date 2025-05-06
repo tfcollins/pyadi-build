@@ -7,25 +7,30 @@ class Builder:
 
     metadata_database = "MongoDB"
     storage_service = "Minio"
-    use_upload_features = False
 
-    def __init__(self, name="adi_project", build_dir: str = "build"):
+    def __init__(
+        self,
+        name="adi_project",
+        build_dir: str = "build",
+        use_upload_features: bool = False,
+    ):
         self.build_dir = build_dir
         self.name = name
         self.fpga = None
         self.software = []
         self.fmc = None
         self.som = None
+        self.use_upload_features = use_upload_features
         self.log_dir = os.path.join(os.getcwd(), "logs")
 
         if self.use_upload_features:
             if self.metadata_database == "MongoDB":
-                self.db_meta = MongoMetadataDatabase(db_name="cse_dev")
+                self.db_meta = MongoMetadataDatabase(db_name="cse-dev")
             else:
                 raise ValueError("Unsupported metadata database type")
 
             if self.storage_service == "Minio":
-                self.db_storage = MinioStorage(bucket_name="cse_dev")
+                self.db_storage = MinioStorage(bucket_name="cse-dev")
             else:
                 raise ValueError("Unsupported storage service type")
 
@@ -54,20 +59,24 @@ class Builder:
         self.som = som
 
     def add_software(self, software, tools):
-        software.parent = self
-        software.tools = tools
-        self.software.append(software)
+        self.software.append(software(parent=self, tools=tools))
 
     def upload_metadata(self, component: str, metadata: dict):
         self.db_meta.upload_metadata(component, metadata)
 
     def upload_artifacts(self, component: str, artifacts: list):
+        results = {}
         for artifact in artifacts:
             if os.path.exists(artifact):
-                object_name = os.path.join(self.name, component, os.path.basename(artifact))
-                self.db_storage.upload_file(component, artifact, object_name)
+                object_name = os.path.join(
+                    self.name, component, os.path.basename(artifact)
+                )
+                result = self.db_storage.upload_file(component, artifact, object_name)
+                key = os.path.basename(artifact)
+                results[key] = result
             else:
                 raise FileNotFoundError(f"Artifact {artifact} does not exist.")
+        return results
 
     def build(self):
 

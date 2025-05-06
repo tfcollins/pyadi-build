@@ -30,6 +30,7 @@ dependencies = [
     'dohq-artifactory',
     'pymongo',
     'minio',
+    'GitPython',
 ]
 
 [tool.setuptools.dynamic]

@@ -2,6 +2,8 @@ import subprocess
 import logging
 import time
 
+import git
+
 log = logging.getLogger(__name__)
 
 
@@ -13,6 +15,22 @@ class Common:
     _log_output_file = "log.txt"
     _log_commands = False
     _log_commands_file = "commands.txt"
+
+    def _get_git_commit(self, repo_path=None, tag_check=False):
+        if repo_path is None:
+            repo_path = "."
+        try:
+            repo = git.Repo(repo_path)
+            if tag_check:
+                # Check if the current commit is tagged
+                tags = repo.tags
+                return bool(tags)
+            commit_hash = repo.head.commit.hexsha
+            return commit_hash
+        except git.exc.InvalidGitRepositoryError:
+            log.warning(f"No git repository found at {repo_path}")
+            return None
+
 
     def _run_shell_cmd(self, cmd):
         log.debug(f"Running shell command: {cmd}")
