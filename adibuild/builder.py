@@ -17,7 +17,7 @@ class Builder:
         self.build_dir = build_dir
         self.name = name
         self.fpga = None
-        self.software = []
+        self.software = {}
         self.fmc = None
         self.som = None
         self.use_upload_features = use_upload_features
@@ -58,8 +58,11 @@ class Builder:
             raise ValueError("Cannot have both FMC and SOM in the same project")
         self.som = som
 
-    def add_software(self, software, tools):
-        self.software.append(software(parent=self, tools=tools))
+    def add_software(self, software, name=None):
+        software.parent = self
+        if not name:
+            name = software.__class__.__name__
+        self.software[name] = software
 
     def upload_metadata(self, component: str, metadata: dict):
         self.db_meta.upload_metadata(component, metadata)
@@ -90,7 +93,9 @@ class Builder:
         all_artifacts = []
         all_logs = []
 
-        for sw in self.software:
+        for sw_key in self.software:
+
+            sw = self.software[sw_key]
 
             # Reset logs
             sw.reset_logs()

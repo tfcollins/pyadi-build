@@ -29,9 +29,9 @@ def gen_script(func):
 
 class Linux(Common):
 
-    def __init__(self):
-        self.parent = None
-        self.tools = None
+    def __init__(self, parent=None, tools=None):
+        self.parent = parent
+        self.tools = tools
         self.log_commands = True
         self.log_output = True
         self.log_file = "linux.log"

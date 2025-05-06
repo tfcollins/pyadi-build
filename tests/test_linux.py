@@ -15,12 +15,12 @@ def test_linux_build_zcu102():
     b.add_fpga(build.models.xilinx.ZCU102())
 
     vivado = build.models.vivado.generate_vivado_config("2023.2", "linux")
-    linux = build.Linux()
+    linux = build.Linux(tools=vivado)
     linux.branch = '2023_R2'
-    hdl = build.HDL()
+    hdl = build.HDL(tools=vivado)
     hdl.branch = 'hdl_2023_r2'
-    b.add_software(linux, vivado)
-    b.add_software(hdl, vivado)
+    b.add_software(linux)
+    b.add_software(hdl)
 
     all_artifacts, all_logs = b.build()
 

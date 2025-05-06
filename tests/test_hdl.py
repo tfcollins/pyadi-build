@@ -15,8 +15,15 @@ def test_linux_build_zcu102():
     b.add_fpga(build.models.xilinx.ZCU102())
 
     vivado = build.models.vivado.generate_vivado_config("2023.2", "linux")
-    b.add_software(build.Linux, vivado)
-    b.add_software(build.HDL, vivado)
+
+    lnx = build.Linux(tools=vivado)
+    lnx.branch = "2023_R2"
+
+    hdl = build.HDL(tools=vivado)
+    hdl.branch = "hdl_2023_r2"
+
+    b.add_software(lnx)
+    b.add_software(hdl)
 
     all_artifacts, all_logs = b.build()
 
@@ -38,12 +45,12 @@ def test_hdl_adsy1100_zu4eg():
     # hdl = build.HDL
     # hdl.branch = "hdl_2023_r2"
     ghdl = build.gen_ghdl_project("apollo_som", "hdl_2023_r2")
-
+    ghdl.tools = vivado
 
     # b.add_software(build.Linux, vivado)
     # b.add_software(build.HDL, vivado)
     # b.add_software(hdl, vivado)
-    b.add_software(ghdl, vivado)
+    b.add_software(ghdl, "ghdl_adsy1100_zu4eg")
     # b.add_software(build.UBoot, vivado)
 
     # b.add_tool()
