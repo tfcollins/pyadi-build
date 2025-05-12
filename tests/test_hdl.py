@@ -6,12 +6,15 @@ import adibuild as build
 
 logging.basicConfig(level=logging.DEBUG)
 
-
-def test_linux_build_zcu102():
+@pytest.mark.parametrize("card", ["FMComms2", "FMComms5"])
+def test_linux_build_zcu102(card):
 
     b = build.Builder(name="build")
 
-    b.add_fmc(build.models.adi.FMComms2())
+    if card == "FMComms2":
+        b.add_fmc(build.models.adi.FMComms2())
+    elif card == "FMComms5":
+        b.add_fmc(build.models.adi.FMComms2())
     b.add_fpga(build.models.xilinx.ZCU102())
 
     vivado = build.models.vivado.generate_vivado_config("2023.2", "linux")
