@@ -12,6 +12,7 @@ import adibuild as build
 #     assert response.status_code == 200
 #     assert response.json().get("status") == "success"
 
+@pytest.mark.upload
 def test_mock_files_upload():
 
     b = build.Builder(name="build", use_upload_features=True)

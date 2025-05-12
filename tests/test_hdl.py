@@ -31,6 +31,7 @@ def test_linux_build_zcu102():
     for file in all_artifacts + all_logs:
         assert os.path.exists(file)
 
+@pytest.mark.ghdl
 def test_hdl_adsy1100_zu4eg():
 
     b = build.Builder(name="build")
