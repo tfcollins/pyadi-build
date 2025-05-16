@@ -141,8 +141,8 @@ class HDL(Common):
         self.ghdl_project = False
         self.ghdl_us_hdl_branch = "main"
         self.ghdl_us_hdl_clone_folder_name = None
-        self.ghdl_us_hdl_repo_https = "https://bitbucket.analog.com/scm/sdg/ghdl.git"
-        self.ghdl_us_hdl_repo_ssh = None
+        self.ghdl_us_hdl_repo_https = "https://github.com/adi-innersource/ghdl.git"
+        self.ghdl_us_hdl_repo_ssh = "git@github.com:adi-innersource/ghdl.git"
         self.ghdl_us_hdl_repo_preferred = "https"
 
     def reset_logs(self):
@@ -173,17 +173,27 @@ class HDL(Common):
                 dir_loc = os.path.join(
                     self.parent.build_dir, self.ghdl_us_hdl_clone_folder_name
                 )
-                self._run_shell_cmd(
-                    f"git clone {self.ghdl_us_hdl_repo_https} -b {self.ghdl_us_hdl_branch} {dir_loc}"
-                )
+                if self.ghdl_us_hdl_repo_preferred == 'https':
+                    self._run_shell_cmd(
+                        f"git clone {self.ghdl_us_hdl_repo_https} -b {self.ghdl_us_hdl_branch} {dir_loc}"
+                    )
+                else:
+                    self._run_shell_cmd(
+                        f"git clone {self.ghdl_us_hdl_repo_ssh} -b {self.ghdl_us_hdl_branch} {dir_loc}"
+                    )
             else:
                 raise NotImplementedError("Only git is supported at this time")
         log.info("Getting source for HDL")
         if self.git_tool:
             dir_loc = os.path.join(self.parent.build_dir, self.hdl_clone_folder_name)
-            self._run_shell_cmd(
-                f"git clone {self.gitrepo_https} -b {self.branch} {dir_loc}"
-            )
+            if self.gitrepo_preferred == 'https':
+                self._run_shell_cmd(
+                    f"git clone {self.gitrepo_https} -b {self.branch} {dir_loc}"
+                )
+            else:
+                self._run_shell_cmd(
+                    f"git clone {self.gitrepo_ssh} -b {self.branch} {dir_loc}"
+                )
         else:
             raise NotImplementedError("Only git is supported at this time")
 

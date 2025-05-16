@@ -48,8 +48,11 @@ def test_hdl_adsy1100_zu4eg():
     # Define source code
     # hdl = build.HDL
     # hdl.branch = "hdl_2023_r2"
-    ghdl = build.gen_ghdl_project("apollo_som", "hdl_2023_r2")
+    ghdl = build.gen_ghdl_project("apollo_som", "dev_selmap", hdl_gitrepo_preferred = "ssh", ghdl_gitrepo_preferred = "ssh"
+)
     ghdl.tools = vivado
+    ghdl.ghdl_us_hdl_repo_preferred = "ssh"
+    ghdl.gitrepo_preferred = "ssh"
 
     # b.add_software(build.Linux, vivado)
     # b.add_software(build.HDL, vivado)
