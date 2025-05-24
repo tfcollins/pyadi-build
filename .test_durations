@@ -1,0 +1,7 @@
+{
+    "tests/test_hdl.py::test_hdl_adsy1100_zu4eg": 23.346470626886003,
+    "tests/test_hdl.py::test_linux_build_zcu102[FMComms2]": 1740.7521308700088,
+    "tests/test_hdl.py::test_linux_build_zcu102[FMComms5]": 1746.2584076259518,
+    "tests/test_hdl_upload.py::test_mock_files_upload": 6.023258967907168,
+    "tests/test_linux.py::test_linux_build_zcu102": 1742.407975972048
+}
