@@ -1,0 +1,173 @@
+/* ADI Brand Colors and Custom Styling for pyadi-build Documentation */
+
+:root {
+    /* ADI Brand Colors */
+    --adi-blue: #0071BC;
+    --adi-orange: #FF6A13;
+    --adi-dark-gray: #2C2D30;
+    --adi-light-gray: #F5F5F5;
+    --adi-white: #FFFFFF;
+}
+
+/* Admonitions with ADI blue accent */
+.admonition {
+    border-left: 4px solid var(--adi-blue);
+}
+
+.admonition.tip {
+    border-left-color: var(--adi-blue);
+}
+
+.admonition.note {
+    border-left-color: var(--adi-blue);
+}
+
+.admonition.warning {
+    border-left-color: var(--adi-orange);
+}
+
+/* Code blocks with ADI blue accent */
+.highlight pre {
+    border-radius: 4px;
+    border-left: 3px solid var(--adi-blue);
+}
+
+div[class^='highlight-'] {
+    border-radius: 4px;
+}
+
+/* Grid cards with hover effects */
+.sd-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sd-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 113, 188, 0.15);
+}
+
+/* Links with ADI blue */
+a {
+    color: var(--adi-blue);
+}
+
+a:hover {
+    color: var(--adi-orange);
+}
+
+/* Code inline elements */
+code.literal {
+    background-color: var(--adi-light-gray);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 90%;
+}
+
+/* Table styling */
+table.docutils {
+    border-collapse: collapse;
+}
+
+table.docutils thead {
+    background-color: var(--adi-blue);
+    color: var(--adi-white);
+}
+
+table.docutils tbody tr:nth-child(even) {
+    background-color: var(--adi-light-gray);
+}
+
+/* Sidebar and navigation */
+.sidebar {
+    background-color: var(--adi-light-gray);
+}
+
+/* Version badge */
+.version {
+    color: var(--adi-blue);
+    font-weight: bold;
+}
+
+/* Octicons in grid cards - ADI blue */
+.sd-card .octicon {
+    color: var(--adi-blue);
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--adi-blue);
+    border-color: var(--adi-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--adi-orange);
+    border-color: var(--adi-orange);
+}
+
+/* Code copy button */
+.copybtn {
+    color: var(--adi-blue);
+}
+
+.copybtn:hover {
+    color: var(--adi-orange);
+}
+
+/* Search box */
+.search input {
+    border-color: var(--adi-blue);
+}
+
+.search input:focus {
+    border-color: var(--adi-orange);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 113, 188, 0.2);
+}
+
+/* Mermaid diagrams - ADI colors */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node polygon {
+    fill: var(--adi-light-gray);
+    stroke: var(--adi-blue);
+    stroke-width: 2px;
+}
+
+.mermaid .edgePath .path {
+    stroke: var(--adi-blue);
+}
+
+/* Tab sets */
+.sd-tab-set {
+    border-color: var(--adi-blue);
+}
+
+.sd-tab-set input:checked + label {
+    border-bottom: 3px solid var(--adi-blue);
+    color: var(--adi-blue);
+}
+
+/* Footnotes */
+.footnote {
+    border-top: 1px solid var(--adi-blue);
+}
+
+/* Table of contents */
+.toctree-wrapper ul {
+    list-style-type: none;
+}
+
+.toctree-wrapper a {
+    text-decoration: none;
+}
+
+.toctree-wrapper a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sd-card:hover {
+        transform: none;
+    }
+}

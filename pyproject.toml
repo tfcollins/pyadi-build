@@ -1,0 +1,104 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyadi-build"
+version = "0.1.0"
+description = "Python module to generate and run build commands for ADI projects (Linux kernel, HDL, libiio)"
+authors = [
+    {name = "Analog Devices, Inc.", email = "opensource@analog.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: System :: Hardware",
+]
+keywords = ["adi", "analog-devices", "xilinx", "zynq", "linux", "kernel", "hdl", "fpga"]
+
+dependencies = [
+    "click>=8.0",
+    "pyyaml>=6.0",
+    "jsonschema>=4.0",
+    "gitpython>=3.1",
+    "rich>=13.0",
+    "requests>=2.28",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-mock>=3.10",
+    "nox>=2023.4.22",
+    "black>=23.0",
+    "ruff>=0.1.0",
+]
+
+docs = [
+    "sphinx>=5.0",
+    "cosmic>=0.1.0",
+    "myst-parser>=2.0.0",
+    "adi-doctools>=0.4.21",
+    "sphinxcontrib-mermaid>=0.9.2",
+    "sphinx-simplepdf>=1.6.0",
+    "sphinx-design>=0.5.0",
+    "sphinx-copybutton>=0.5.2",
+    "pillow>=10.0.0",
+    "sphinx-autobuild>=2021.3.14",
+]
+
+[project.scripts]
+adibuild = "adibuild.cli.main:cli"
+
+[project.urls]
+Homepage = "https://github.com/analogdevicesinc/pyadi-build"
+Documentation = "https://analogdevicesinc.github.io/pyadi-build"
+Repository = "https://github.com/analogdevicesinc/pyadi-build"
+Issues = "https://github.com/analogdevicesinc/pyadi-build/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["adibuild*"]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+markers = [
+    "real_build: tests that build actual kernels (slow)",
+    "toolchain: tests requiring actual toolchains",
+    "integration: integration tests combining multiple components",
+]
+addopts = "-v --strict-markers"
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "T20"]
+ignore = ["E501"]  # Line too long (handled by black)
+
+[tool.coverage.run]
+source = ["adibuild"]
+omit = ["*/test/*", "*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]

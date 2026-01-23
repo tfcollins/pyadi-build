@@ -1,0 +1,30 @@
+# ZynqMP (ARM64) Platform Defaults
+# This file contains default configuration for ZynqMP platform builds
+
+project: linux
+repository: https://github.com/analogdevicesinc/linux.git
+
+build:
+  parallel_jobs: 8
+  clean_before: false
+  output_dir: ./build
+
+platforms:
+  zynqmp:
+    arch: arm64
+    cross_compile: aarch64-linux-gnu-
+    defconfig: adi_zynqmp_defconfig
+    kernel_target: Image
+    dtb_path: arch/arm64/boot/dts/xilinx
+    kernel_image_path: arch/arm64/boot/Image
+
+    dtbs:
+      - zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dtb
+      - zynqmp-zcu102-rev10-ad9364-fmcomms4.dtb
+      - zynqmp-zcu102-rev10-adrv9371.dtb
+
+    toolchain:
+      preferred: vivado
+      fallback:
+        - arm
+        - system

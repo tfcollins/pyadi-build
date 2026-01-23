@@ -1,0 +1,386 @@
+"""Linux kernel builder implementation."""
+
+import json
+import shutil
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional
+
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
+
+from adibuild.core.builder import BuilderBase
+from adibuild.core.config import BuildConfig
+from adibuild.core.executor import BuildError
+from adibuild.platforms.base import Platform
+from adibuild.utils.git import GitRepository
+
+
+class LinuxBuilder(BuilderBase):
+    """Linux kernel builder with support for multiple platforms."""
+
+    def __init__(
+        self,
+        config: BuildConfig,
+        platform: Platform,
+        work_dir: Optional[Path] = None,
+    ):
+        """
+        Initialize LinuxBuilder.
+
+        Args:
+            config: Build configuration
+            platform: Target platform
+            work_dir: Working directory
+        """
+        super().__init__(config, platform, work_dir)
+
+        self.source_dir: Optional[Path] = None
+        self.repo: Optional[GitRepository] = None
+
+        # Build state
+        self._configured = False
+        self._kernel_built = False
+        self._dtbs_built = False
+
+    def prepare_source(self) -> Path:
+        """
+        Prepare kernel source code.
+
+        Returns:
+            Path to kernel source directory
+        """
+        self.logger.info("Preparing Linux kernel source...")
+
+        # Get repository info
+        repo_url = self.config.get_repository()
+        tag = self.config.get_tag()
+
+        # Setup repository path
+        repo_cache = Path.home() / ".adibuild" / "repos" / "linux"
+        self.source_dir = repo_cache
+
+        # Initialize git repository
+        self.repo = GitRepository(repo_url, repo_cache)
+
+        # Clone/update repository and checkout tag
+        self.logger.info(f"Ensuring repository is ready...")
+        self.repo.ensure_repo(ref=tag)
+
+        if not tag:
+            self.logger.warning("No tag specified, using current HEAD")
+
+        # Get commit info
+        commit_sha = self.repo.get_commit_sha()
+        self.logger.info(f"Using commit {commit_sha[:8]}")
+
+        # Update executor working directory
+        self.executor.cwd = self.source_dir
+
+        return self.source_dir
+
+    def configure(self, custom_config: Optional[Path] = None, menuconfig: bool = False) -> None:
+        """
+        Configure the kernel.
+
+        Args:
+            custom_config: Optional path to custom .config file
+            menuconfig: If True, run menuconfig after defconfig
+        """
+        if not self.source_dir:
+            raise BuildError("Source not prepared. Call prepare_source() first.")
+
+        self.logger.info(f"Configuring kernel with {self.platform.defconfig}...")
+
+        # Get environment for make
+        make_env = self.platform.get_make_env()
+
+        # Load custom config or use defconfig
+        if custom_config:
+            self.logger.info(f"Using custom config from {custom_config}")
+            shutil.copy(custom_config, self.source_dir / ".config")
+            # Run olddefconfig to update
+            self.executor.make("olddefconfig", env=make_env)
+        else:
+            # Run defconfig
+            self.executor.make(self.platform.defconfig, env=make_env)
+
+        # Run menuconfig if requested
+        if menuconfig:
+            self.logger.info("Running menuconfig...")
+            self.executor.make("menuconfig", env=make_env)
+
+        self._configured = True
+        self.logger.info("Kernel configuration complete")
+
+    def build_kernel(self, jobs: Optional[int] = None) -> Path:
+        """
+        Build kernel image.
+
+        Args:
+            jobs: Number of parallel jobs
+
+        Returns:
+            Path to built kernel image
+        """
+        if not self._configured:
+            raise BuildError("Kernel not configured. Call configure() first.")
+
+        jobs = jobs or self.config.get_parallel_jobs()
+
+        self.logger.info(
+            f"Building kernel target '{self.platform.kernel_target}' with {jobs} jobs..."
+        )
+
+        # Get environment
+        make_env = self.platform.get_make_env()
+
+        # Build kernel
+        start_time = time.time()
+        self.executor.make(self.platform.kernel_target, jobs=jobs, env=make_env)
+        duration = time.time() - start_time
+
+        self.logger.info(f"Kernel build completed in {duration:.1f}s")
+
+        # Get kernel image path
+        kernel_image = self.platform.get_kernel_image_full_path(self.source_dir)
+
+        if not kernel_image.exists():
+            raise BuildError(
+                f"Kernel image not found at expected location: {kernel_image}"
+            )
+
+        self._kernel_built = True
+        return kernel_image
+
+    def build_dtbs(
+        self,
+        dtbs: Optional[List[str]] = None,
+        jobs: Optional[int] = None,
+    ) -> List[Path]:
+        """
+        Build device tree blobs.
+
+        Args:
+            dtbs: Optional list of specific DTBs to build (uses config if None)
+            jobs: Number of parallel jobs
+
+        Returns:
+            List of paths to built DTB files
+        """
+        if not self._configured:
+            raise BuildError("Kernel not configured. Call configure() first.")
+
+        dtbs = dtbs or self.platform.dtbs
+        if not dtbs:
+            self.logger.warning("No DTBs specified, skipping DTB build")
+            return []
+
+        jobs = jobs or self.config.get_parallel_jobs()
+
+        self.logger.info(f"Building {len(dtbs)} device tree blobs...")
+
+        # Get environment
+        make_env = self.platform.get_make_env()
+
+        # Build DTBs individually to handle missing ones gracefully
+        start_time = time.time()
+        built_dtbs = []
+        dtb_dir = self.source_dir / self.platform.dtb_path
+
+        for dtb in dtbs:
+            try:
+                # Get correct make target (includes subdirectory if needed)
+                make_target = self.platform.get_dtb_make_target(dtb)
+                self.executor.make(make_target, jobs=jobs, env=make_env)
+                dtb_path = dtb_dir / dtb
+                if dtb_path.exists():
+                    built_dtbs.append(dtb_path)
+                    self.logger.debug(f"Built DTB: {dtb}")
+                else:
+                    self.logger.warning(f"DTB build succeeded but file not found: {dtb}")
+            except BuildError as e:
+                self.logger.warning(f"Failed to build DTB {dtb}: {e}")
+                continue
+
+        duration = time.time() - start_time
+        self.logger.info(f"Built {len(built_dtbs)}/{len(dtbs)} DTBs in {duration:.1f}s")
+
+        if not built_dtbs:
+            raise BuildError("No DTBs were successfully built")
+
+        self._dtbs_built = True
+        return built_dtbs
+
+    def build(
+        self,
+        clean_before: bool = False,
+        dtbs_only: bool = False,
+        custom_config: Optional[Path] = None,
+    ) -> Dict[str, any]:
+        """
+        Execute full kernel build pipeline.
+
+        Args:
+            clean_before: Clean before building
+            dtbs_only: Build only DTBs (skip kernel image)
+            custom_config: Optional custom configuration file
+
+        Returns:
+            Dictionary with build results
+        """
+        self.logger.info("Starting Linux kernel build...")
+        build_start = time.time()
+
+        # Validate environment
+        self.validate_environment()
+
+        # Prepare source
+        if not self.source_dir:
+            self.prepare_source()
+
+        # Clean if requested
+        if clean_before:
+            self.clean()
+
+        # Configure
+        self.configure(custom_config=custom_config)
+
+        # Build kernel
+        kernel_image = None
+        if not dtbs_only:
+            kernel_image = self.build_kernel()
+
+        # Build DTBs
+        dtbs = self.build_dtbs()
+
+        # Package artifacts
+        artifacts = self.package_artifacts(kernel_image, dtbs)
+
+        build_duration = time.time() - build_start
+
+        self.logger.info(f"Build completed successfully in {build_duration:.1f}s")
+
+        return {
+            "success": True,
+            "duration": build_duration,
+            "kernel_image": kernel_image,
+            "dtbs": dtbs,
+            "artifacts": artifacts,
+        }
+
+    def package_artifacts(
+        self,
+        kernel_image: Optional[Path],
+        dtbs: List[Path],
+    ) -> Path:
+        """
+        Package build artifacts to output directory.
+
+        Args:
+            kernel_image: Path to kernel image
+            dtbs: List of DTB paths
+
+        Returns:
+            Path to output directory
+        """
+        self.logger.info("Packaging build artifacts...")
+
+        # Get output directory
+        output_dir = self.get_output_dir()
+
+        # Copy kernel image
+        if kernel_image:
+            output_kernel = output_dir / kernel_image.name
+            shutil.copy(kernel_image, output_kernel)
+            self.logger.info(f"Copied kernel image to {output_kernel}")
+
+        # Copy DTBs
+        if dtbs:
+            dtb_output_dir = output_dir / "dts"
+            dtb_output_dir.mkdir(exist_ok=True)
+
+            for dtb in dtbs:
+                output_dtb = dtb_output_dir / dtb.name
+                shutil.copy(dtb, output_dtb)
+
+            self.logger.info(f"Copied {len(dtbs)} DTBs to {dtb_output_dir}")
+
+        # Generate metadata
+        metadata = {
+            "project": self.config.get_project(),
+            "platform": self.platform.arch,
+            "defconfig": self.platform.defconfig,
+            "tag": self.config.get_tag(),
+            "commit_sha": self.repo.get_commit_sha() if self.repo else None,
+            "build_date": datetime.now().isoformat(),
+            "toolchain": {
+                "type": self.toolchain.type,
+                "version": self.toolchain.version,
+            },
+            "artifacts": {
+                "kernel_image": kernel_image.name if kernel_image else None,
+                "dtbs": [dtb.name for dtb in dtbs],
+            },
+        }
+
+        metadata_file = output_dir / "metadata.json"
+        with open(metadata_file, "w") as f:
+            json.dump(metadata, f, indent=2)
+
+        self.logger.info(f"Generated metadata: {metadata_file}")
+        self.logger.info(f"All artifacts packaged in: {output_dir}")
+
+        return output_dir
+
+    def clean(self, deep: bool = False) -> None:
+        """
+        Clean build artifacts.
+
+        Args:
+            deep: If True, run mrproper (full clean)
+        """
+        if not self.source_dir:
+            self.logger.warning("Source directory not set, nothing to clean")
+            return
+
+        target = "mrproper" if deep else "clean"
+        self.logger.info(f"Running make {target}...")
+
+        # Get environment
+        make_env = self.platform.get_make_env()
+
+        # Update executor working directory
+        self.executor.cwd = self.source_dir
+
+        # Run clean
+        self.executor.make(target, env=make_env)
+
+        # Reset build state
+        self._configured = False
+        self._kernel_built = False
+        self._dtbs_built = False
+
+        self.logger.info("Clean completed")
+
+    def menuconfig(self) -> None:
+        """
+        Run menuconfig for interactive kernel configuration.
+
+        Requires kernel to be configured first.
+        """
+        if not self.source_dir:
+            raise BuildError("Source not prepared. Call prepare_source() first.")
+
+        self.logger.info("Running menuconfig...")
+
+        # Get environment
+        make_env = self.platform.get_make_env()
+
+        # Update executor working directory
+        self.executor.cwd = self.source_dir
+
+        # Run menuconfig
+        self.executor.make("menuconfig", env=make_env)
+
+        self.logger.info("Menuconfig completed")

@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Linux Kernel Build Configuration",
+  "description": "Configuration schema for ADI Linux kernel builds",
+  "type": "object",
+  "required": ["project", "repository", "platforms"],
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "Project name",
+      "enum": ["linux"]
+    },
+    "repository": {
+      "type": "string",
+      "description": "Git repository URL",
+      "format": "uri"
+    },
+    "tag": {
+      "type": "string",
+      "description": "Git tag or branch to build"
+    },
+    "build": {
+      "type": "object",
+      "description": "Build settings",
+      "properties": {
+        "parallel_jobs": {
+          "type": "integer",
+          "description": "Number of parallel make jobs",
+          "minimum": 1,
+          "maximum": 128,
+          "default": 4
+        },
+        "clean_before": {
+          "type": "boolean",
+          "description": "Run make clean before building",
+          "default": false
+        },
+        "output_dir": {
+          "type": "string",
+          "description": "Output directory for build artifacts",
+          "default": "./build"
+        }
+      }
+    },
+    "platforms": {
+      "type": "object",
+      "description": "Platform-specific configurations",
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "type": "object",
+          "required": ["arch", "cross_compile", "defconfig", "kernel_target"],
+          "properties": {
+            "arch": {
+              "type": "string",
+              "description": "Target architecture",
+              "enum": ["arm", "arm64", "x86", "x86_64", "riscv"]
+            },
+            "cross_compile": {
+              "type": "string",
+              "description": "Cross-compiler prefix"
+            },
+            "defconfig": {
+              "type": "string",
+              "description": "Default kernel configuration"
+            },
+            "kernel_target": {
+              "type": "string",
+              "description": "Kernel build target (e.g., uImage, Image, zImage)",
+              "enum": ["uImage", "Image", "zImage", "bzImage", "vmlinux"]
+            },
+            "dtbs": {
+              "type": "array",
+              "description": "Device tree blobs to build",
+              "items": {
+                "type": "string"
+              }
+            },
+            "toolchain": {
+              "type": "object",
+              "description": "Toolchain preferences",
+              "properties": {
+                "preferred": {
+                  "type": "string",
+                  "description": "Preferred toolchain type",
+                  "enum": ["vivado", "arm", "system"]
+                },
+                "fallback": {
+                  "type": "array",
+                  "description": "Fallback toolchain types",
+                  "items": {
+                    "type": "string",
+                    "enum": ["vivado", "arm", "system"]
+                  }
+                }
+              }
+            },
+            "uimage_loadaddr": {
+              "type": "string",
+              "description": "Load address for uImage (hex format)",
+              "pattern": "^0x[0-9a-fA-F]+$"
+            },
+            "dtb_path": {
+              "type": "string",
+              "description": "Relative path to DTB directory in kernel source"
+            },
+            "kernel_image_path": {
+              "type": "string",
+              "description": "Relative path to kernel image in kernel source"
+            }
+          }
+        }
+      }
+    },
+    "toolchains": {
+      "type": "object",
+      "description": "Global toolchain configuration",
+      "properties": {
+        "vivado_path": {
+          "type": "string",
+          "description": "Path to Xilinx Vivado/Vitis installation"
+        },
+        "arm_cache_dir": {
+          "type": "string",
+          "description": "Directory to cache ARM GNU toolchains"
+        }
+      }
+    }
+  }
+}

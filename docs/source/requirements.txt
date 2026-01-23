@@ -1,0 +1,10 @@
+sphinx>=5.0
+cosmic>=0.1.0
+myst-parser>=2.0.0
+adi-doctools>=0.4.21
+sphinxcontrib-mermaid>=0.9.2
+sphinx-simplepdf>=1.6.0
+sphinx-design>=0.5.0
+sphinx-copybutton>=0.5.2
+pillow>=10.0.0
+sphinx-autobuild>=2021.3.14

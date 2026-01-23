@@ -1,0 +1,69 @@
+# ADI Linux Kernel Build Configuration for 2023_R2
+# This configuration supports building the ADI Linux kernel for Zynq and ZynqMP platforms
+
+project: linux
+repository: https://github.com/analogdevicesinc/linux.git
+tag: 2023_R2
+
+build:
+  parallel_jobs: 8
+  clean_before: false
+  output_dir: ./build
+
+platforms:
+  # Zynq (ARM32) Platform Configuration
+  zynq:
+    arch: arm
+    cross_compile: arm-linux-gnueabihf-
+    defconfig: zynq_xcomm_adv7511_defconfig
+    kernel_target: uImage
+    uimage_loadaddr: "0x8000"
+    dtb_path: arch/arm/boot/dts
+    kernel_image_path: arch/arm/boot/uImage
+
+    # Device Tree Blobs for Zynq
+    dtbs:
+      - zynq-zc702-adv7511-ad9361-fmcomms2-3.dtb
+      - zynq-zc706-adv7511-ad9361-fmcomms2-3.dtb
+      - zynq-zed-adv7511-ad9361-fmcomms2-3.dtb
+      - zynq-adrv9361-z7035-fmc.dtb
+      - zynq-adrv9364-z7020-fmc.dtb
+      - zynq-zc702-adv7511-ad9364-fmcomms4.dtb
+      - zynq-zc706-adv7511-ad9364-fmcomms4.dtb
+
+    toolchain:
+      preferred: vivado
+      fallback:
+        - arm
+        - system
+
+  # ZynqMP (ARM64) Platform Configuration
+  zynqmp:
+    arch: arm64
+    cross_compile: aarch64-linux-gnu-
+    defconfig: adi_zynqmp_defconfig
+    kernel_target: Image
+    dtb_path: arch/arm64/boot/dts/xilinx
+    kernel_image_path: arch/arm64/boot/Image
+
+    # Device Tree Blobs for ZynqMP
+    dtbs:
+      - zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dtb
+      - zynqmp-zcu102-rev10-ad9364-fmcomms4.dtb
+      - zynqmp-zcu102-rev10-adrv9371.dtb
+      - zynqmp-zcu102-rev10-adrv9009.dtb
+      - zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-jesd204-fsm.dtb
+
+    toolchain:
+      preferred: vivado
+      fallback:
+        - arm
+        - system
+
+# Global toolchain configuration
+toolchains:
+  # Vivado/Vitis installation paths (auto-detected if not specified)
+  # vivado_path: /opt/Xilinx/Vitis/2023.2
+
+  # Linaro toolchain cache directory
+  arm_cache_dir: ~/.adibuild/toolchains/arm
