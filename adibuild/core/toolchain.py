@@ -91,12 +91,14 @@ class VivadoToolchain(Toolchain):
 
     def _get_default_search_paths(self) -> List[Path]:
         """Get default search paths for Vivado/Vitis."""
-        paths = [
-            Path("/opt/Xilinx/Vitis"),
-            Path("/opt/Xilinx/Vivado"),
-            Path("/tools/Xilinx/Vitis"),
-            Path("/tools/Xilinx/Vivado"),
-        ]
+        paths = []
+        for version in ["2025.1", "2024.2", "2024.1", "2023.2", "2023.1", "2022.2", "2022.1", "2021.2", "2021.1"]:
+            paths.append(Path(f"/opt/Xilinx/Vivado/{version}"))
+            paths.append(Path(f"/opt/Xilinx/Vitis/{version}"))
+            paths.append(Path(f"/opt/Xilinx/{version}/Vivado"))
+            paths.append(Path(f"/opt/Xilinx/{version}/Vitis"))
+            paths.append(Path(f"/tools/Xilinx/{version}/Vivado"))
+            paths.append(Path(f"/tools/Xilinx/{version}/Vitis"))
 
         # Check environment variable
         if "XILINX_VIVADO" in os.environ:
@@ -116,24 +118,31 @@ class VivadoToolchain(Toolchain):
 
             # Find version directories
             if search_path.is_dir():
-                for version_dir in sorted(search_path.iterdir(), reverse=True):
-                    if version_dir.is_dir() and version_dir.name[0].isdigit():
-                        settings_script = version_dir / "settings64.sh"
-                        if settings_script.exists():
-                            version = version_dir.name
-                            self.logger.info(f"Found Vivado/Vitis {version} at {version_dir}")
+                    settings_script = search_path / "settings64.sh"
+                    if settings_script.exists():
+                        # Fine XXXX.X version from path
+                        import re
+                        for i in [-2, -1]:
+                            version = search_path.parts[i]
+                            match = re.match(r"(\d{4}\.\d)", version)
+                            if match:
+                                version = match.group(1)
+                                break
+                            else:
+                                version = "unknown"
+                        self.logger.info(f"Found Vivado/Vitis {version} at {search_path}")
 
-                            # Extract environment variables
-                            env_vars = self._get_env_vars(settings_script)
-                            if env_vars:
-                                return ToolchainInfo(
-                                    type="vivado",
-                                    version=version,
-                                    path=version_dir,
-                                    env_vars=env_vars,
-                                    cross_compile_arm32="arm-linux-gnueabihf-",
-                                    cross_compile_arm64="aarch64-linux-gnu-",
-                                )
+                        # Extract environment variables
+                        env_vars = self._get_env_vars(settings_script)
+                        if env_vars:
+                            return ToolchainInfo(
+                                type="vivado",
+                                version=version,
+                                path=search_path,
+                                env_vars=env_vars,
+                                cross_compile_arm32="arm-linux-gnueabihf-",
+                                cross_compile_arm64="aarch64-linux-gnu-",
+                            )
 
         self.logger.debug("Vivado/Vitis toolchain not found")
         return None
