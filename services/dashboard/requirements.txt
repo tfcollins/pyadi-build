@@ -1,5 +1,0 @@
-dash
-pandas
-dash-bootstrap-components
-#dash-mantine-components
-
