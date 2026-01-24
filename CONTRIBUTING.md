@@ -31,8 +31,10 @@ pip install -e ".[dev]"
 
 ### Running Tests
 
+#### Fast Unit Tests (Recommended for PRs)
+
 ```bash
-# Run fast unit tests
+# Run fast unit tests with mocks
 make test
 # or
 nox -s tests
@@ -45,6 +47,29 @@ nox
 # Run specific test file
 pytest test/core/test_config.py -v
 ```
+
+**Before submitting PR**: Run fast tests to ensure they pass. CI will run both fast and real build tests.
+
+#### Real Build Integration Tests
+
+These tests perform actual kernel builds and are slower but more comprehensive:
+
+```bash
+# Run all real build integration tests (requires toolchains, ~30-60 minutes)
+nox -s tests_real
+
+# Run real builds for specific platform
+nox -s tests_real_platform-zynq
+nox -s tests_real_platform-zynqmp
+nox -s tests_real_platform-microblaze
+```
+
+**Real build test requirements**:
+- Toolchain installed (Vivado, ARM GNU, or system cross-compiler)
+- Network connectivity (git clone from GitHub)
+- Sufficient disk space (~15GB)
+
+**Skip real build tests by default**: Integration tests are skipped unless `--real-build` flag is used
 
 ### Code Style
 

@@ -311,15 +311,46 @@ nox -s tests
 # Run all tests for all Python versions
 nox
 
-# Run tests with real kernel builds (slow!)
-nox -s tests_real
-
 # Run linting
 nox -s lint
 
 # Format code
 nox -s format
 ```
+
+#### Real Build Integration Tests
+
+Optional integration tests that perform actual kernel builds:
+
+```bash
+# Run all real build tests (requires toolchains, ~30-60 minutes)
+nox -s tests_real
+
+# Run real builds for specific platform
+nox -s tests_real_platform-zynq
+nox -s tests_real_platform-zynqmp
+nox -s tests_real_platform-microblaze
+
+# Run with pytest directly
+pytest --real-build test/integration/
+
+# Run specific test
+pytest --real-build test/integration/test_real_zynq_build.py::TestRealZynqBuild::test_full_zynq_build
+```
+
+**Requirements for real builds**:
+- Toolchain installed (Vivado, ARM GNU, or system cross-compiler)
+- Network connectivity (git clone from GitHub)
+- Sufficient disk space (~15GB)
+- Time (~10-30 minutes per platform)
+
+**What gets tested**:
+- Real git clone of analogdevicesinc/linux repository
+- Actual kernel configuration (defconfig)
+- Real kernel compilation with cross-compiler
+- Device tree blob compilation
+- Artifact packaging and metadata generation
+- File validation (sizes, magic bytes, directory structure)
 
 ### Testing Examples
 

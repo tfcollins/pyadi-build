@@ -10,6 +10,28 @@ from adibuild.core.config import BuildConfig
 from adibuild.core.toolchain import ToolchainInfo
 
 
+def pytest_addoption(parser):
+    """Add custom command-line options."""
+    parser.addoption(
+        "--real-build",
+        action="store_true",
+        default=False,
+        help="Run real build integration tests (slow, requires toolchains)",
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    """Modify test collection based on options."""
+    # Skip real_build tests by default
+    if not config.getoption("--real-build"):
+        skip_real_build = pytest.mark.skip(
+            reason="--real-build flag not provided. Use 'pytest --real-build' to run real build tests"
+        )
+        for item in items:
+            if "real_build" in item.keywords:
+                item.add_marker(skip_real_build)
+
+
 @pytest.fixture
 def tmp_dir(tmp_path):
     """Temporary directory for tests."""

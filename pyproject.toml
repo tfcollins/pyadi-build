@@ -75,6 +75,8 @@ markers = [
     "real_build: tests that build actual kernels (slow)",
     "toolchain: tests requiring actual toolchains",
     "integration: integration tests combining multiple components",
+    "slow: slow-running tests",
+    "requires_vivado: tests requiring Xilinx Vivado/Vitis",
 ]
 addopts = "-v --strict-markers"
 

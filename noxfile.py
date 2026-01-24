@@ -57,9 +57,31 @@ def tests_real(session):
     session.run(
         "pytest",
         "-v",
-        "-s",
         "-m",
         "real_build",
+        "--real-build",
+        "--tb=short",
+        "--maxfail=1",
+        "test/integration/",
+        *session.posargs,
+    )
+
+
+@nox.session(python="3.11")
+@nox.parametrize("platform", ["zynq", "zynqmp", "microblaze"])
+def tests_real_platform(session, platform):
+    """Run real build tests for specific platform.
+
+    Args:
+        platform: Platform to test (zynq, zynqmp, or microblaze)
+    """
+    session.install(".[dev]")
+    session.run(
+        "pytest",
+        "-v",
+        f"test/integration/test_real_{platform}_build.py",
+        "--real-build",
+        "--tb=short",
         *session.posargs,
     )
 
