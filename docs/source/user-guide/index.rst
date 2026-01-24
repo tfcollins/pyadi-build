@@ -53,7 +53,7 @@ for using pyadi-build as both a CLI tool and Python library.
 
       :octicon:`cpu;2em`
 
-      Zynq and ZynqMP platform details
+      Zynq, ZynqMP, and MicroBlaze platform details
 
    .. grid-item-card:: Build Outputs
       :link: build-outputs
@@ -80,7 +80,7 @@ Topics Covered
    Understanding the three toolchain types and how they're managed
 
 **Platforms**
-   Platform-specific details for Zynq and ZynqMP
+   Platform-specific details for Zynq, ZynqMP, and MicroBlaze
 
 **Build Outputs**
    Understanding the structure and contents of build artifacts

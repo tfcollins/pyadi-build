@@ -10,6 +10,7 @@ pyadi-build currently supports:
 
 - **Zynq** - Xilinx Zynq-7000 SoC (ARM Cortex-A9, 32-bit)
 - **ZynqMP** - Xilinx Zynq UltraScale+ MPSoC (ARM Cortex-A53, 64-bit)
+- **MicroBlaze** - Xilinx Virtex FPGAs (MicroBlaze soft-core processor)
 
 Zynq Platform
 -------------
@@ -247,37 +248,219 @@ Common ZynqMP DTBs:
    * - ``zynqmp-zcu102-rev10-ad9082-fmcomms8.dtb``
      - ZCU102 + FMCOMMS8 (AD9082)
 
+MicroBlaze Platform
+-------------------
+
+Overview
+~~~~~~~~
+
+The MicroBlaze platform targets Xilinx Virtex FPGAs with MicroBlaze soft-core processors:
+
+- **Architecture**: MicroBlaze soft-core (32-bit)
+- **GCC Target**: ``microblazeel-xilinx-linux-gnu``
+- **Kernel Image**: ``simpleImage.<dts>`` (device tree embedded)
+- **Defconfig**: ``adi_mb_defconfig``
+
+Supported Boards
+~~~~~~~~~~~~~~~~
+
+- **VCU118** - Virtex UltraScale+ FPGA development board
+- **KC705** - Kintex-7 FPGA development board
+- **KCU105** - Kintex UltraScale FPGA development board
+- **VC707** - Virtex-7 FPGA development board
+- **VCU128** - Virtex UltraScale+ HBM FPGA platform
+- Custom Virtex boards with ADI FMC cards
+
+ADI FMC Cards Supported
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- **AD9081-FMCA-EBZ** - MxFE™ mixed-signal front end
+- **AD9082** - MxFE™ mixed-signal front end
+- **ADRV9009** - Wideband RF transceiver
+- **FMCOMMS8** - ADRV9009/AD9371 FMC module
+
+Configuration
+~~~~~~~~~~~~~
+
+**Default Configuration (``configs/linux/microblaze.yaml``):**
+
+.. code-block:: yaml
+
+   platforms:
+     microblaze:
+       arch: microblaze
+       cross_compile: microblazeel-xilinx-linux-gnu-
+       defconfig: adi_mb_defconfig
+       kernel_target: simpleImage.system
+       dtb_path: arch/microblaze/boot/dts
+       kernel_image_path: arch/microblaze/boot/simpleImage.system
+
+       simpleimage_targets:
+         - simpleImage.system
+
+       dtbs: []
+
+       toolchain:
+         preferred: vivado
+         fallback: []
+
+**VCU118 + AD9081 Configuration (``configs/linux/microblaze_vcu118_ad9081.yaml``):**
+
+.. code-block:: yaml
+
+   platforms:
+     microblaze_vcu118:
+       arch: microblaze
+       cross_compile: microblazeel-xilinx-linux-gnu-
+       defconfig: adi_mb_defconfig
+       kernel_target: simpleImage.vcu118_ad9081
+
+       simpleimage_targets:
+         - simpleImage.vcu118_ad9081
+
+       board: VCU118
+       fmc: AD9081
+
+Building for MicroBlaze
+~~~~~~~~~~~~~~~~~~~~~~~
+
+**CLI:**
+
+.. code-block:: bash
+
+   # Build with default configuration
+   adibuild linux build -p microblaze -t 2023_R2
+
+   # Build for VCU118 + AD9081
+   adibuild linux build -p microblaze_vcu118 \
+     --config configs/linux/microblaze_vcu118_ad9081.yaml \
+     -t 2023_R2
+
+**Python API:**
+
+.. code-block:: python
+
+   from adibuild import LinuxBuilder, BuildConfig
+   from adibuild.platforms import MicroBlazePlatform
+
+   config = BuildConfig.from_yaml('configs/linux/microblaze_vcu118_ad9081.yaml')
+   platform_config = config.get_platform('microblaze_vcu118')
+   platform = MicroBlazePlatform(platform_config)
+
+   builder = LinuxBuilder(config, platform)
+   result = builder.build()
+
+Build Outputs
+~~~~~~~~~~~~~
+
+.. code-block:: text
+
+   build/microblaze_vcu118_ad9081/
+   ├── simpleImage.vcu118_ad9081    # Kernel with embedded DT (~4 MB)
+   └── metadata.json                 # Build metadata
+
+**Note:** Unlike Zynq/ZynqMP, MicroBlaze does not produce separate DTB files.
+The device tree is embedded directly in the ``simpleImage`` file.
+
+simpleImage Format
+~~~~~~~~~~~~~~~~~~
+
+MicroBlaze uses the ``simpleImage`` kernel format which includes:
+
+- Compressed kernel binary
+- Embedded device tree blob (DT)
+- Bootstrap code
+
+This self-contained format allows the kernel to boot without requiring separate DTB files.
+
+Multiple simpleImage Targets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+MicroBlaze platforms can build multiple simpleImage targets with different device trees:
+
+.. code-block:: yaml
+
+   platforms:
+     microblaze_custom:
+       simpleimage_targets:
+         - simpleImage.vcu118_ad9081
+         - simpleImage.vcu118_ad9082
+         - simpleImage.vcu118_adrv9009
+
+Each target produces a separate kernel image with its corresponding device tree.
+
+Platform-Specific Features for MicroBlaze
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Vivado Toolchain Required:**
+
+MicroBlaze requires Xilinx Vivado or Vitis for the cross-compiler:
+
+.. code-block:: bash
+
+   # Source Vivado environment
+   source /opt/Xilinx/Vivado/2023.2/settings64.sh
+
+   # Verify toolchain
+   which microblazeel-xilinx-linux-gnu-gcc
+
+**No Fallback Toolchains:**
+
+Unlike Zynq/ZynqMP, MicroBlaze has no ARM GNU or system toolchain fallback.
+Vivado/Vitis installation is mandatory.
+
+**ADI Reference Designs:**
+
+MicroBlaze support is designed for ADI reference designs available at:
+https://analogdevicesinc.github.io/documentation/linux/kernel/microblaze.html
+
 Platform Comparison
 -------------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 40 40
+   :widths: 20 27 27 26
 
    * - Feature
      - Zynq
      - ZynqMP
+     - MicroBlaze
    * - Architecture
      - ARM Cortex-A9 (32-bit)
      - ARM Cortex-A53 (64-bit)
+     - MicroBlaze soft-core (32-bit)
    * - GCC Target
      - ``arm-linux-gnueabihf``
      - ``aarch64-linux-gnu``
+     - ``microblazeel-xilinx-linux-gnu``
    * - Kernel Image
      - ``uImage`` (~4 MB)
      - ``Image`` (~19 MB)
+     - ``simpleImage.<dts>`` (~4 MB)
    * - Defconfig
      - ``zynq_xcomm_adv7511_defconfig``
      - ``adi_zynqmp_defconfig``
+     - ``adi_mb_defconfig``
    * - DTB Path
      - ``arch/arm/boot/dts``
      - ``arch/arm64/boot/dts/xilinx``
+     - ``arch/microblaze/boot/dts``
+   * - Separate DTBs
+     - Yes
+     - Yes
+     - No (embedded)
    * - Build Time
      - ~10-15 min
      - ~15-20 min
+     - ~12-18 min
    * - Common Boards
      - ZC702, ZC706, ZedBoard
      - ZCU102, ZCU106
+     - VCU118, KC705, KCU105
+   * - Toolchain
+     - Vivado/ARM GNU/System
+     - Vivado/ARM GNU/System
+     - Vivado only
 
 Platform-Specific Features
 ---------------------------
@@ -313,6 +496,34 @@ The kernel includes EFI stub support for UEFI booting.
 **64-bit Address Space:**
 
 ZynqMP can address more than 4 GB of RAM, enabling larger kernels and buffers.
+
+MicroBlaze-Specific
+~~~~~~~~~~~~~~~~~~~
+
+**simpleImage Format:**
+
+MicroBlaze uses ``simpleImage`` format which embeds the device tree directly in the kernel:
+
+.. code-block:: text
+
+   simpleImage = kernel + DT + bootstrap
+
+Unlike Zynq/ZynqMP which produce separate DTB files, the device tree is compiled into the kernel image.
+
+**No Separate DTBs:**
+
+The ``dtbs`` configuration list should be empty for MicroBlaze platforms.
+Device trees are specified via device tree source names in ``simpleimage_targets``.
+
+**Multiple Targets:**
+
+A single MicroBlaze configuration can build multiple kernel images with different device trees
+using the ``simpleimage_targets`` property.
+
+**Vivado Mandatory:**
+
+MicroBlaze cross-compiler is only available through Xilinx Vivado/Vitis.
+There is no ARM GNU or system toolchain fallback like Zynq/ZynqMP.
 
 Custom Platform Configuration
 ------------------------------

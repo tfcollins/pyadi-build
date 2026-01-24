@@ -4,10 +4,10 @@ Python module to generate and run build commands for Analog Devices, Inc. (ADI) 
 
 ## Features
 
-- **Linux Kernel Builder**: Build ADI Linux kernels for Zynq and ZynqMP platforms
+- **Linux Kernel Builder**: Build ADI Linux kernels for Zynq, ZynqMP, and MicroBlaze platforms
 - **Automatic Toolchain Management**: Auto-detect or download cross-compilation toolchains
 - **Configuration Management**: YAML-based configuration with schema validation
-- **Multiple Platform Support**: Zynq (ARM32) and ZynqMP (ARM64) platforms
+- **Multiple Platform Support**: Zynq (ARM32), ZynqMP (ARM64), and MicroBlaze (soft-core) platforms
 - **Device Tree Support**: Build and package device tree blobs (DTBs)
 - **Rich CLI**: Beautiful command-line interface with progress indicators
 - **Python API**: Use as a library in your own Python scripts
@@ -38,6 +38,12 @@ adibuild linux build -p zynq -t 2023_R2
 
 ```bash
 adibuild linux build -p zynqmp -t 2023_R2
+```
+
+### Build a MicroBlaze Kernel
+
+```bash
+adibuild linux build -p microblaze -t 2023_R2
 ```
 
 ### List Available Platforms
@@ -280,6 +286,20 @@ Supported boards:
 - ZCU102
 - Custom ZynqMP boards with ADI FMC cards
 
+### MicroBlaze (Soft-core)
+
+- **Architecture**: MicroBlaze soft-core processor
+- **Defconfig**: `adi_mb_defconfig`
+- **Kernel Target**: `simpleImage.<dts>`
+- **Toolchain**: `microblazeel-xilinx-linux-gnu-`
+
+Supported boards:
+- VCU118 (Virtex UltraScale+ FPGA)
+- KC705, KCU105, VC707, VCU128 (Virtex FPGAs)
+- Custom Virtex boards with ADI FMC cards
+
+**Note:** MicroBlaze kernels use `simpleImage` format with embedded device tree, not separate DTB files.
+
 ## Development
 
 ### Running Tests
@@ -333,7 +353,8 @@ pyadi-build/
 │   ├── platforms/             # Platform support
 │   │   ├── base.py            # Base platform
 │   │   ├── zynq.py            # Zynq platform
-│   │   └── zynqmp.py          # ZynqMP platform
+│   │   ├── zynqmp.py          # ZynqMP platform
+│   │   └── microblaze.py      # MicroBlaze platform
 │   ├── cli/                   # CLI interface
 │   │   ├── main.py            # Click commands
 │   │   └── helpers.py         # CLI utilities

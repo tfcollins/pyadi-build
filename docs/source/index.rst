@@ -45,10 +45,10 @@ Welcome to the documentation for **pyadi-build**, a Python module for generating
 Features
 --------
 
-- **Linux Kernel Builder**: Build ADI Linux kernels for Zynq and ZynqMP platforms
+- **Linux Kernel Builder**: Build ADI Linux kernels for Zynq, ZynqMP, and MicroBlaze platforms
 - **Automatic Toolchain Management**: Auto-detect or download cross-compilation toolchains
 - **Configuration Management**: YAML-based configuration with schema validation
-- **Multiple Platform Support**: Zynq (ARM32) and ZynqMP (ARM64) platforms
+- **Multiple Platform Support**: Zynq (ARM32), ZynqMP (ARM64), and MicroBlaze (soft-core) platforms
 - **Device Tree Support**: Build and package device tree blobs (DTBs)
 - **Rich CLI**: Beautiful command-line interface with progress indicators
 - **Python API**: Use as a library in your own Python scripts

@@ -50,9 +50,9 @@ adibuild config show
 ```
 
 This shows:
-- Available platforms (zynq, zynqmp)
+- Available platforms (zynq, zynqmp, microblaze)
 - Their configurations
-- Device tree blobs (DTBs)
+- Device tree blobs (DTBs) and simpleImage targets
 
 ### 3. Build Your First Kernel
 
@@ -66,6 +66,17 @@ adibuild linux build -p zynqmp -t 2023_R2
 
 ```bash
 adibuild linux build -p zynq -t 2023_R2
+```
+
+#### For MicroBlaze (Soft-core):
+
+```bash
+adibuild linux build -p microblaze -t 2023_R2
+```
+
+Note: MicroBlaze requires Xilinx Vivado/Vitis. Source it before building:
+```bash
+source /opt/Xilinx/Vivado/2023.2/settings64.sh
 ```
 
 ### 4. Find Your Build Artifacts
@@ -278,6 +289,9 @@ python examples/build_zynq_kernel.py
 
 # Run ZynqMP example
 python examples/build_zynqmp_kernel.py
+
+# Run MicroBlaze example
+python examples/build_microblaze_kernel.py
 
 # Run custom config example
 python examples/custom_config.py

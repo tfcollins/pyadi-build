@@ -12,6 +12,7 @@ Modules
    base
    zynq
    zynqmp
+   microblaze
 
 Overview
 --------
@@ -21,6 +22,7 @@ The platforms package contains platform-specific implementations:
 - **base** - PlatformBase abstract class
 - **zynq** - Zynq (ARM32) platform
 - **zynqmp** - ZynqMP (ARM64) platform
+- **microblaze** - MicroBlaze (soft-core) platform
 
 Quick Example
 -------------
@@ -28,7 +30,7 @@ Quick Example
 .. code-block:: python
 
    from adibuild import BuildConfig
-   from adibuild.platforms import ZynqPlatform, ZynqMPPlatform
+   from adibuild.platforms import ZynqPlatform, ZynqMPPlatform, MicroBlazePlatform
 
    config = BuildConfig.from_yaml('configs/linux/2023_R2.yaml')
 
@@ -39,3 +41,7 @@ Quick Example
    # ZynqMP platform
    zynqmp_config = config.get_platform('zynqmp')
    zynqmp = ZynqMPPlatform(zynqmp_config)
+
+   # MicroBlaze platform
+   microblaze_config = config.get_platform('microblaze_vcu118')
+   microblaze = MicroBlazePlatform(microblaze_config)
