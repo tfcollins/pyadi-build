@@ -8,8 +8,6 @@ import tempfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional
-from urllib.parse import urljoin
 
 import requests
 
@@ -29,10 +27,10 @@ class ToolchainInfo:
     type: str  # 'vivado', 'arm', 'system'
     version: str
     path: Path
-    env_vars: Dict[str, str]
-    cross_compile_arm32: Optional[str] = None
-    cross_compile_arm64: Optional[str] = None
-    cross_compile_microblaze: Optional[str] = None
+    env_vars: dict[str, str]
+    cross_compile_arm32: str | None = None
+    cross_compile_arm64: str | None = None
+    cross_compile_microblaze: str | None = None
 
 
 class Toolchain(ABC):
@@ -43,7 +41,7 @@ class Toolchain(ABC):
         self.logger = get_logger(f"adibuild.toolchain.{self.__class__.__name__}")
 
     @abstractmethod
-    def detect(self) -> Optional[ToolchainInfo]:
+    def detect(self) -> ToolchainInfo | None:
         """
         Detect if toolchain is available.
 
@@ -80,7 +78,7 @@ class VivadoToolchain(Toolchain):
         "2021.1": "10.2.0",
     }
 
-    def __init__(self, search_paths: Optional[List[Path]] = None):
+    def __init__(self, search_paths: list[Path] | None = None):
         """
         Initialize VivadoToolchain.
 
@@ -90,10 +88,20 @@ class VivadoToolchain(Toolchain):
         super().__init__()
         self.search_paths = search_paths or self._get_default_search_paths()
 
-    def _get_default_search_paths(self) -> List[Path]:
+    def _get_default_search_paths(self) -> list[Path]:
         """Get default search paths for Vivado/Vitis."""
         paths = []
-        for version in ["2025.1", "2024.2", "2024.1", "2023.2", "2023.1", "2022.2", "2022.1", "2021.2", "2021.1"]:
+        for version in [
+            "2025.1",
+            "2024.2",
+            "2024.1",
+            "2023.2",
+            "2023.1",
+            "2022.2",
+            "2022.1",
+            "2021.2",
+            "2021.1",
+        ]:
             paths.append(Path(f"/opt/Xilinx/Vivado/{version}"))
             paths.append(Path(f"/opt/Xilinx/Vitis/{version}"))
             paths.append(Path(f"/opt/Xilinx/{version}/Vivado"))
@@ -109,7 +117,7 @@ class VivadoToolchain(Toolchain):
 
         return paths
 
-    def detect(self) -> Optional[ToolchainInfo]:
+    def detect(self) -> ToolchainInfo | None:
         """Detect Vivado/Vitis installation."""
         for search_path in self.search_paths:
             if not search_path.exists():
@@ -119,37 +127,38 @@ class VivadoToolchain(Toolchain):
 
             # Find version directories
             if search_path.is_dir():
-                    settings_script = search_path / "settings64.sh"
-                    if settings_script.exists():
-                        # Fine XXXX.X version from path
-                        import re
-                        for i in [-2, -1]:
-                            version = search_path.parts[i]
-                            match = re.match(r"(\d{4}\.\d)", version)
-                            if match:
-                                version = match.group(1)
-                                break
-                            else:
-                                version = "unknown"
-                        self.logger.info(f"Found Vivado/Vitis {version} at {search_path}")
+                settings_script = search_path / "settings64.sh"
+                if settings_script.exists():
+                    # Fine XXXX.X version from path
+                    import re
 
-                        # Extract environment variables
-                        env_vars = self._get_env_vars(settings_script)
-                        if env_vars:
-                            return ToolchainInfo(
-                                type="vivado",
-                                version=version,
-                                path=search_path,
-                                env_vars=env_vars,
-                                cross_compile_arm32="arm-linux-gnueabihf-",
-                                cross_compile_arm64="aarch64-linux-gnu-",
-                                cross_compile_microblaze="microblazeel-xilinx-linux-gnu-",
-                            )
+                    for i in [-2, -1]:
+                        version = search_path.parts[i]
+                        match = re.match(r"(\d{4}\.\d)", version)
+                        if match:
+                            version = match.group(1)
+                            break
+                        else:
+                            version = "unknown"
+                    self.logger.info(f"Found Vivado/Vitis {version} at {search_path}")
+
+                    # Extract environment variables
+                    env_vars = self._get_env_vars(settings_script)
+                    if env_vars:
+                        return ToolchainInfo(
+                            type="vivado",
+                            version=version,
+                            path=search_path,
+                            env_vars=env_vars,
+                            cross_compile_arm32="arm-linux-gnueabihf-",
+                            cross_compile_arm64="aarch64-linux-gnu-",
+                            cross_compile_microblaze="microblazeel-xilinx-linux-gnu-",
+                        )
 
         self.logger.debug("Vivado/Vitis toolchain not found")
         return None
 
-    def _get_env_vars(self, settings_script: Path) -> Dict[str, str]:
+    def _get_env_vars(self, settings_script: Path) -> dict[str, str]:
         """
         Extract environment variables from settings64.sh.
 
@@ -162,9 +171,7 @@ class VivadoToolchain(Toolchain):
         try:
             # Source the script and dump environment
             cmd = f'bash -c "source {settings_script} > /dev/null 2>&1 && env"'
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=30
-            )
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
 
             if result.returncode != 0:
                 self.logger.warning(f"Failed to source {settings_script}")
@@ -221,7 +228,7 @@ class ArmToolchain(Toolchain):
         "https://developer.arm.com/-/media/Files/downloads/gnu/",
     ]
 
-    def __init__(self, cache_dir: Optional[Path] = None, version: Optional[str] = None):
+    def __init__(self, cache_dir: Path | None = None, version: str | None = None):
         """
         Initialize ArmToolchain.
 
@@ -234,7 +241,7 @@ class ArmToolchain(Toolchain):
         self.version = version
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-    def detect(self) -> Optional[ToolchainInfo]:
+    def detect(self) -> ToolchainInfo | None:
         """Detect installed ARM toolchain."""
         # Check cache directory for installed toolchains
         if not self.cache_dir.exists():
@@ -242,7 +249,9 @@ class ArmToolchain(Toolchain):
 
         # Look for ARM32 and ARM64 toolchains
         # ARM toolchains use pattern: arm-gnu-toolchain-{version}-x86_64-{target}
-        arm32_dirs = list(self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-arm-none-linux-gnueabihf"))
+        arm32_dirs = list(
+            self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-arm-none-linux-gnueabihf")
+        )
         arm64_dirs = list(self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-aarch64-none-linux-gnu"))
 
         if arm32_dirs or arm64_dirs:
@@ -262,9 +271,7 @@ class ArmToolchain(Toolchain):
             for tc_dir in arm64_dirs:
                 path_additions.append(str(tc_dir / "bin"))
 
-            env_vars = {
-                "PATH": ":".join(path_additions) + ":" + os.environ.get("PATH", "")
-            }
+            env_vars = {"PATH": ":".join(path_additions) + ":" + os.environ.get("PATH", "")}
 
             return ToolchainInfo(
                 type="arm",
@@ -277,7 +284,7 @@ class ArmToolchain(Toolchain):
 
         return None
 
-    def download(self, vivado_version: Optional[str] = None) -> ToolchainInfo:
+    def download(self, vivado_version: str | None = None) -> ToolchainInfo:
         """
         Download ARM GNU toolchain.
 
@@ -311,9 +318,7 @@ class ArmToolchain(Toolchain):
             str(arm64_dir / "bin"),
         ]
 
-        env_vars = {
-            "PATH": ":".join(path_additions) + ":" + os.environ.get("PATH", "")
-        }
+        env_vars = {"PATH": ":".join(path_additions) + ":" + os.environ.get("PATH", "")}
 
         return ToolchainInfo(
             type="arm",
@@ -344,10 +349,7 @@ class ArmToolchain(Toolchain):
 
         # URL structure: {base}/{version}/binrel/{filename}
         # Try multiple base URLs in case one is down
-        urls = [
-            f"{base_url}{version}/binrel/{filename}"
-            for base_url in self.ARM_BASE_URLS
-        ]
+        urls = [f"{base_url}{version}/binrel/{filename}" for base_url in self.ARM_BASE_URLS]
 
         extract_dir = self.cache_dir / f"arm-gnu-toolchain-{version}-x86_64-{target}"
 
@@ -427,7 +429,7 @@ class ArmToolchain(Toolchain):
 class SystemToolchain(Toolchain):
     """System-installed cross-compiler toolchain."""
 
-    def detect(self) -> Optional[ToolchainInfo]:
+    def detect(self) -> ToolchainInfo | None:
         """Detect system-installed cross-compilers."""
         arm32_gcc = shutil.which("arm-linux-gnueabihf-gcc")
         arm64_gcc = shutil.which("aarch64-linux-gnu-gcc")
@@ -467,6 +469,7 @@ class SystemToolchain(Toolchain):
                 first_line = result.stdout.splitlines()[0]
                 # Look for version pattern (e.g., '9.4.0')
                 import re
+
                 match = re.search(r"(\d+\.\d+\.\d+)", first_line)
                 if match:
                     return match.group(1)
@@ -494,8 +497,8 @@ class SystemToolchain(Toolchain):
 
 def select_toolchain(
     preferred: str = "vivado",
-    fallbacks: Optional[List[str]] = None,
-    vivado_version: Optional[str] = None,
+    fallbacks: list[str] | None = None,
+    vivado_version: str | None = None,
 ) -> ToolchainInfo:
     """
     Select and return best available toolchain.

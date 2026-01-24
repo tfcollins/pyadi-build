@@ -29,7 +29,7 @@ def tests(session):
     )
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def test_examples(session):
     """
     Run example tests to verify examples work correctly.
@@ -45,7 +45,7 @@ def test_examples(session):
     )
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def tests_real(session):
     """
     Run tests with real kernel builds (slow).
@@ -86,7 +86,7 @@ def tests_real_platform(session, platform):
     )
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def lint(session):
     """Run code linters (black and ruff)."""
     session.install("black>=23.0", "ruff>=0.1.0")
@@ -95,17 +95,17 @@ def lint(session):
     session.run("black", "--check", "adibuild", "test")
 
     # Run ruff
-    session.run("ruff", "check", "adibuild", "test")
+    session.run("ruff", "check", "adibuild", "test", *session.posargs)
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def format(session):
     """Format code with black."""
     session.install("black>=23.0")
     session.run("black", "adibuild", "test")
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def type_check(session):
     """Run type checking with mypy."""
     session.install("mypy", "types-PyYAML", "types-requests")
@@ -113,7 +113,7 @@ def type_check(session):
     session.run("mypy", "adibuild", "--ignore-missing-imports")
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def coverage(session):
     """Generate coverage report."""
     session.install(".[dev]")
@@ -128,7 +128,7 @@ def coverage(session):
     session.log("Coverage report generated in htmlcov/index.html")
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def docs(session):
     """Build documentation."""
     session.install("-e", ".[docs]")
@@ -137,7 +137,7 @@ def docs(session):
     session.log("Documentation built in docs/build/html/index.html")
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def docs_live(session):
     """Build and serve documentation with live reload."""
     session.install("-e", ".[docs]")
@@ -145,7 +145,7 @@ def docs_live(session):
     session.run("sphinx-autobuild", "source", "build/html", "--open-browser")
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 def clean(session):
     """Clean build and test artifacts."""
     import shutil

@@ -2,22 +2,18 @@
 
 import sys
 from pathlib import Path
-from typing import Dict, Optional
 
 import click
 from rich.console import Console
-from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
 
 from adibuild import __version__
 from adibuild.core.config import BuildConfig, ConfigurationError
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
+from adibuild.platforms.microblaze import MicroBlazePlatform
 from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
-from adibuild.platforms.microblaze import MicroBlazePlatform
-
 
 console = Console()
 
@@ -44,9 +40,9 @@ def print_warning(message: str):
 
 
 def load_config_with_overrides(
-    config_file: Optional[str],
+    config_file: str | None,
     platform: str,
-    tag: Optional[str],
+    tag: str | None,
 ) -> BuildConfig:
     """
     Load configuration with command-line overrides.
@@ -77,7 +73,7 @@ def load_config_with_overrides(
                     config = BuildConfig.from_yaml(default_config)
                 else:
                     raise ConfigurationError(
-                        f"No configuration file found. Please specify with --config"
+                        "No configuration file found. Please specify with --config"
                     )
 
         # Apply tag override
@@ -119,7 +115,7 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
         print_error(f"Failed to create platform: {e}")
 
 
-def display_build_summary(result: Dict, platform: Platform):
+def display_build_summary(result: dict, platform: Platform):
     """
     Display build summary.
 
@@ -226,7 +222,7 @@ def validate_config_file(config_path: Path, schema_path: Path):
         print_error(f"Configuration validation failed: {e}")
 
 
-def prompt_for_config() -> Dict:
+def prompt_for_config() -> dict:
     """
     Interactively prompt user for configuration.
 

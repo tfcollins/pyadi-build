@@ -2,6 +2,7 @@
 
 import sys
 from pathlib import Path
+
 import pytest
 
 EXAMPLES_DIR = Path(__file__).parent.parent.parent / "examples"
@@ -13,7 +14,7 @@ class TestBuildZynqMPExample:
 
     def test_example_imports(self):
         """Verify example can import required modules."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqMPPlatform
 
         assert LinuxBuilder is not None
@@ -45,7 +46,7 @@ class TestBuildZynqMPExample:
         self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
     ):
         """Test builder.build() single call as in example."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqMPPlatform
 
         # Create config
@@ -84,7 +85,7 @@ class TestBuildZynqMPExample:
         self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
     ):
         """Test that result dict has expected fields."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqMPPlatform
 
         # Setup (same as above)
@@ -126,7 +127,7 @@ class TestBuildZynqMPExample:
         self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
     ):
         """Test complete ZynqMP build workflow."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqMPPlatform
 
         # Create config

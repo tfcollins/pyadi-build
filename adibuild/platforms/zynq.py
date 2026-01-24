@@ -1,14 +1,12 @@
 """Xilinx Zynq (ARM32) platform implementation."""
 
-from typing import Dict
-
 from adibuild.platforms.base import Platform
 
 
 class ZynqPlatform(Platform):
     """Xilinx Zynq (ARM32) platform configuration."""
 
-    def __init__(self, config: Dict[str, any]):
+    def __init__(self, config: dict[str, any]):
         """
         Initialize ZynqPlatform.
 
@@ -27,7 +25,7 @@ class ZynqPlatform(Platform):
                 "Typically 'uImage' or 'zImage' is used."
             )
 
-    def get_make_env(self) -> Dict[str, str]:
+    def get_make_env(self) -> dict[str, str]:
         """
         Get environment variables for make.
 
@@ -42,10 +40,12 @@ class ZynqPlatform(Platform):
         env = dict(toolchain.env_vars)
 
         # Add platform-specific variables (these take precedence)
-        env.update({
-            "ARCH": self.arch,
-            "CROSS_COMPILE": cross_compile,
-        })
+        env.update(
+            {
+                "ARCH": self.arch,
+                "CROSS_COMPILE": cross_compile,
+            }
+        )
 
         # Add LOADADDR for uImage builds (kernel Makefile converts this to UIMAGE_LOADADDR)
         if self.kernel_target == "uImage" and self.uimage_loadaddr:

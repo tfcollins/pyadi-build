@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from adibuild.core.toolchain import ToolchainInfo, select_toolchain
 from adibuild.utils.logger import get_logger
@@ -17,7 +16,7 @@ class PlatformError(Exception):
 class Platform(ABC):
     """Abstract base class for hardware platforms."""
 
-    def __init__(self, config: Dict[str, any]):
+    def __init__(self, config: dict[str, any]):
         """
         Initialize Platform.
 
@@ -26,7 +25,7 @@ class Platform(ABC):
         """
         self.config = config
         self.logger = get_logger(f"adibuild.platform.{self.__class__.__name__}")
-        self._toolchain: Optional[ToolchainInfo] = None
+        self._toolchain: ToolchainInfo | None = None
 
     @property
     def arch(self) -> str:
@@ -81,7 +80,7 @@ class Platform(ABC):
         return target
 
     @property
-    def dtbs(self) -> List[str]:
+    def dtbs(self) -> list[str]:
         """
         Get list of device tree blobs to build.
 
@@ -91,7 +90,7 @@ class Platform(ABC):
         return self.config.get("dtbs", [])
 
     @property
-    def uimage_loadaddr(self) -> Optional[str]:
+    def uimage_loadaddr(self) -> str | None:
         """
         Get uImage load address.
 
@@ -101,7 +100,7 @@ class Platform(ABC):
         return self.config.get("uimage_loadaddr")
 
     @property
-    def dtb_path(self) -> Optional[str]:
+    def dtb_path(self) -> str | None:
         """
         Get relative path to DTB directory in kernel source.
 
@@ -111,7 +110,7 @@ class Platform(ABC):
         return self.config.get("dtb_path")
 
     @property
-    def kernel_image_path(self) -> Optional[str]:
+    def kernel_image_path(self) -> str | None:
         """
         Get relative path to kernel image in kernel source.
 
@@ -121,7 +120,7 @@ class Platform(ABC):
         return self.config.get("kernel_image_path")
 
     @abstractmethod
-    def get_make_env(self) -> Dict[str, str]:
+    def get_make_env(self) -> dict[str, str]:
         """
         Get environment variables for make.
 
@@ -130,7 +129,7 @@ class Platform(ABC):
         """
         pass
 
-    def get_toolchain(self, vivado_version: Optional[str] = None) -> ToolchainInfo:
+    def get_toolchain(self, vivado_version: str | None = None) -> ToolchainInfo:
         """
         Get or select toolchain for this platform.
 
@@ -167,24 +166,18 @@ class Platform(ABC):
 
         # Check if toolchain supports this architecture
         if self.arch == "arm" and not toolchain.cross_compile_arm32:
-            raise PlatformError(
-                f"Toolchain {toolchain.type} does not support ARM32 architecture"
-            )
+            raise PlatformError(f"Toolchain {toolchain.type} does not support ARM32 architecture")
         elif self.arch == "arm64" and not toolchain.cross_compile_arm64:
-            raise PlatformError(
-                f"Toolchain {toolchain.type} does not support ARM64 architecture"
-            )
+            raise PlatformError(f"Toolchain {toolchain.type} does not support ARM64 architecture")
         elif self.arch == "microblaze" and not toolchain.cross_compile_microblaze:
             raise PlatformError(
                 f"Toolchain {toolchain.type} does not support MicroBlaze architecture"
             )
 
-        self.logger.info(
-            f"Toolchain validation passed: {toolchain.type} v{toolchain.version}"
-        )
+        self.logger.info(f"Toolchain validation passed: {toolchain.type} v{toolchain.version}")
         return True
 
-    def get_dtb_full_paths(self, kernel_source: Path) -> List[Path]:
+    def get_dtb_full_paths(self, kernel_source: Path) -> list[Path]:
         """
         Get full paths to DTB files in kernel source tree.
 

@@ -2,6 +2,7 @@
 
 import sys
 from pathlib import Path
+
 import pytest
 
 EXAMPLES_DIR = Path(__file__).parent.parent.parent / "examples"
@@ -23,9 +24,11 @@ class TestCustomConfigExample:
 
         assert config.get("tag") == "2023_R2"
 
-    def test_menuconfig_call(self, mocker, mock_git_repo_for_examples, zynqmp_config_dict, mock_kernel_source):
+    def test_menuconfig_call(
+        self, mocker, mock_git_repo_for_examples, zynqmp_config_dict, mock_kernel_source
+    ):
         """Test calling builder.menuconfig() as in example."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqMPPlatform
 
         config_data = {
@@ -57,7 +60,7 @@ class TestCustomConfigExample:
         self, mocker, mock_git_repo_for_examples, zynqmp_config_dict, mock_kernel_source
     ):
         """Test defconfig followed by menuconfig workflow."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqMPPlatform
 
         config_data = {
@@ -87,7 +90,7 @@ class TestCustomConfigExample:
         self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
     ):
         """Test complete custom config workflow from example."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqMPPlatform
 
         # Load and override config as example does

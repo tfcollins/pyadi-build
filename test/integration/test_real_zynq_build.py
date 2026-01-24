@@ -1,7 +1,6 @@
 """Real kernel build tests for Zynq platform (ARM32)."""
 
 import json
-from pathlib import Path
 
 import pytest
 

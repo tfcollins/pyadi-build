@@ -2,6 +2,7 @@
 
 import sys
 from pathlib import Path
+
 import pytest
 
 # Setup path to import examples
@@ -14,7 +15,7 @@ class TestBuildZynqExample:
 
     def test_example_imports(self):
         """Verify example can import required modules."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqPlatform
 
         assert LinuxBuilder is not None
@@ -66,7 +67,9 @@ class TestBuildZynqExample:
         assert source_dir.name == "linux"
         assert builder.source_dir is not None
 
-    def test_configure(self, mocker, mock_git_repo_for_examples, zynq_config, zynq_config_dict, mock_kernel_source):
+    def test_configure(
+        self, mocker, mock_git_repo_for_examples, zynq_config, zynq_config_dict, mock_kernel_source
+    ):
         """Test configure() call as in example."""
         from adibuild import LinuxBuilder
         from adibuild.platforms import ZynqPlatform
@@ -84,13 +87,15 @@ class TestBuildZynqExample:
         mock_make.assert_called_once()
         assert builder._configured is True
 
-    def test_build_kernel(self, mocker, mock_git_repo_for_examples, zynq_config, zynq_config_dict, mock_kernel_source):
+    def test_build_kernel(
+        self, mocker, mock_git_repo_for_examples, zynq_config, zynq_config_dict, mock_kernel_source
+    ):
         """Test build_kernel() call as in example."""
         from adibuild import LinuxBuilder
         from adibuild.platforms import ZynqPlatform
 
         # Setup mocks
-        mock_make = mocker.patch("adibuild.core.executor.BuildExecutor.make")
+        mocker.patch("adibuild.core.executor.BuildExecutor.make")
 
         platform = ZynqPlatform(zynq_config_dict)
         builder = LinuxBuilder(zynq_config, platform)
@@ -103,7 +108,9 @@ class TestBuildZynqExample:
         assert kernel_image == mock_kernel_source / "arch/arm/boot/uImage"
         assert kernel_image.exists()
 
-    def test_build_dtbs(self, mocker, mock_git_repo_for_examples, zynq_config, zynq_config_dict, mock_kernel_source):
+    def test_build_dtbs(
+        self, mocker, mock_git_repo_for_examples, zynq_config, zynq_config_dict, mock_kernel_source
+    ):
         """Test build_dtbs() call as in example."""
         from adibuild import LinuxBuilder
         from adibuild.platforms import ZynqPlatform
@@ -179,7 +186,7 @@ class TestBuildZynqExample:
         self, mocker, mock_git_repo_for_examples, tmp_path, zynq_config_dict, mock_kernel_source
     ):
         """Test complete workflow from example (mocked)."""
-        from adibuild import LinuxBuilder, BuildConfig
+        from adibuild import BuildConfig, LinuxBuilder
         from adibuild.platforms import ZynqPlatform
 
         # Create config

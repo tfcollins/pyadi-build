@@ -6,8 +6,6 @@ from pathlib import Path
 
 import pytest
 
-from adibuild.core.config import BuildConfig
-
 
 @pytest.fixture(scope="session")
 def real_toolchain_arm32():

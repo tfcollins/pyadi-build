@@ -5,10 +5,8 @@ import shutil
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Union
 
 import requests
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
@@ -24,7 +22,7 @@ class LinuxBuilder(BuilderBase):
         self,
         config: BuildConfig,
         platform: Platform,
-        work_dir: Optional[Path] = None,
+        work_dir: Path | None = None,
     ):
         """
         Initialize LinuxBuilder.
@@ -36,8 +34,8 @@ class LinuxBuilder(BuilderBase):
         """
         super().__init__(config, platform, work_dir)
 
-        self.source_dir: Optional[Path] = None
-        self.repo: Optional[GitRepository] = None
+        self.source_dir: Path | None = None
+        self.repo: GitRepository | None = None
 
         # Build state
         self._configured = False
@@ -65,7 +63,7 @@ class LinuxBuilder(BuilderBase):
         self.repo = GitRepository(repo_url, repo_cache)
 
         # Clone/update repository and checkout tag
-        self.logger.info(f"Ensuring repository is ready...")
+        self.logger.info("Ensuring repository is ready...")
         self.repo.ensure_repo(ref=tag)
 
         if not tag:
@@ -80,7 +78,7 @@ class LinuxBuilder(BuilderBase):
 
         return self.source_dir
 
-    def configure(self, custom_config: Optional[Path] = None, menuconfig: bool = False) -> None:
+    def configure(self, custom_config: Path | None = None, menuconfig: bool = False) -> None:
         """
         Configure the kernel.
 
@@ -114,7 +112,7 @@ class LinuxBuilder(BuilderBase):
         self._configured = True
         self.logger.info("Kernel configuration complete")
 
-    def build_kernel(self, jobs: Optional[int] = None) -> Union[Path, List[Path]]:
+    def build_kernel(self, jobs: int | None = None) -> Path | list[Path]:
         """
         Build kernel image.
 
@@ -158,7 +156,7 @@ class LinuxBuilder(BuilderBase):
         self._kernel_built = True
         return kernel_image
 
-    def _build_microblaze_kernel(self, jobs: int) -> List[Path]:
+    def _build_microblaze_kernel(self, jobs: int) -> list[Path]:
         """
         Build MicroBlaze kernel with simpleImage targets.
 
@@ -187,7 +185,7 @@ class LinuxBuilder(BuilderBase):
                         f.write(chunk)
                 self.logger.info("Downloaded rootfs.cpio.gz")
             except Exception as e:
-                raise BuildError(f"Failed to download rootfs.cpio.gz: {e}")
+                raise BuildError(f"Failed to download rootfs.cpio.gz: {e}") from e
 
         targets = platform.simpleimage_targets
         self.logger.info(f"Building {len(targets)} MicroBlaze simpleImage targets...")
@@ -228,9 +226,9 @@ class LinuxBuilder(BuilderBase):
 
     def build_dtbs(
         self,
-        dtbs: Optional[List[str]] = None,
-        jobs: Optional[int] = None,
-    ) -> List[Path]:
+        dtbs: list[str] | None = None,
+        jobs: int | None = None,
+    ) -> list[Path]:
         """
         Build device tree blobs.
 
@@ -297,8 +295,8 @@ class LinuxBuilder(BuilderBase):
         self,
         clean_before: bool = False,
         dtbs_only: bool = False,
-        custom_config: Optional[Path] = None,
-    ) -> Dict[str, any]:
+        custom_config: Path | None = None,
+    ) -> dict[str, any]:
         """
         Execute full kernel build pipeline.
 
@@ -352,8 +350,8 @@ class LinuxBuilder(BuilderBase):
 
     def package_artifacts(
         self,
-        kernel_image: Optional[Union[Path, List[Path]]],
-        dtbs: List[Path],
+        kernel_image: Path | list[Path] | None,
+        dtbs: list[Path],
     ) -> Path:
         """
         Package build artifacts to output directory.

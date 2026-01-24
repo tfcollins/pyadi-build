@@ -1,7 +1,7 @@
 """Pytest configuration and fixtures for example tests."""
 
 from pathlib import Path
-from unittest.mock import MagicMock, PropertyMock
+from unittest.mock import MagicMock
 
 import pytest
 

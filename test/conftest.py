@@ -1,6 +1,5 @@
 """Pytest configuration and fixtures."""
 
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -46,6 +45,7 @@ def tmp_repo(tmp_path):
 
     # Initialize git repo
     import git
+
     repo = git.Repo.init(repo_dir)
 
     # Create a test file and commit
@@ -214,7 +214,9 @@ def mock_kernel_source(tmp_path):
     # Create dummy kernel images
     (kernel_dir / "arch" / "arm" / "boot" / "uImage").write_text("dummy uImage")
     (kernel_dir / "arch" / "arm64" / "boot" / "Image").write_text("dummy Image")
-    (kernel_dir / "arch" / "microblaze" / "boot" / "simpleImage.vcu118_ad9081").write_text("dummy simpleImage")
+    (kernel_dir / "arch" / "microblaze" / "boot" / "simpleImage.vcu118_ad9081").write_text(
+        "dummy simpleImage"
+    )
 
     # Create dummy DTBs
     (kernel_dir / "arch" / "arm" / "boot" / "dts" / "test.dtb").write_text("dummy dtb")

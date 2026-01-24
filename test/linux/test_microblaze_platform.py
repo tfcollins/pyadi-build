@@ -78,6 +78,7 @@ def test_microblaze_simpleimage_targets_multiple():
 def test_microblaze_platform_get_make_env(microblaze_config_dict, mocker):
     """Test getting make environment variables with fallback to platform config."""
     from pathlib import Path
+
     from adibuild.core.toolchain import ToolchainInfo
 
     platform = MicroBlazePlatform(microblaze_config_dict)
@@ -106,6 +107,7 @@ def test_microblaze_platform_get_make_env(microblaze_config_dict, mocker):
 def test_microblaze_platform_get_make_env_fallback(microblaze_config_dict, mocker):
     """Test getting make environment variables with fallback to platform config."""
     from pathlib import Path
+
     from adibuild.core.toolchain import ToolchainInfo
 
     platform = MicroBlazePlatform(microblaze_config_dict)
@@ -197,7 +199,7 @@ def test_microblaze_kernel_target_warning(microblaze_config_dict, caplog):
     config = microblaze_config_dict.copy()
     config["kernel_target"] = "zImage"  # Not a simpleImage target
 
-    platform = MicroBlazePlatform(config)
+    MicroBlazePlatform(config)
 
     # Check that warning was logged
     assert any("Unusual kernel target" in record.message for record in caplog.records)

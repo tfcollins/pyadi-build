@@ -1,7 +1,6 @@
 """Real kernel build tests for MicroBlaze platform (soft-core)."""
 
 import json
-from pathlib import Path
 
 import pytest
 

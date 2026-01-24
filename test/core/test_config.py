@@ -1,7 +1,6 @@
 """Tests for configuration management."""
 
 import json
-from pathlib import Path
 
 import pytest
 import yaml

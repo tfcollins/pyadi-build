@@ -31,6 +31,7 @@ def test_zynq_platform_invalid_arch():
 def test_zynq_platform_get_make_env(zynq_config_dict, mocker):
     """Test getting make environment variables with fallback to platform config."""
     from pathlib import Path
+
     from adibuild.core.toolchain import ToolchainInfo
 
     platform = ZynqPlatform(zynq_config_dict)

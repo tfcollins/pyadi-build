@@ -1,14 +1,12 @@
 """Xilinx MicroBlaze (Virtex) platform implementation."""
 
-from typing import Dict, List
-
 from adibuild.platforms.base import Platform
 
 
 class MicroBlazePlatform(Platform):
     """Xilinx MicroBlaze platform for Virtex FPGAs."""
 
-    def __init__(self, config: Dict[str, any]):
+    def __init__(self, config: dict[str, any]):
         """
         Initialize MicroBlazePlatform.
 
@@ -19,9 +17,7 @@ class MicroBlazePlatform(Platform):
 
         # Validate required configuration
         if self.arch != "microblaze":
-            raise ValueError(
-                f"MicroBlazePlatform requires arch='microblaze', got '{self.arch}'"
-            )
+            raise ValueError(f"MicroBlazePlatform requires arch='microblaze', got '{self.arch}'")
 
         if not self.kernel_target.startswith("simpleImage"):
             self.logger.warning(
@@ -29,7 +25,7 @@ class MicroBlazePlatform(Platform):
                 "Typically 'simpleImage.<dts>' format is used."
             )
 
-    def get_make_env(self) -> Dict[str, str]:
+    def get_make_env(self) -> dict[str, str]:
         """
         Get environment variables for make.
 
@@ -44,10 +40,12 @@ class MicroBlazePlatform(Platform):
         env = dict(toolchain.env_vars)
 
         # Add platform-specific variables (these take precedence)
-        env.update({
-            "ARCH": self.arch,
-            "CROSS_COMPILE": cross_compile,
-        })
+        env.update(
+            {
+                "ARCH": self.arch,
+                "CROSS_COMPILE": cross_compile,
+            }
+        )
 
         return env
 
@@ -70,7 +68,7 @@ class MicroBlazePlatform(Platform):
         return f"arch/microblaze/boot/{self.kernel_target}"
 
     @property
-    def simpleimage_targets(self) -> List[str]:
+    def simpleimage_targets(self) -> list[str]:
         """
         Get list of simpleImage targets to build.
 

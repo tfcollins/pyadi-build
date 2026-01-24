@@ -1,9 +1,7 @@
 """Logging configuration and utilities using rich library."""
 
 import logging
-import sys
 from pathlib import Path
-from typing import Optional
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -12,7 +10,7 @@ from rich.logging import RichHandler
 class BuildLogger:
     """Enhanced logger for build operations with rich console output."""
 
-    def __init__(self, name: str, log_file: Optional[Path] = None, level: int = logging.INFO):
+    def __init__(self, name: str, log_file: Path | None = None, level: int = logging.INFO):
         """
         Initialize BuildLogger.
 
@@ -81,12 +79,12 @@ class BuildLogger:
 
 
 # Global logger instance
-_global_logger: Optional[BuildLogger] = None
+_global_logger: BuildLogger | None = None
 
 
 def setup_logging(
     name: str = "adibuild",
-    log_file: Optional[Path] = None,
+    log_file: Path | None = None,
     level: int = logging.INFO,
 ) -> BuildLogger:
     """
@@ -105,7 +103,7 @@ def setup_logging(
     return _global_logger
 
 
-def get_logger(name: Optional[str] = None) -> BuildLogger:
+def get_logger(name: str | None = None) -> BuildLogger:
     """
     Get logger instance.
 

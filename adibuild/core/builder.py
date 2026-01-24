@@ -2,13 +2,12 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional
 
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildExecutor
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
-from adibuild.utils.logger import BuildLogger, get_logger
+from adibuild.utils.logger import get_logger
 
 
 class BuilderBase(ABC):
@@ -18,7 +17,7 @@ class BuilderBase(ABC):
         self,
         config: BuildConfig,
         platform: Platform,
-        work_dir: Optional[Path] = None,
+        work_dir: Path | None = None,
     ):
         """
         Initialize BuilderBase.
@@ -39,7 +38,7 @@ class BuilderBase(ABC):
         log_file = self.work_dir / f"build-{self.platform.arch}.log"
         self.executor = BuildExecutor(log_file=log_file)
 
-        self._toolchain: Optional[ToolchainInfo] = None
+        self._toolchain: ToolchainInfo | None = None
 
     @property
     def toolchain(self) -> ToolchainInfo:
@@ -112,7 +111,10 @@ class BuilderBase(ABC):
             Path to output directory
         """
         output_base = Path(self.config.get("build.output_dir", "./build"))
-        output_dir = output_base / f"{self.config.get_project()}-{self.config.get_tag()}-{self.platform.arch}"
+        output_dir = (
+            output_base
+            / f"{self.config.get_project()}-{self.config.get_tag()}-{self.platform.arch}"
+        )
         output_dir.mkdir(parents=True, exist_ok=True)
         return output_dir
 

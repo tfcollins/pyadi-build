@@ -93,16 +93,16 @@ def mock_build_success(mocker, tmp_path):
 
     # Mock the build result
     mock_result = {
-        'success': True,
-        'duration': 123.4,
-        'kernel_image': str(kernel_image),
-        'dtbs': [str(dtb_file)],
-        'artifacts_dir': build_output,
-        'platform': 'zynqmp',
+        "success": True,
+        "duration": 123.4,
+        "kernel_image": str(kernel_image),
+        "dtbs": [str(dtb_file)],
+        "artifacts_dir": build_output,
+        "platform": "zynqmp",
     }
 
     # Mock LinuxBuilder.build()
-    mocker.patch('adibuild.projects.linux.LinuxBuilder.build', return_value=mock_result)
+    mocker.patch("adibuild.projects.linux.LinuxBuilder.build", return_value=mock_result)
 
     return mock_result
 
@@ -114,8 +114,8 @@ def mock_build_failure(mocker):
 
     # Mock LinuxBuilder.build() to raise BuildError
     mocker.patch(
-        'adibuild.projects.linux.LinuxBuilder.build',
-        side_effect=BuildError("Compilation failed: undefined reference to foo")
+        "adibuild.projects.linux.LinuxBuilder.build",
+        side_effect=BuildError("Compilation failed: undefined reference to foo"),
     )
 
 
@@ -123,17 +123,17 @@ def mock_build_failure(mocker):
 def mock_toolchain_vivado(mocker):
     """Mock Vivado toolchain detection."""
     vivado_info = ToolchainInfo(
-        type='vivado',
-        version='2023.2',
-        path=Path('/opt/Xilinx/Vitis/2023.2'),
+        type="vivado",
+        version="2023.2",
+        path=Path("/opt/Xilinx/Vitis/2023.2"),
         env_vars={},
-        cross_compile_arm32='arm-linux-gnueabihf-',
-        cross_compile_arm64='aarch64-linux-gnu-',
+        cross_compile_arm32="arm-linux-gnueabihf-",
+        cross_compile_arm64="aarch64-linux-gnu-",
     )
 
-    mocker.patch('adibuild.core.toolchain.VivadoToolchain.detect', return_value=vivado_info)
-    mocker.patch('adibuild.core.toolchain.ArmToolchain.detect', return_value=None)
-    mocker.patch('adibuild.core.toolchain.SystemToolchain.detect', return_value=None)
+    mocker.patch("adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info)
+    mocker.patch("adibuild.core.toolchain.ArmToolchain.detect", return_value=None)
+    mocker.patch("adibuild.core.toolchain.SystemToolchain.detect", return_value=None)
 
     return vivado_info
 
@@ -142,59 +142,59 @@ def mock_toolchain_vivado(mocker):
 def mock_toolchain_all(mocker):
     """Mock all toolchains detected."""
     vivado_info = ToolchainInfo(
-        type='vivado',
-        version='2023.2',
-        path=Path('/opt/Xilinx/Vitis/2023.2'),
+        type="vivado",
+        version="2023.2",
+        path=Path("/opt/Xilinx/Vitis/2023.2"),
         env_vars={},
-        cross_compile_arm32='arm-linux-gnueabihf-',
-        cross_compile_arm64='aarch64-linux-gnu-',
+        cross_compile_arm32="arm-linux-gnueabihf-",
+        cross_compile_arm64="aarch64-linux-gnu-",
     )
 
     arm_info = ToolchainInfo(
-        type='arm',
-        version='11.3.0',
-        path=Path('/opt/arm-gnu-toolchain'),
+        type="arm",
+        version="11.3.0",
+        path=Path("/opt/arm-gnu-toolchain"),
         env_vars={},
-        cross_compile_arm32='arm-none-linux-gnueabihf-',
-        cross_compile_arm64='aarch64-none-linux-gnu-',
+        cross_compile_arm32="arm-none-linux-gnueabihf-",
+        cross_compile_arm64="aarch64-none-linux-gnu-",
     )
 
     system_info = ToolchainInfo(
-        type='system',
-        version='11.4.0',
+        type="system",
+        version="11.4.0",
         path=None,
         env_vars={},
         cross_compile_arm32=None,
-        cross_compile_arm64='aarch64-linux-gnu-',
+        cross_compile_arm64="aarch64-linux-gnu-",
     )
 
-    mocker.patch('adibuild.core.toolchain.VivadoToolchain.detect', return_value=vivado_info)
-    mocker.patch('adibuild.core.toolchain.ArmToolchain.detect', return_value=arm_info)
-    mocker.patch('adibuild.core.toolchain.SystemToolchain.detect', return_value=system_info)
+    mocker.patch("adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info)
+    mocker.patch("adibuild.core.toolchain.ArmToolchain.detect", return_value=arm_info)
+    mocker.patch("adibuild.core.toolchain.SystemToolchain.detect", return_value=system_info)
 
-    return {'vivado': vivado_info, 'arm': arm_info, 'system': system_info}
+    return {"vivado": vivado_info, "arm": arm_info, "system": system_info}
 
 
 @pytest.fixture
 def mock_toolchain_none(mocker):
     """Mock no toolchains detected."""
-    mocker.patch('adibuild.core.toolchain.VivadoToolchain.detect', return_value=None)
-    mocker.patch('adibuild.core.toolchain.ArmToolchain.detect', return_value=None)
-    mocker.patch('adibuild.core.toolchain.SystemToolchain.detect', return_value=None)
+    mocker.patch("adibuild.core.toolchain.VivadoToolchain.detect", return_value=None)
+    mocker.patch("adibuild.core.toolchain.ArmToolchain.detect", return_value=None)
+    mocker.patch("adibuild.core.toolchain.SystemToolchain.detect", return_value=None)
 
 
 @pytest.fixture
 def mock_linux_builder(mocker, tmp_path):
     """Mock LinuxBuilder for various operations."""
     # Mock all LinuxBuilder methods
-    mocker.patch('adibuild.projects.linux.LinuxBuilder.prepare_source')
-    mocker.patch('adibuild.projects.linux.LinuxBuilder.configure')
-    mocker.patch('adibuild.projects.linux.LinuxBuilder.menuconfig')
-    mocker.patch('adibuild.projects.linux.LinuxBuilder.build_dtbs')
-    mocker.patch('adibuild.projects.linux.LinuxBuilder.clean')
+    mocker.patch("adibuild.projects.linux.LinuxBuilder.prepare_source")
+    mocker.patch("adibuild.projects.linux.LinuxBuilder.configure")
+    mocker.patch("adibuild.projects.linux.LinuxBuilder.menuconfig")
+    mocker.patch("adibuild.projects.linux.LinuxBuilder.build_dtbs")
+    mocker.patch("adibuild.projects.linux.LinuxBuilder.clean")
 
     # Return the mocked class
-    return mocker.patch('adibuild.projects.linux.LinuxBuilder')
+    return mocker.patch("adibuild.projects.linux.LinuxBuilder")
 
 
 @pytest.fixture
@@ -246,7 +246,7 @@ def mock_config_loading(mocker, mock_config_file):
     config = BuildConfig.from_dict(config_data)
 
     # Mock load_config_with_overrides to return our config
-    mocker.patch('adibuild.cli.main.load_config_with_overrides', return_value=config)
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=config)
 
     return config
 

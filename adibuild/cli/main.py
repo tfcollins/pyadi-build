@@ -1,13 +1,10 @@
 """Command-line interface for adibuild."""
 
 import logging
-import sys
 from pathlib import Path
-from typing import Optional
 
 import click
 
-from adibuild import __version__
 from adibuild.cli.helpers import (
     create_default_config,
     display_build_summary,
@@ -146,6 +143,7 @@ def build(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs):
         print_error(f"Unexpected error: {e}")
         if ctx.obj.get("verbose", 0) > 1:
             import traceback
+
             traceback.print_exc()
 
 
@@ -353,9 +351,9 @@ def toolchain(ctx, platform):
     """
     try:
         from adibuild.core.toolchain import (
-            VivadoToolchain,
             ArmToolchain,
             SystemToolchain,
+            VivadoToolchain,
         )
 
         click.echo("Detecting available toolchains...\n")
@@ -442,7 +440,9 @@ def config_validate(config_file):
 
     Checks if configuration file is valid according to the JSON schema.
     """
-    schema_path = Path(__file__).parent.parent.parent / "configs" / "schema" / "linux_config.schema.json"
+    schema_path = (
+        Path(__file__).parent.parent.parent / "configs" / "schema" / "linux_config.schema.json"
+    )
 
     if not schema_path.exists():
         print_error(f"Schema file not found: {schema_path}")

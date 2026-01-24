@@ -6,11 +6,8 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Union
 
 from rich.console import Console
-from rich.live import Live
-from rich.panel import Panel
 from rich.text import Text
 
 from adibuild.utils.logger import get_logger
@@ -59,7 +56,7 @@ class BuildExecutor:
         re.compile(r"deprecated", re.IGNORECASE),
     ]
 
-    def __init__(self, cwd: Optional[Path] = None, log_file: Optional[Path] = None):
+    def __init__(self, cwd: Path | None = None, log_file: Path | None = None):
         """
         Initialize BuildExecutor.
 
@@ -77,8 +74,8 @@ class BuildExecutor:
 
     def execute(
         self,
-        command: Union[str, List[str]],
-        env: Optional[Dict[str, str]] = None,
+        command: str | list[str],
+        env: dict[str, str] | None = None,
         stream_output: bool = True,
         capture_output: bool = True,
     ) -> ExecutionResult:
@@ -206,10 +203,10 @@ class BuildExecutor:
 
     def make(
         self,
-        target: Optional[str] = None,
-        jobs: Optional[int] = None,
-        env: Optional[Dict[str, str]] = None,
-        extra_args: Optional[List[str]] = None,
+        target: str | None = None,
+        jobs: int | None = None,
+        env: dict[str, str] | None = None,
+        extra_args: list[str] | None = None,
     ) -> ExecutionResult:
         """
         Execute make command.
@@ -247,7 +244,7 @@ class BuildExecutor:
             errors = self._extract_errors(result.stdout)
             error_msg = f"Make failed with return code {result.return_code}"
             if errors:
-                error_msg += f"\n\nErrors found:\n" + "\n".join(f"  • {e}" for e in errors[:5])
+                error_msg += "\n\nErrors found:\n" + "\n".join(f"  • {e}" for e in errors[:5])
                 if len(errors) > 5:
                     error_msg += f"\n  ... and {len(errors) - 5} more errors"
 
@@ -278,7 +275,7 @@ class BuildExecutor:
         # Default styling
         return Text(line)
 
-    def _extract_errors(self, output: str) -> List[str]:
+    def _extract_errors(self, output: str) -> list[str]:
         """
         Extract error messages from build output.
 
@@ -320,7 +317,7 @@ class BuildExecutor:
 
         return True
 
-    def check_tools(self, tools: List[str]) -> bool:
+    def check_tools(self, tools: list[str]) -> bool:
         """
         Check if multiple tools are available.
 

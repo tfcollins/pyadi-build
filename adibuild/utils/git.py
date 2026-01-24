@@ -2,7 +2,6 @@
 
 import shutil
 from pathlib import Path
-from typing import Optional
 
 import git
 
@@ -18,7 +17,7 @@ class RepositoryError(Exception):
 class GitRepository:
     """Manages git repository operations with caching support."""
 
-    def __init__(self, url: str, local_path: Path, cache_dir: Optional[Path] = None):
+    def __init__(self, url: str, local_path: Path, cache_dir: Path | None = None):
         """
         Initialize GitRepository.
 
@@ -31,9 +30,9 @@ class GitRepository:
         self.local_path = Path(local_path)
         self.cache_dir = cache_dir or Path.home() / ".adibuild" / "repos"
         self.logger = get_logger("adibuild.git")
-        self.repo: Optional[git.Repo] = None
+        self.repo: git.Repo | None = None
 
-    def clone(self, depth: Optional[int] = None, branch: Optional[str] = None) -> git.Repo:
+    def clone(self, depth: int | None = None, branch: str | None = None) -> git.Repo:
         """
         Clone repository if it doesn't exist locally.
 
@@ -67,7 +66,7 @@ class GitRepository:
                 kwargs["branch"] = branch
 
             self.repo = git.Repo.clone_from(self.url, self.local_path, **kwargs)
-            self.logger.info(f"Successfully cloned repository")
+            self.logger.info("Successfully cloned repository")
             return self.repo
 
         except git.exc.GitCommandError as e:
@@ -115,7 +114,7 @@ class GitRepository:
         except git.exc.GitCommandError as e:
             raise RepositoryError(f"Failed to checkout {ref}: {e}") from e
 
-    def get_commit_sha(self, ref: Optional[str] = None) -> str:
+    def get_commit_sha(self, ref: str | None = None) -> str:
         """
         Get commit SHA for a reference.
 
@@ -140,7 +139,7 @@ class GitRepository:
         except (git.exc.GitCommandError, ValueError) as e:
             raise RepositoryError(f"Failed to get commit SHA: {e}") from e
 
-    def get_current_branch(self) -> Optional[str]:
+    def get_current_branch(self) -> str | None:
         """
         Get current branch name.
 
@@ -167,7 +166,7 @@ class GitRepository:
             return False
         return self.repo.is_dirty()
 
-    def ensure_repo(self, ref: Optional[str] = None) -> git.Repo:
+    def ensure_repo(self, ref: str | None = None) -> git.Repo:
         """
         Ensure repository is cloned and optionally checkout a reference.
 

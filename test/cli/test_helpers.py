@@ -2,8 +2,6 @@
 
 from pathlib import Path
 
-import pytest
-
 from adibuild import __version__
 from adibuild.cli.helpers import (
     create_default_config,
@@ -18,11 +16,10 @@ from adibuild.cli.helpers import (
     print_warning,
     validate_config_file,
 )
-from adibuild.core.config import BuildConfig, ConfigurationError
+from adibuild.core.config import BuildConfig
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
-
 
 # ============================================================================
 # Print Functions Tests
@@ -34,13 +31,13 @@ def test_print_version(capsys):
     print_version()
     captured = capsys.readouterr()
 
-    assert 'adibuild' in captured.out
+    assert "adibuild" in captured.out
     assert __version__ in captured.out
 
 
 def test_print_error_exits(mocker):
     """Test print_error prints message and exits."""
-    mock_exit = mocker.patch('sys.exit')
+    mock_exit = mocker.patch("sys.exit")
 
     print_error("Test error message")
 
@@ -49,13 +46,13 @@ def test_print_error_exits(mocker):
 
 def test_print_error_message(capsys, mocker):
     """Test print_error prints error message."""
-    mocker.patch('sys.exit')  # Prevent actual exit
+    mocker.patch("sys.exit")  # Prevent actual exit
 
     print_error("Test error message")
     captured = capsys.readouterr()
 
-    assert 'Error' in captured.out
-    assert 'Test error message' in captured.out
+    assert "Error" in captured.out
+    assert "Test error message" in captured.out
 
 
 def test_print_success(capsys):
@@ -63,7 +60,7 @@ def test_print_success(capsys):
     print_success("Operation successful")
     captured = capsys.readouterr()
 
-    assert 'Operation successful' in captured.out
+    assert "Operation successful" in captured.out
     # Success messages typically have checkmarks or success indicators
 
 
@@ -72,8 +69,8 @@ def test_print_warning(capsys):
     print_warning("This is a warning")
     captured = capsys.readouterr()
 
-    assert 'Warning' in captured.out
-    assert 'This is a warning' in captured.out
+    assert "Warning" in captured.out
+    assert "This is a warning" in captured.out
 
 
 # ============================================================================
@@ -99,11 +96,11 @@ platforms:
 """
     config_file.write_text(config_content)
 
-    config = load_config_with_overrides(str(config_file), 'zynqmp', None)
+    config = load_config_with_overrides(str(config_file), "zynqmp", None)
 
     assert config is not None
-    assert config.get('project') == 'linux'
-    assert config.get('tag') == '2023_R2'
+    assert config.get("project") == "linux"
+    assert config.get("tag") == "2023_R2"
 
 
 def test_load_config_with_overrides_tag_override(tmp_path):
@@ -123,9 +120,9 @@ platforms:
 """
     config_file.write_text(config_content)
 
-    config = load_config_with_overrides(str(config_file), 'zynqmp', '2024_R1')
+    config = load_config_with_overrides(str(config_file), "zynqmp", "2024_R1")
 
-    assert config.get('tag') == '2024_R1'
+    assert config.get("tag") == "2024_R1"
 
 
 def test_load_config_with_overrides_default_config(mocker, tmp_path):
@@ -148,17 +145,17 @@ platforms:
     default_config.write_text(config_content)
 
     # Test with explicit path (mocking Path is complex and can break pytest)
-    config = load_config_with_overrides(str(default_config), 'zynqmp', None)
+    config = load_config_with_overrides(str(default_config), "zynqmp", None)
 
     assert config is not None
 
 
 def test_load_config_with_overrides_file_not_found(mocker):
     """Test load_config_with_overrides when file not found."""
-    mock_exit = mocker.patch('sys.exit')
+    mock_exit = mocker.patch("sys.exit")
 
     # Try to load non-existent file
-    load_config_with_overrides('/nonexistent/config.yaml', 'zynqmp', None)
+    load_config_with_overrides("/nonexistent/config.yaml", "zynqmp", None)
 
     # Should call sys.exit due to print_error
     mock_exit.assert_called_once_with(1)
@@ -185,10 +182,10 @@ def test_get_platform_instance_zynq():
     }
 
     config = BuildConfig.from_dict(config_data)
-    platform = get_platform_instance(config, 'zynq')
+    platform = get_platform_instance(config, "zynq")
 
     assert isinstance(platform, ZynqPlatform)
-    assert platform.arch == 'arm'
+    assert platform.arch == "arm"
 
 
 def test_get_platform_instance_zynqmp():
@@ -207,10 +204,10 @@ def test_get_platform_instance_zynqmp():
     }
 
     config = BuildConfig.from_dict(config_data)
-    platform = get_platform_instance(config, 'zynqmp')
+    platform = get_platform_instance(config, "zynqmp")
 
     assert isinstance(platform, ZynqMPPlatform)
-    assert platform.arch == 'arm64'
+    assert platform.arch == "arm64"
 
 
 def test_get_platform_instance_invalid(mocker):
@@ -222,9 +219,9 @@ def test_get_platform_instance_invalid(mocker):
     }
 
     config = BuildConfig.from_dict(config_data)
-    mock_exit = mocker.patch('sys.exit')
+    mock_exit = mocker.patch("sys.exit")
 
-    get_platform_instance(config, 'invalid')
+    get_platform_instance(config, "invalid")
 
     # Should call sys.exit due to print_error
     mock_exit.assert_called_once_with(1)
@@ -248,20 +245,20 @@ def test_display_build_summary(capsys, mock_toolchain):
     platform = ZynqMPPlatform(platform_config)
 
     result = {
-        'success': True,
-        'duration': 123.4,
-        'kernel_image': '/path/to/Image',
-        'dtbs': ['dtb1.dtb', 'dtb2.dtb'],
-        'artifacts': Path('/tmp/build'),
+        "success": True,
+        "duration": 123.4,
+        "kernel_image": "/path/to/Image",
+        "dtbs": ["dtb1.dtb", "dtb2.dtb"],
+        "artifacts": Path("/tmp/build"),
     }
 
     display_build_summary(result, platform)
     captured = capsys.readouterr()
 
-    assert 'Build Summary' in captured.out or 'Build' in captured.out
-    assert 'arm64' in captured.out
-    assert 'adi_zynqmp_defconfig' in captured.out
-    assert 'Image' in captured.out
+    assert "Build Summary" in captured.out or "Build" in captured.out
+    assert "arm64" in captured.out
+    assert "adi_zynqmp_defconfig" in captured.out
+    assert "Image" in captured.out
 
 
 def test_display_build_summary_minimal(capsys):
@@ -277,61 +274,61 @@ def test_display_build_summary_minimal(capsys):
     platform = ZynqPlatform(platform_config)
 
     result = {
-        'success': True,
+        "success": True,
     }
 
     display_build_summary(result, platform)
     captured = capsys.readouterr()
 
     # Should still display basic info even with minimal data
-    assert 'arm' in captured.out
-    assert 'zynq_xcomm_adv7511_defconfig' in captured.out
+    assert "arm" in captured.out
+    assert "zynq_xcomm_adv7511_defconfig" in captured.out
 
 
 def test_display_toolchain_info_vivado(capsys):
     """Test display_toolchain_info with Vivado toolchain."""
     toolchain = ToolchainInfo(
-        type='vivado',
-        version='2023.2',
-        path=Path('/opt/Xilinx/Vitis/2023.2'),
+        type="vivado",
+        version="2023.2",
+        path=Path("/opt/Xilinx/Vitis/2023.2"),
         env_vars={},
-        cross_compile_arm32='arm-linux-gnueabihf-',
-        cross_compile_arm64='aarch64-linux-gnu-',
+        cross_compile_arm32="arm-linux-gnueabihf-",
+        cross_compile_arm64="aarch64-linux-gnu-",
     )
 
     display_toolchain_info(toolchain)
     captured = capsys.readouterr()
 
-    assert 'vivado' in captured.out.lower()
-    assert '2023.2' in captured.out
-    assert 'arm-linux-gnueabihf-' in captured.out
-    assert 'aarch64-linux-gnu-' in captured.out
+    assert "vivado" in captured.out.lower()
+    assert "2023.2" in captured.out
+    assert "arm-linux-gnueabihf-" in captured.out
+    assert "aarch64-linux-gnu-" in captured.out
 
 
 def test_display_toolchain_info_dict(capsys):
     """Test display_toolchain_info with dictionary (from mocks)."""
     toolchain_dict = {
-        'type': 'vivado',
-        'version': '2023.2',
-        'path': Path('/opt/Xilinx/Vitis/2023.2'),
-        'cross_compile_arm32': 'arm-linux-gnueabihf-',
-        'cross_compile_arm64': 'aarch64-linux-gnu-',
+        "type": "vivado",
+        "version": "2023.2",
+        "path": Path("/opt/Xilinx/Vitis/2023.2"),
+        "cross_compile_arm32": "arm-linux-gnueabihf-",
+        "cross_compile_arm64": "aarch64-linux-gnu-",
     }
 
     # Create ToolchainInfo from dict
     toolchain = ToolchainInfo(
-        type=toolchain_dict['type'],
-        version=toolchain_dict['version'],
-        path=toolchain_dict['path'],
+        type=toolchain_dict["type"],
+        version=toolchain_dict["version"],
+        path=toolchain_dict["path"],
         env_vars={},
-        cross_compile_arm32=toolchain_dict.get('cross_compile_arm32'),
-        cross_compile_arm64=toolchain_dict.get('cross_compile_arm64'),
+        cross_compile_arm32=toolchain_dict.get("cross_compile_arm32"),
+        cross_compile_arm64=toolchain_dict.get("cross_compile_arm64"),
     )
 
     display_toolchain_info(toolchain)
     captured = capsys.readouterr()
 
-    assert 'vivado' in captured.out.lower()
+    assert "vivado" in captured.out.lower()
 
 
 def test_display_platforms(capsys):
@@ -359,10 +356,10 @@ def test_display_platforms(capsys):
     display_platforms(config)
     captured = capsys.readouterr()
 
-    assert 'zynq' in captured.out.lower() or 'Platform' in captured.out
-    assert 'zynqmp' in captured.out.lower() or 'Platform' in captured.out
-    assert 'arm' in captured.out
-    assert 'arm64' in captured.out
+    assert "zynq" in captured.out.lower() or "Platform" in captured.out
+    assert "zynqmp" in captured.out.lower() or "Platform" in captured.out
+    assert "arm" in captured.out
+    assert "arm64" in captured.out
 
 
 def test_display_platforms_empty(capsys):
@@ -377,7 +374,7 @@ def test_display_platforms_empty(capsys):
     display_platforms(config)
     captured = capsys.readouterr()
 
-    assert 'No platforms' in captured.out or 'Warning' in captured.out
+    assert "No platforms" in captured.out or "Warning" in captured.out
 
 
 # ============================================================================
@@ -401,7 +398,7 @@ platforms:
     schema_file.write_text('{"type": "object"}')
 
     # Mock validate to succeed
-    mocker.patch('adibuild.core.config.BuildConfig.validate')
+    mocker.patch("adibuild.core.config.BuildConfig.validate")
 
     validate_config_file(config_file, schema_file)
     # Should not raise or exit
@@ -415,7 +412,7 @@ def test_validate_config_file_invalid(tmp_path, mocker):
     schema_file = tmp_path / "schema.json"
     schema_file.write_text('{"type": "object"}')
 
-    mock_exit = mocker.patch('sys.exit')
+    mock_exit = mocker.patch("sys.exit")
 
     validate_config_file(config_file, schema_file)
 
@@ -433,7 +430,7 @@ def test_create_default_config(tmp_path, mocker):
     output_file = tmp_path / "new_config.yaml"
 
     # Mock the interactive prompt
-    mock_prompt_config = mocker.patch('adibuild.cli.helpers.prompt_for_config')
+    mock_prompt_config = mocker.patch("adibuild.cli.helpers.prompt_for_config")
     mock_prompt_config.return_value = {
         "build": {"parallel_jobs": 8},
         "toolchains": {},
@@ -449,7 +446,7 @@ def test_create_default_config_with_toolchain(tmp_path, mocker):
     """Test create_default_config with toolchain configuration."""
     output_file = tmp_path / "config_with_toolchain.yaml"
 
-    mock_prompt_config = mocker.patch('adibuild.cli.helpers.prompt_for_config')
+    mock_prompt_config = mocker.patch("adibuild.cli.helpers.prompt_for_config")
     mock_prompt_config.return_value = {
         "build": {"parallel_jobs": 16},
         "toolchains": {
@@ -486,13 +483,13 @@ platforms:
     config_file.write_text(config_content)
 
     # Load config
-    config = load_config_with_overrides(str(config_file), 'zynqmp', None)
+    config = load_config_with_overrides(str(config_file), "zynqmp", None)
     assert config is not None
 
     # Get platform
-    platform = get_platform_instance(config, 'zynqmp')
+    platform = get_platform_instance(config, "zynqmp")
     assert isinstance(platform, ZynqMPPlatform)
 
     # Display would happen here (already tested separately)
-    assert platform.arch == 'arm64'
-    assert platform.defconfig == 'adi_zynqmp_defconfig'
+    assert platform.arch == "arm64"
+    assert platform.defconfig == "adi_zynqmp_defconfig"

@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 import jsonschema
 import yaml
@@ -19,7 +19,7 @@ class ConfigurationError(Exception):
 class BuildConfig:
     """Manages build configuration with support for YAML/JSON and hierarchical loading."""
 
-    def __init__(self, config_data: Dict[str, Any]):
+    def __init__(self, config_data: dict[str, Any]):
         """
         Initialize BuildConfig.
 
@@ -30,7 +30,7 @@ class BuildConfig:
         self.logger = get_logger("adibuild.config")
 
     @classmethod
-    def from_yaml(cls, path: Union[str, Path]) -> "BuildConfig":
+    def from_yaml(cls, path: str | Path) -> "BuildConfig":
         """
         Load configuration from YAML file.
 
@@ -48,14 +48,14 @@ class BuildConfig:
             raise ConfigurationError(f"Configuration file not found: {path}")
 
         try:
-            with open(path, "r") as f:
+            with open(path) as f:
                 data = yaml.safe_load(f)
             return cls(data or {})
         except yaml.YAMLError as e:
             raise ConfigurationError(f"Failed to parse YAML file {path}: {e}") from e
 
     @classmethod
-    def from_json(cls, path: Union[str, Path]) -> "BuildConfig":
+    def from_json(cls, path: str | Path) -> "BuildConfig":
         """
         Load configuration from JSON file.
 
@@ -73,14 +73,14 @@ class BuildConfig:
             raise ConfigurationError(f"Configuration file not found: {path}")
 
         try:
-            with open(path, "r") as f:
+            with open(path) as f:
                 data = json.load(f)
             return cls(data or {})
         except json.JSONDecodeError as e:
             raise ConfigurationError(f"Failed to parse JSON file {path}: {e}") from e
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "BuildConfig":
+    def from_dict(cls, data: dict[str, Any]) -> "BuildConfig":
         """
         Create configuration from dictionary.
 
@@ -95,8 +95,8 @@ class BuildConfig:
     @classmethod
     def load_with_defaults(
         cls,
-        config_path: Optional[Union[str, Path]] = None,
-        user_config_path: Optional[Union[str, Path]] = None,
+        config_path: str | Path | None = None,
+        user_config_path: str | Path | None = None,
     ) -> "BuildConfig":
         """
         Load configuration with hierarchical merging.
@@ -111,7 +111,7 @@ class BuildConfig:
             BuildConfig instance with merged configuration
         """
         logger = get_logger("adibuild.config")
-        merged_data: Dict[str, Any] = {}
+        merged_data: dict[str, Any] = {}
 
         # Load user config if exists
         if user_config_path is None:
@@ -131,7 +131,7 @@ class BuildConfig:
         return cls(merged_data)
 
     @staticmethod
-    def _deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+    def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
         """
         Deep merge two dictionaries.
 
@@ -190,7 +190,7 @@ class BuildConfig:
 
         data[keys[-1]] = value
 
-    def get_platform(self, platform_name: str) -> Dict[str, Any]:
+    def get_platform(self, platform_name: str) -> dict[str, Any]:
         """
         Get platform-specific configuration.
 
@@ -242,7 +242,7 @@ class BuildConfig:
             raise ConfigurationError("Repository URL not specified in configuration")
         return repo
 
-    def get_tag(self) -> Optional[str]:
+    def get_tag(self) -> str | None:
         """
         Get git tag.
 
@@ -267,7 +267,7 @@ class BuildConfig:
         except (ValueError, TypeError):
             return default
 
-    def validate(self, schema_path: Union[str, Path]) -> bool:
+    def validate(self, schema_path: str | Path) -> bool:
         """
         Validate configuration against JSON schema.
 
@@ -285,7 +285,7 @@ class BuildConfig:
             raise ConfigurationError(f"Schema file not found: {schema_path}")
 
         try:
-            with open(schema_path, "r") as f:
+            with open(schema_path) as f:
                 schema = json.load(f)
 
             jsonschema.validate(self._data, schema)
@@ -297,7 +297,7 @@ class BuildConfig:
         except jsonschema.ValidationError as e:
             raise ConfigurationError(f"Configuration validation failed: {e.message}") from e
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Get configuration as dictionary.
 
@@ -306,7 +306,7 @@ class BuildConfig:
         """
         return self._data.copy()
 
-    def to_yaml(self, path: Union[str, Path]) -> None:
+    def to_yaml(self, path: str | Path) -> None:
         """
         Save configuration to YAML file.
 
@@ -319,7 +319,7 @@ class BuildConfig:
         with open(path, "w") as f:
             yaml.dump(self._data, f, default_flow_style=False)
 
-    def to_json(self, path: Union[str, Path]) -> None:
+    def to_json(self, path: str | Path) -> None:
         """
         Save configuration to JSON file.
 

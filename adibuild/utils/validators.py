@@ -3,7 +3,6 @@
 import re
 import shutil
 from pathlib import Path
-from typing import List, Optional
 
 from adibuild.utils.logger import get_logger
 
@@ -16,7 +15,7 @@ class ValidationError(Exception):
     pass
 
 
-def validate_platform(platform: str, valid_platforms: Optional[List[str]] = None) -> str:
+def validate_platform(platform: str, valid_platforms: list[str] | None = None) -> str:
     """
     Validate platform name.
 
@@ -101,7 +100,7 @@ def validate_path(path: Path, must_exist: bool = False, must_be_dir: bool = Fals
     return path
 
 
-def validate_tool_available(tool: str, error_msg: Optional[str] = None) -> bool:
+def validate_tool_available(tool: str, error_msg: str | None = None) -> bool:
     """
     Validate that a required tool is available on the system.
 
@@ -121,7 +120,7 @@ def validate_tool_available(tool: str, error_msg: Optional[str] = None) -> bool:
     return True
 
 
-def validate_tools_available(tools: List[str]) -> bool:
+def validate_tools_available(tools: list[str]) -> bool:
     """
     Validate that multiple required tools are available.
 

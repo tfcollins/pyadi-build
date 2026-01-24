@@ -18,8 +18,8 @@ __version__ = "0.1.0"
 __author__ = "Analog Devices, Inc."
 __license__ = "BSD"
 
-from adibuild.core.config import BuildConfig
 from adibuild.core.builder import BuilderBase
+from adibuild.core.config import BuildConfig
 from adibuild.projects.linux import LinuxBuilder
 
 __all__ = [

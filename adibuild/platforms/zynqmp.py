@@ -1,14 +1,12 @@
 """Xilinx ZynqMP (ARM64) platform implementation."""
 
-from typing import Dict
-
 from adibuild.platforms.base import Platform
 
 
 class ZynqMPPlatform(Platform):
     """Xilinx ZynqMP (ARM64) platform configuration."""
 
-    def __init__(self, config: Dict[str, any]):
+    def __init__(self, config: dict[str, any]):
         """
         Initialize ZynqMPPlatform.
 
@@ -27,7 +25,7 @@ class ZynqMPPlatform(Platform):
                 "Typically 'Image' or 'Image.gz' is used."
             )
 
-    def get_make_env(self) -> Dict[str, str]:
+    def get_make_env(self) -> dict[str, str]:
         """
         Get environment variables for make.
 
@@ -42,10 +40,12 @@ class ZynqMPPlatform(Platform):
         env = dict(toolchain.env_vars)
 
         # Add platform-specific variables (these take precedence)
-        env.update({
-            "ARCH": self.arch,
-            "CROSS_COMPILE": cross_compile,
-        })
+        env.update(
+            {
+                "ARCH": self.arch,
+                "CROSS_COMPILE": cross_compile,
+            }
+        )
 
         # ARM64 kernels typically don't need UIMAGE_LOADADDR, but include if specified
         if self.uimage_loadaddr:
