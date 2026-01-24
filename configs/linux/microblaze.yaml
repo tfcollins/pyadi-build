@@ -1,0 +1,21 @@
+project: linux
+repository: https://github.com/analogdevicesinc/linux.git
+
+build:
+  parallel_jobs: 8
+  output_dir: ./build
+
+platforms:
+  microblaze:
+    arch: microblaze
+    cross_compile: microblazeel-xilinx-linux-gnu-
+    defconfig: adi_mb_defconfig
+    kernel_target: simpleImage.system
+    dtb_path: arch/microblaze/boot/dts
+    kernel_image_path: arch/microblaze/boot/simpleImage.system
+    simpleimage_targets:
+      - simpleImage.system
+    dtbs: []
+    toolchain:
+      preferred: vivado
+      fallback: []

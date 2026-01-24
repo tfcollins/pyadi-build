@@ -1,0 +1,21 @@
+project: linux
+repository: https://github.com/analogdevicesinc/linux.git
+tag: 2023_R2
+
+build:
+  parallel_jobs: 8
+  output_dir: ./build/microblaze_vcu118_ad9081
+
+platforms:
+  microblaze_vcu118:
+    arch: microblaze
+    cross_compile: microblazeel-xilinx-linux-gnu-
+    defconfig: adi_mb_defconfig
+    kernel_target: simpleImage.vcu118_ad9081
+    simpleimage_targets:
+      - simpleImage.vcu118_ad9081
+    dtbs: []
+    toolchain:
+      preferred: vivado
+    board: VCU118
+    fmc: AD9081

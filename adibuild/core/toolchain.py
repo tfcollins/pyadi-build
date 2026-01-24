@@ -32,6 +32,7 @@ class ToolchainInfo:
     env_vars: Dict[str, str]
     cross_compile_arm32: Optional[str] = None
     cross_compile_arm64: Optional[str] = None
+    cross_compile_microblaze: Optional[str] = None
 
 
 class Toolchain(ABC):
@@ -142,6 +143,7 @@ class VivadoToolchain(Toolchain):
                                 env_vars=env_vars,
                                 cross_compile_arm32="arm-linux-gnueabihf-",
                                 cross_compile_arm64="aarch64-linux-gnu-",
+                                cross_compile_microblaze="microblazeel-xilinx-linux-gnu-",
                             )
 
         self.logger.debug("Vivado/Vitis toolchain not found")

@@ -49,6 +49,7 @@ def mock_toolchain():
         env_vars={"PATH": "/mock/toolchain/bin"},
         cross_compile_arm32="arm-mock-",
         cross_compile_arm64="aarch64-mock-",
+        cross_compile_microblaze="microblazeel-xilinx-linux-gnu-",
     )
 
 
@@ -134,6 +135,46 @@ def zynqmp_config(zynqmp_config_dict):
 
 
 @pytest.fixture
+def microblaze_config_dict():
+    """MicroBlaze platform configuration dictionary."""
+    return {
+        "arch": "microblaze",
+        "cross_compile": "microblazeel-xilinx-linux-gnu-",
+        "defconfig": "adi_mb_defconfig",
+        "kernel_target": "simpleImage.vcu118_ad9081",
+        "dtb_path": "arch/microblaze/boot/dts",
+        "kernel_image_path": "arch/microblaze/boot/simpleImage.vcu118_ad9081",
+        "simpleimage_targets": [
+            "simpleImage.vcu118_ad9081",
+        ],
+        "dtbs": [],
+        "toolchain": {
+            "preferred": "vivado",
+            "fallback": [],
+        },
+    }
+
+
+@pytest.fixture
+def microblaze_config(microblaze_config_dict):
+    """BuildConfig with MicroBlaze configuration."""
+    config_data = {
+        "project": "linux",
+        "repository": "https://github.com/analogdevicesinc/linux.git",
+        "tag": "2023_R2",
+        "build": {
+            "parallel_jobs": 4,
+            "clean_before": False,
+            "output_dir": "./build",
+        },
+        "platforms": {
+            "microblaze_vcu118": microblaze_config_dict,
+        },
+    }
+    return BuildConfig.from_dict(config_data)
+
+
+@pytest.fixture
 def mock_kernel_source(tmp_path):
     """Create minimal kernel source structure."""
     kernel_dir = tmp_path / "linux"
@@ -142,6 +183,7 @@ def mock_kernel_source(tmp_path):
     # Create basic structure
     (kernel_dir / "arch" / "arm" / "boot" / "dts").mkdir(parents=True)
     (kernel_dir / "arch" / "arm64" / "boot" / "dts" / "xilinx").mkdir(parents=True)
+    (kernel_dir / "arch" / "microblaze" / "boot" / "dts").mkdir(parents=True)
 
     # Create dummy files
     (kernel_dir / "Makefile").write_text("# Dummy Makefile")
@@ -150,6 +192,7 @@ def mock_kernel_source(tmp_path):
     # Create dummy kernel images
     (kernel_dir / "arch" / "arm" / "boot" / "uImage").write_text("dummy uImage")
     (kernel_dir / "arch" / "arm64" / "boot" / "Image").write_text("dummy Image")
+    (kernel_dir / "arch" / "microblaze" / "boot" / "simpleImage.vcu118_ad9081").write_text("dummy simpleImage")
 
     # Create dummy DTBs
     (kernel_dir / "arch" / "arm" / "boot" / "dts" / "test.dtb").write_text("dummy dtb")

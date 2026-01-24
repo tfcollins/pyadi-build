@@ -84,7 +84,7 @@ def linux():
     "--platform",
     "-p",
     required=True,
-    type=click.Choice(["zynq", "zynqmp"], case_sensitive=False),
+    type=click.Choice(["zynq", "zynqmp", "microblaze"], case_sensitive=False),
     help="Target platform",
 )
 @click.option("--tag", "-t", help="Git tag or branch to build")
@@ -154,7 +154,7 @@ def build(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs):
     "--platform",
     "-p",
     required=True,
-    type=click.Choice(["zynq", "zynqmp"], case_sensitive=False),
+    type=click.Choice(["zynq", "zynqmp", "microblaze"], case_sensitive=False),
     help="Target platform",
 )
 @click.option("--tag", "-t", help="Git tag or branch")
@@ -203,7 +203,7 @@ def configure(ctx, platform, tag, defconfig):
     "--platform",
     "-p",
     required=True,
-    type=click.Choice(["zynq", "zynqmp"], case_sensitive=False),
+    type=click.Choice(["zynq", "zynqmp", "microblaze"], case_sensitive=False),
     help="Target platform",
 )
 @click.option("--tag", "-t", help="Git tag or branch")
@@ -245,7 +245,7 @@ def menuconfig(ctx, platform, tag):
     "--platform",
     "-p",
     required=True,
-    type=click.Choice(["zynq", "zynqmp"], case_sensitive=False),
+    type=click.Choice(["zynq", "zynqmp", "microblaze"], case_sensitive=False),
     help="Target platform",
 )
 @click.option("--tag", "-t", help="Git tag or branch")
@@ -296,7 +296,7 @@ def dtbs(ctx, platform, tag, dtb_files):
     "--platform",
     "-p",
     required=True,
-    type=click.Choice(["zynq", "zynqmp"], case_sensitive=False),
+    type=click.Choice(["zynq", "zynqmp", "microblaze"], case_sensitive=False),
     help="Target platform",
 )
 @click.option("--tag", "-t", help="Git tag or branch")
@@ -341,7 +341,7 @@ def clean(ctx, platform, tag, deep):
 @click.option(
     "--platform",
     "-p",
-    type=click.Choice(["zynq", "zynqmp"], case_sensitive=False),
+    type=click.Choice(["zynq", "zynqmp", "microblaze"], case_sensitive=False),
     help="Show toolchain for specific platform",
 )
 @click.pass_context

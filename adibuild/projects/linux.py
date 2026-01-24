@@ -5,7 +5,7 @@ import shutil
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 
@@ -113,7 +113,7 @@ class LinuxBuilder(BuilderBase):
         self._configured = True
         self.logger.info("Kernel configuration complete")
 
-    def build_kernel(self, jobs: Optional[int] = None) -> Path:
+    def build_kernel(self, jobs: Optional[int] = None) -> Union[Path, List[Path]]:
         """
         Build kernel image.
 
@@ -121,12 +121,17 @@ class LinuxBuilder(BuilderBase):
             jobs: Number of parallel jobs
 
         Returns:
-            Path to built kernel image
+            Path to built kernel image (or List[Path] for MicroBlaze with multiple targets)
         """
         if not self._configured:
             raise BuildError("Kernel not configured. Call configure() first.")
 
         jobs = jobs or self.config.get_parallel_jobs()
+
+        # Check if this is a MicroBlaze platform with multiple targets
+        from adibuild.platforms.microblaze import MicroBlazePlatform
+        if isinstance(self.platform, MicroBlazePlatform):
+            return self._build_microblaze_kernel(jobs)
 
         self.logger.info(
             f"Building kernel target '{self.platform.kernel_target}' with {jobs} jobs..."
@@ -153,6 +158,57 @@ class LinuxBuilder(BuilderBase):
         self._kernel_built = True
         return kernel_image
 
+    def _build_microblaze_kernel(self, jobs: int) -> List[Path]:
+        """
+        Build MicroBlaze kernel with simpleImage targets.
+
+        Args:
+            jobs: Number of parallel jobs
+
+        Returns:
+            List of paths to built simpleImage targets
+        """
+        from adibuild.platforms.microblaze import MicroBlazePlatform
+
+        platform = self.platform
+        if not isinstance(platform, MicroBlazePlatform):
+            raise BuildError("_build_microblaze_kernel called with non-MicroBlaze platform")
+
+        targets = platform.simpleimage_targets
+        self.logger.info(f"Building {len(targets)} MicroBlaze simpleImage targets...")
+
+        # Get environment
+        make_env = platform.get_make_env()
+
+        # Build each target
+        start_time = time.time()
+        built_images = []
+
+        for target in targets:
+            self.logger.info(f"Building {target}...")
+            try:
+                self.executor.make(target, jobs=jobs, env=make_env)
+
+                # Find the built image
+                image_path = self.source_dir / "arch" / "microblaze" / "boot" / target
+                if image_path.exists():
+                    built_images.append(image_path)
+                    self.logger.debug(f"Built simpleImage: {target}")
+                else:
+                    self.logger.warning(f"simpleImage not found at expected location: {image_path}")
+            except BuildError as e:
+                self.logger.warning(f"Failed to build target {target}: {e}")
+                continue
+
+        duration = time.time() - start_time
+        self.logger.info(f"Built {len(built_images)}/{len(targets)} simpleImage targets in {duration:.1f}s")
+
+        if not built_images:
+            raise BuildError("No simpleImage targets were successfully built")
+
+        self._kernel_built = True
+        return built_images
+
     def build_dtbs(
         self,
         dtbs: Optional[List[str]] = None,
@@ -168,6 +224,14 @@ class LinuxBuilder(BuilderBase):
         Returns:
             List of paths to built DTB files
         """
+        from adibuild.platforms.microblaze import MicroBlazePlatform
+
+        # Skip DTB build for MicroBlaze (DT embedded in simpleImage)
+        if isinstance(self.platform, MicroBlazePlatform):
+            self.logger.info("Skipping DTB build for MicroBlaze (DT embedded in simpleImage)")
+            self._dtbs_built = True
+            return []
+
         if not self._configured:
             raise BuildError("Kernel not configured. Call configure() first.")
 
@@ -271,14 +335,14 @@ class LinuxBuilder(BuilderBase):
 
     def package_artifacts(
         self,
-        kernel_image: Optional[Path],
+        kernel_image: Optional[Union[Path, List[Path]]],
         dtbs: List[Path],
     ) -> Path:
         """
         Package build artifacts to output directory.
 
         Args:
-            kernel_image: Path to kernel image
+            kernel_image: Path to kernel image (or List[Path] for MicroBlaze)
             dtbs: List of DTB paths
 
         Returns:
@@ -289,11 +353,18 @@ class LinuxBuilder(BuilderBase):
         # Get output directory
         output_dir = self.get_output_dir()
 
-        # Copy kernel image
+        # Copy kernel image(s)
         if kernel_image:
-            output_kernel = output_dir / kernel_image.name
-            shutil.copy(kernel_image, output_kernel)
-            self.logger.info(f"Copied kernel image to {output_kernel}")
+            # Handle both single image and list of images (MicroBlaze)
+            if isinstance(kernel_image, list):
+                for img in kernel_image:
+                    output_kernel = output_dir / img.name
+                    shutil.copy(img, output_kernel)
+                self.logger.info(f"Copied {len(kernel_image)} kernel images to {output_dir}")
+            else:
+                output_kernel = output_dir / kernel_image.name
+                shutil.copy(kernel_image, output_kernel)
+                self.logger.info(f"Copied kernel image to {output_kernel}")
 
         # Copy DTBs
         if dtbs:
@@ -307,6 +378,13 @@ class LinuxBuilder(BuilderBase):
             self.logger.info(f"Copied {len(dtbs)} DTBs to {dtb_output_dir}")
 
         # Generate metadata
+        if isinstance(kernel_image, list):
+            kernel_images = [img.name for img in kernel_image]
+        elif kernel_image:
+            kernel_images = [kernel_image.name]
+        else:
+            kernel_images = []
+
         metadata = {
             "project": self.config.get_project(),
             "platform": self.platform.arch,
@@ -319,7 +397,7 @@ class LinuxBuilder(BuilderBase):
                 "version": self.toolchain.version,
             },
             "artifacts": {
-                "kernel_image": kernel_image.name if kernel_image else None,
+                "kernel_images": kernel_images,
                 "dtbs": [dtb.name for dtb in dtbs],
             },
         }

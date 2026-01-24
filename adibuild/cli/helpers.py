@@ -16,6 +16,7 @@ from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
 from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
+from adibuild.platforms.microblaze import MicroBlazePlatform
 
 
 console = Console()
@@ -109,6 +110,8 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
             return ZynqPlatform(platform_config)
         elif arch == "arm64" or platform_name == "zynqmp":
             return ZynqMPPlatform(platform_config)
+        elif arch == "microblaze" or platform_name.startswith("microblaze"):
+            return MicroBlazePlatform(platform_config)
         else:
             print_error(f"Unsupported platform: {platform_name}")
 
@@ -170,6 +173,8 @@ def display_toolchain_info(toolchain: ToolchainInfo):
         table.add_row("ARM32 Prefix", toolchain.cross_compile_arm32)
     if toolchain.cross_compile_arm64:
         table.add_row("ARM64 Prefix", toolchain.cross_compile_arm64)
+    if toolchain.cross_compile_microblaze:
+        table.add_row("MicroBlaze Prefix", toolchain.cross_compile_microblaze)
 
     console.print(table)
 

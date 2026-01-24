@@ -174,6 +174,10 @@ class Platform(ABC):
             raise PlatformError(
                 f"Toolchain {toolchain.type} does not support ARM64 architecture"
             )
+        elif self.arch == "microblaze" and not toolchain.cross_compile_microblaze:
+            raise PlatformError(
+                f"Toolchain {toolchain.type} does not support MicroBlaze architecture"
+            )
 
         self.logger.info(
             f"Toolchain validation passed: {toolchain.type} v{toolchain.version}"
