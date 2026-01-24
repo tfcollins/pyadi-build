@@ -67,7 +67,7 @@ def tests_real(session):
     )
 
 
-@nox.session(python="3.11")
+@nox.session(python=PYTHON_VERSIONS)
 @nox.parametrize("platform", ["zynq", "zynqmp", "microblaze"])
 def tests_real_platform(session, platform):
     """Run real build tests for specific platform.

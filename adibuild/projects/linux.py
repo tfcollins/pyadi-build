@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+import requests
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 
 from adibuild.core.builder import BuilderBase
@@ -130,6 +131,7 @@ class LinuxBuilder(BuilderBase):
 
         # Check if this is a MicroBlaze platform with multiple targets
         from adibuild.platforms.microblaze import MicroBlazePlatform
+
         if isinstance(self.platform, MicroBlazePlatform):
             return self._build_microblaze_kernel(jobs)
 
@@ -151,9 +153,7 @@ class LinuxBuilder(BuilderBase):
         kernel_image = self.platform.get_kernel_image_full_path(self.source_dir)
 
         if not kernel_image.exists():
-            raise BuildError(
-                f"Kernel image not found at expected location: {kernel_image}"
-            )
+            raise BuildError(f"Kernel image not found at expected location: {kernel_image}")
 
         self._kernel_built = True
         return kernel_image
@@ -173,6 +173,21 @@ class LinuxBuilder(BuilderBase):
         platform = self.platform
         if not isinstance(platform, MicroBlazePlatform):
             raise BuildError("_build_microblaze_kernel called with non-MicroBlaze platform")
+
+        # Check for rootfs.cpio.gz
+        rootfs_path = self.source_dir / "rootfs.cpio.gz"
+        if not rootfs_path.exists():
+            self.logger.info("rootfs.cpio.gz not found, downloading...")
+            url = "https://swdownloads.analog.com/cse/microblaze/rootfs/rootfs.cpio.gz"
+            try:
+                response = requests.get(url, stream=True)
+                response.raise_for_status()
+                with open(rootfs_path, "wb") as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                self.logger.info("Downloaded rootfs.cpio.gz")
+            except Exception as e:
+                raise BuildError(f"Failed to download rootfs.cpio.gz: {e}")
 
         targets = platform.simpleimage_targets
         self.logger.info(f"Building {len(targets)} MicroBlaze simpleImage targets...")
@@ -201,7 +216,9 @@ class LinuxBuilder(BuilderBase):
                 continue
 
         duration = time.time() - start_time
-        self.logger.info(f"Built {len(built_images)}/{len(targets)} simpleImage targets in {duration:.1f}s")
+        self.logger.info(
+            f"Built {len(built_images)}/{len(targets)} simpleImage targets in {duration:.1f}s"
+        )
 
         if not built_images:
             raise BuildError("No simpleImage targets were successfully built")
