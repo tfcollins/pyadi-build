@@ -627,6 +627,32 @@ Command Not Found
 
       source venv/bin/activate
 
+Documentation Issues
+--------------------
+
+Flowgraphs Appear as Code
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Problem:**
+
+Diagrams and flowcharts in the documentation appear as raw code blocks instead of rendered images when viewing locally.
+
+**Cause:**
+
+Modern browsers block loading Javascript modules from ``file://`` URLs due to Cross-Origin Resource Sharing (CORS) security policies. The diagramming tool (Mermaid.js) uses ES modules.
+
+**Solution:**
+
+View the documentation using a local HTTP server instead of opening ``index.html`` directly:
+
+.. code-block:: bash
+
+   # From the docs/build/html directory
+   cd docs/build/html
+   python3 -m http.server
+
+Then open http://localhost:8000 in your browser.
+
 Getting More Help
 -----------------
 
