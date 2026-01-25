@@ -25,12 +25,13 @@ def mock_git_repo_for_examples(mocker, mock_kernel_source, mock_toolchain, tmp_p
     linux_link.symlink_to(mock_kernel_source)
 
     # We need to create a special mock that handles the GitRepository initialization
-    def mock_init(self, url, local_path, cache_dir=None):
+    def mock_init(self, url, local_path, cache_dir=None, script_builder=None):
         """Mock __init__ that sets up the repo property correctly."""
         self.url = url
         self.local_path = Path(local_path)
         self.cache_dir = cache_dir or Path.home() / ".adibuild" / "repos"
         self.logger = MagicMock()
+        self.script_builder = script_builder
         # This is the key: set repo to a MagicMock so it's not None
         self.repo = MagicMock()
 
