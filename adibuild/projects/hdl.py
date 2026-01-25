@@ -313,6 +313,7 @@ class HDLBuilder(BuilderBase):
         common_files = [
             self.source_dir / "library" / "scripts" / "adi_ip_xilinx.tcl",
             self.source_dir / "projects" / "scripts" / "adi_project_xilinx.tcl",
+            self.source_dir / "scripts" / "adi_env.tcl",
         ]
 
         for f in common_files:
