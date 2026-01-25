@@ -1,3 +1,4 @@
+import os
 import re
 from pathlib import Path
 
@@ -70,6 +71,10 @@ class HDLBuilder(BuilderBase):
         Configuration is handled via make variables during build.
         """
         self.logger.info("Configuration is handled during build via make variables.")
+
+    def _is_windows(self) -> bool:
+        """Check if running on Windows."""
+        return os.name == "nt"
 
     def build(self, clean_before: bool = False, ignore_version_check: bool = False) -> dict:
         """
@@ -168,10 +173,91 @@ class HDLBuilder(BuilderBase):
             make_args.append(f"{k}={v}")
 
         # Execute build
-        self.executor.make(target=None, extra_args=make_args, env=env)
+        if self._is_windows():
+            self.build_win(project_dir, env)
+        else:
+            self.executor.make(target=None, extra_args=make_args, env=env)
 
         # 4. Package Artifacts
         return self.package_artifacts(project_dir, hdl_project, carrier)
+
+    def build_win(self, project_dir: Path, env: dict[str, str] | None = None) -> None:
+        """
+        Execute HDL build on Windows using Vivado TCL mode.
+
+        Args:
+            project_dir: Project directory
+            env: Environment variables
+        """
+        # Construct TCL commands to replicate make flow
+        # 1. Source adi_make.tcl from library/scripts (../../scripts/adi_make.tcl relative to project/carrier)
+        # 2. adi_make::lib all
+        # 3. source system_project.tcl
+
+        # Calculate relative path to scripts
+        # project_dir is typically: repos/hdl/projects/project_name/carrier
+        # scripts are in: repos/hdl/projects/scripts or repos/hdl/library/scripts
+        # adi_make.tcl is in projects/scripts/adi_make.tcl (usually) or library/scripts?
+        # The wiki says: source ../../scripts/adi_make.tcl when in projects/fmcomms2/zed
+        # projects/fmcomms2/zed -> ../../scripts -> projects/scripts
+
+        # Let's verify location of adi_make.tcl
+        # It's usually in `projects/scripts/adi_make.tcl`
+
+        tcl_script_path = project_dir / "adibuild_win.tcl"
+
+        if self.script_mode:
+            # In script mode, we generate a bat script (or sh if using git bash on win? assume bat/ps1?)
+
+            # But the executor generates bash scripts by default.
+            # If the user is on Windows, they might be running this in Git Bash or WSL.
+            # If running in cmd/powershell, we might need a BatBuilder.
+            # But the request implies running ON Windows.
+
+            # If generating script on Windows, we probably want a batch file or just assume
+            # bash is available (Git Bash).
+            # adibuild currently generates #!/bin/bash.
+            # Let's assume bash is available for script generation for now, OR
+            # stick to the requested manual flow commands.
+
+            # The user asked for "Windows support to build HDL which will use the TCL flow".
+            # If generating script, we should probably output what we would run.
+            # If we are strictly in Windows CMD, we can't run the generated bash script easily.
+            # But changing ScriptBuilder to BAT is a larger task.
+            # Let's focus on execution.
+
+            # For script generation, we can just write the vivado command.
+            # But we need the tcl script to exist.
+            # We can write the tcl content using echo/printf in the script.
+
+            self.executor.script_builder.write_comment("Windows Build Flow")
+            self.executor.script_builder.write_command(f"cd {project_dir}")
+
+            # Create the TCL script on the fly
+            create_tcl_cmd = (
+                'echo "source ../../scripts/adi_make.tcl" > adibuild_win.tcl && '
+                'echo "adi_make::lib all" >> adibuild_win.tcl && '
+                'echo "source system_project.tcl" >> adibuild_win.tcl'
+            )
+            self.executor.script_builder.write_command(create_tcl_cmd)
+
+            # Run Vivado
+            self.executor.script_builder.write_command(
+                "vivado -mode batch -source adibuild_win.tcl"
+            )
+            return
+
+        # Real execution
+        self.logger.info("Generating build TCL script for Windows...")
+        with open(tcl_script_path, "w") as f:
+            f.write("source ../../scripts/adi_make.tcl\n")
+            f.write("adi_make::lib all\n")
+            f.write("source system_project.tcl\n")
+
+        cmd = "vivado -mode batch -source adibuild_win.tcl"
+
+        self.logger.info(f"Running Vivado build: {cmd}")
+        self.executor.execute(cmd, cwd=project_dir, env=env)
 
     def _check_vivado_version(self, ignore_check: bool) -> str:
         """

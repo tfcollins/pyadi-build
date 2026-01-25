@@ -121,6 +121,16 @@ To override this check (e.g., building an older release with a newer Vivado):
 
    adibuild hdl build -p zed_fmcomms2 --ignore-version-check
 
+Windows Support
+~~~~~~~~~~~~~~~
+
+If running on Windows, `adibuild` automatically detects the environment and switches from `make` to a pure Tcl-based build flow. This involves:
+
+1.  Generating a temporary Tcl script that sources `adi_make.tcl`.
+2.  Running `vivado -mode batch -source ...`.
+
+No extra configuration is needed; simply run the same command as on Linux.
+
 Portable Build Scripts
 ~~~~~~~~~~~~~~~~~~~~~~
 

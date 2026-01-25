@@ -393,7 +393,17 @@ class BuildExecutor:
         )
 
         if result.failed:
-            raise BuildError(f"Required tool '{tool}' not found in PATH")
+            if os.name == "nt":
+                # which doesn't exist on windows, use where
+                result = self.execute(
+                    f"where {tool}",
+                    stream_output=False,
+                    capture_output=True,
+                )
+                if result.failed:
+                    raise BuildError(f"Required tool '{tool}' not found in PATH")
+            else:
+                raise BuildError(f"Required tool '{tool}' not found in PATH")
 
         return True
 
