@@ -40,6 +40,67 @@ class ExecutionResult:
         return self.return_code != 0
 
 
+class ScriptBuilder:
+    """Generates bash scripts from build commands."""
+
+    def __init__(self, script_path: Path):
+        """
+        Initialize ScriptBuilder.
+
+        Args:
+            script_path: Path to output script
+        """
+        self.script_path = script_path
+        self.script_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Initialize script
+        with open(self.script_path, "w") as f:
+            f.write("#!/bin/bash\n")
+            f.write("# Auto-generated build script by adibuild\n")
+            f.write("set -e  # Exit on error\n")
+            f.write("set -x  # Print commands\n\n")
+
+    def write_command(
+        self, command: str | list[str], cwd: Path | None = None, env: dict[str, str] | None = None
+    ) -> None:
+        """
+        Write command to script.
+
+        Args:
+            command: Command string or list
+            cwd: Working directory
+            env: Environment variables
+        """
+        with open(self.script_path, "a") as f:
+            f.write("\n")
+
+            # Add directory change if needed
+            if cwd:
+                f.write(f"mkdir -p {cwd}\n")
+                f.write(f"cd {cwd}\n")
+
+            # Add environment variables
+            if env:
+                for key, value in env.items():
+                    f.write(f"export {key}='{value}'\n")
+
+            # Write command
+            if isinstance(command, list):
+                cmd_str = " ".join(command)
+            else:
+                cmd_str = command
+
+            f.write(f"{cmd_str}\n")
+
+            # Cleanup environment (optional, but good for isolation)
+            # For now we rely on subshells or just overwriting in next steps if needed
+
+    def write_comment(self, comment: str) -> None:
+        """Write comment to script."""
+        with open(self.script_path, "a") as f:
+            f.write(f"\n# {comment}\n")
+
+
 class BuildExecutor:
     """Executes build commands with streaming output and error handling."""
 
@@ -56,16 +117,23 @@ class BuildExecutor:
         re.compile(r"deprecated", re.IGNORECASE),
     ]
 
-    def __init__(self, cwd: Path | None = None, log_file: Path | None = None):
+    def __init__(
+        self,
+        cwd: Path | None = None,
+        log_file: Path | None = None,
+        script_builder: ScriptBuilder | None = None,
+    ):
         """
         Initialize BuildExecutor.
 
         Args:
             cwd: Working directory for commands
             log_file: Optional file to log command output
+            script_builder: Optional builder for generating scripts instead of executing
         """
         self.cwd = cwd or Path.cwd()
         self.log_file = log_file
+        self.script_builder = script_builder
         self.logger = get_logger("adibuild.executor")
         self.console = Console(stderr=True)
 
@@ -104,8 +172,20 @@ class BuildExecutor:
 
         self.logger.info(f"Executing: {cmd_str}")
 
+        # If in script generation mode, write to script and return success
+        if self.script_builder:
+            self.script_builder.write_command(command, self.cwd, env)
+            return ExecutionResult(
+                command=cmd_str,
+                return_code=0,
+                stdout="Command written to script",
+                stderr="",
+                duration=0.0,
+            )
+
         # Prepare environment
         exec_env = os.environ.copy()
+
         if env:
             exec_env.update(env)
 
@@ -117,10 +197,10 @@ class BuildExecutor:
         log_handle = None
         if self.log_file:
             log_handle = open(self.log_file, "a")
-            log_handle.write(f"\n{'='*80}\n")
+            log_handle.write(f"\n{'=' * 80}\n")
             log_handle.write(f"Command: {cmd_str}\n")
             log_handle.write(f"Time: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
-            log_handle.write(f"{'='*80}\n\n")
+            log_handle.write(f"{'=' * 80}\n\n")
 
         start_time = time.time()
 

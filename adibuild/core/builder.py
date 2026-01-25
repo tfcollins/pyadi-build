@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from adibuild.core.config import BuildConfig
-from adibuild.core.executor import BuildExecutor
+from adibuild.core.executor import BuildExecutor, ScriptBuilder
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
 from adibuild.utils.logger import get_logger
@@ -18,6 +18,7 @@ class BuilderBase(ABC):
         config: BuildConfig,
         platform: Platform,
         work_dir: Path | None = None,
+        script_mode: bool = False,
     ):
         """
         Initialize BuilderBase.
@@ -26,19 +27,59 @@ class BuilderBase(ABC):
             config: Build configuration
             platform: Target platform
             work_dir: Working directory (defaults to ~/.adibuild/work)
+            script_mode: If True, generate bash script instead of executing
         """
         self.config = config
         self.platform = platform
         self.work_dir = work_dir or (Path.home() / ".adibuild" / "work")
         self.work_dir.mkdir(parents=True, exist_ok=True)
+        self.script_mode = script_mode
 
         self.logger = get_logger(f"adibuild.builder.{self.__class__.__name__}")
 
-        # Initialize executor with log file
+        # Initialize script builder if in script mode
+        script_builder = None
+        if self.script_mode:
+            script_path = (
+                self.work_dir / f"build_{self.config.get_project()}_{self.platform.arch}.sh"
+            )
+            script_builder = ScriptBuilder(script_path)
+            self.logger.info(f"Generating build script at {script_path}")
+
+        # Initialize executor with log file and optional script builder
         log_file = self.work_dir / f"build-{self.platform.arch}.log"
-        self.executor = BuildExecutor(log_file=log_file)
+        self.executor = BuildExecutor(log_file=log_file, script_builder=script_builder)
 
         self._toolchain: ToolchainInfo | None = None
+
+    def copy_file(self, src: Path, dst: Path) -> None:
+        """Copy file (handles script generation)."""
+        if self.script_mode:
+            self.executor.execute(f"cp {src} {dst}")
+        else:
+            import shutil
+
+            shutil.copy(src, dst)
+
+    def download_file(self, url: str, dst: Path) -> None:
+        """Download file (handles script generation)."""
+        if self.script_mode:
+            self.executor.execute(f"wget -O {dst} {url} || curl -L -o {dst} {url}")
+        else:
+            import requests
+
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            with open(dst, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+    def make_directory(self, path: Path) -> None:
+        """Create directory (handles script generation)."""
+        if self.script_mode:
+            self.executor.execute(f"mkdir -p {path}")
+        else:
+            path.mkdir(parents=True, exist_ok=True)
 
     @property
     def toolchain(self) -> ToolchainInfo:

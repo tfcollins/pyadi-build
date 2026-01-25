@@ -90,8 +90,11 @@ def linux():
 @click.option("--clean", is_flag=True, help="Clean before building")
 @click.option("--dtbs-only", is_flag=True, help="Build only device tree blobs")
 @click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.option(
+    "--generate-script", is_flag=True, help="Generate bash script instead of executing build"
+)
 @click.pass_context
-def build(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs):
+def build(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs, generate_script):
     """
     Build Linux kernel for specified platform.
 
@@ -102,6 +105,8 @@ def build(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs):
         adibuild linux build -p zynq --clean
 
         adibuild linux build -p zynqmp --dtbs-only
+
+        adibuild linux build -p zynqmp --generate-script
     """
     try:
         # Load configuration
@@ -129,7 +134,7 @@ def build(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs):
         platform_obj = get_platform_instance(config, platform)
 
         # Create builder
-        builder = LinuxBuilder(config, platform_obj)
+        builder = LinuxBuilder(config, platform_obj, script_mode=generate_script)
 
         # Execute build
         result = builder.build(clean_before=clean, dtbs_only=dtbs_only)

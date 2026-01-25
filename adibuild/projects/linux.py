@@ -1,12 +1,9 @@
 """Linux kernel builder implementation."""
 
 import json
-import shutil
 import time
 from datetime import datetime
 from pathlib import Path
-
-import requests
 
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
@@ -23,6 +20,7 @@ class LinuxBuilder(BuilderBase):
         config: BuildConfig,
         platform: Platform,
         work_dir: Path | None = None,
+        script_mode: bool = False,
     ):
         """
         Initialize LinuxBuilder.
@@ -31,10 +29,12 @@ class LinuxBuilder(BuilderBase):
             config: Build configuration
             platform: Target platform
             work_dir: Working directory
+            script_mode: If True, generate bash script instead of executing
         """
-        super().__init__(config, platform, work_dir)
+        super().__init__(config, platform, work_dir, script_mode=script_mode)
 
         self.source_dir: Path | None = None
+
         self.repo: GitRepository | None = None
 
         # Build state
@@ -60,9 +60,10 @@ class LinuxBuilder(BuilderBase):
         self.source_dir = repo_cache
 
         # Initialize git repository
-        self.repo = GitRepository(repo_url, repo_cache)
+        self.repo = GitRepository(repo_url, repo_cache, script_builder=self.executor.script_builder)
 
         # Clone/update repository and checkout tag
+
         self.logger.info("Ensuring repository is ready...")
         self.repo.ensure_repo(ref=tag)
 
@@ -97,9 +98,10 @@ class LinuxBuilder(BuilderBase):
         # Load custom config or use defconfig
         if custom_config:
             self.logger.info(f"Using custom config from {custom_config}")
-            shutil.copy(custom_config, self.source_dir / ".config")
+            self.copy_file(custom_config, self.source_dir / ".config")
             # Run olddefconfig to update
             self.executor.make("olddefconfig", env=make_env)
+
         else:
             # Run defconfig
             self.executor.make(self.platform.defconfig, env=make_env)
@@ -150,7 +152,7 @@ class LinuxBuilder(BuilderBase):
         # Get kernel image path
         kernel_image = self.platform.get_kernel_image_full_path(self.source_dir)
 
-        if not kernel_image.exists():
+        if not self.script_mode and not kernel_image.exists():
             raise BuildError(f"Kernel image not found at expected location: {kernel_image}")
 
         self._kernel_built = True
@@ -174,18 +176,17 @@ class LinuxBuilder(BuilderBase):
 
         # Check for rootfs.cpio.gz
         rootfs_path = self.source_dir / "rootfs.cpio.gz"
-        if not rootfs_path.exists():
+        if not rootfs_path.exists() and not self.script_mode:
             self.logger.info("rootfs.cpio.gz not found, downloading...")
             url = "https://swdownloads.analog.com/cse/microblaze/rootfs/rootfs.cpio.gz"
             try:
-                response = requests.get(url, stream=True)
-                response.raise_for_status()
-                with open(rootfs_path, "wb") as f:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
+                self.download_file(url, rootfs_path)
                 self.logger.info("Downloaded rootfs.cpio.gz")
             except Exception as e:
                 raise BuildError(f"Failed to download rootfs.cpio.gz: {e}") from e
+        elif self.script_mode:
+            url = "https://swdownloads.analog.com/cse/microblaze/rootfs/rootfs.cpio.gz"
+            self.download_file(url, rootfs_path)
 
         targets = platform.simpleimage_targets
         self.logger.info(f"Building {len(targets)} MicroBlaze simpleImage targets...")
@@ -204,11 +205,12 @@ class LinuxBuilder(BuilderBase):
 
                 # Find the built image
                 image_path = self.source_dir / "arch" / "microblaze" / "boot" / target
-                if image_path.exists():
+                if self.script_mode or image_path.exists():
                     built_images.append(image_path)
                     self.logger.debug(f"Built simpleImage: {target}")
                 else:
                     self.logger.warning(f"simpleImage not found at expected location: {image_path}")
+
             except BuildError as e:
                 self.logger.warning(f"Failed to build target {target}: {e}")
                 continue
@@ -273,11 +275,12 @@ class LinuxBuilder(BuilderBase):
                 make_target = self.platform.get_dtb_make_target(dtb)
                 self.executor.make(make_target, jobs=jobs, env=make_env)
                 dtb_path = dtb_dir / dtb
-                if dtb_path.exists():
+                if self.script_mode or dtb_path.exists():
                     built_dtbs.append(dtb_path)
                     self.logger.debug(f"Built DTB: {dtb}")
                 else:
                     self.logger.warning(f"DTB build succeeded but file not found: {dtb}")
+
             except BuildError as e:
                 self.logger.warning(f"Failed to build DTB {dtb}: {e}")
                 continue
@@ -374,54 +377,56 @@ class LinuxBuilder(BuilderBase):
             if isinstance(kernel_image, list):
                 for img in kernel_image:
                     output_kernel = output_dir / img.name
-                    shutil.copy(img, output_kernel)
+                    self.copy_file(img, output_kernel)
                 self.logger.info(f"Copied {len(kernel_image)} kernel images to {output_dir}")
             else:
                 output_kernel = output_dir / kernel_image.name
-                shutil.copy(kernel_image, output_kernel)
+                self.copy_file(kernel_image, output_kernel)
                 self.logger.info(f"Copied kernel image to {output_kernel}")
 
         # Copy DTBs
         if dtbs:
             dtb_output_dir = output_dir / "dts"
-            dtb_output_dir.mkdir(exist_ok=True)
+            self.make_directory(dtb_output_dir)
 
             for dtb in dtbs:
                 output_dtb = dtb_output_dir / dtb.name
-                shutil.copy(dtb, output_dtb)
+                self.copy_file(dtb, output_dtb)
 
             self.logger.info(f"Copied {len(dtbs)} DTBs to {dtb_output_dir}")
 
-        # Generate metadata
-        if isinstance(kernel_image, list):
-            kernel_images = [img.name for img in kernel_image]
-        elif kernel_image:
-            kernel_images = [kernel_image.name]
-        else:
-            kernel_images = []
+        # Generate metadata (skip in script mode for now or implement file writing via echo)
+        if not self.script_mode:
+            if isinstance(kernel_image, list):
+                kernel_images = [img.name for img in kernel_image]
+            elif kernel_image:
+                kernel_images = [kernel_image.name]
+            else:
+                kernel_images = []
 
-        metadata = {
-            "project": self.config.get_project(),
-            "platform": self.platform.arch,
-            "defconfig": self.platform.defconfig,
-            "tag": self.config.get_tag(),
-            "commit_sha": self.repo.get_commit_sha() if self.repo else None,
-            "build_date": datetime.now().isoformat(),
-            "toolchain": {
-                "type": self.toolchain.type,
-                "version": self.toolchain.version,
-            },
-            "artifacts": {
-                "kernel_images": kernel_images,
-                "dtbs": [dtb.name for dtb in dtbs],
-            },
-        }
+            metadata = {
+                "project": self.config.get_project(),
+                "platform": self.platform.arch,
+                "defconfig": self.platform.defconfig,
+                "tag": self.config.get_tag(),
+                "commit_sha": self.repo.get_commit_sha() if self.repo else None,
+                "build_date": datetime.now().isoformat(),
+                "toolchain": {
+                    "type": self.toolchain.type,
+                    "version": self.toolchain.version,
+                },
+                "artifacts": {
+                    "kernel_images": kernel_images,
+                    "dtbs": [dtb.name for dtb in dtbs],
+                },
+            }
 
-        metadata_file = output_dir / "metadata.json"
-        with open(metadata_file, "w") as f:
-            json.dump(metadata, f, indent=2)
+            metadata_file = output_dir / "metadata.json"
+            with open(metadata_file, "w") as f:
+                json.dump(metadata, f, indent=2)
 
-        self.logger.info(f"Generated metadata: {metadata_file}")
+            self.logger.info(f"Generated metadata: {metadata_file}")
+
         self.logger.info(f"All artifacts packaged in: {output_dir}")
 
         return output_dir
