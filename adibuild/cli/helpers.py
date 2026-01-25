@@ -11,6 +11,7 @@ from adibuild import __version__
 from adibuild.core.config import BuildConfig, ConfigurationError
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
+from adibuild.platforms.hdl import HDLPlatform
 from adibuild.platforms.microblaze import MicroBlazePlatform
 from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
@@ -41,7 +42,7 @@ def print_warning(message: str):
 
 def load_config_with_overrides(
     config_file: str | None,
-    platform: str,
+    platform: str | None,
     tag: str | None,
 ) -> BuildConfig:
     """
@@ -49,7 +50,7 @@ def load_config_with_overrides(
 
     Args:
         config_file: Optional configuration file path
-        platform: Platform name
+        platform: Platform name (optional)
         tag: Optional tag override
 
     Returns:
@@ -62,9 +63,9 @@ def load_config_with_overrides(
             # Try to load default configs
             config_dir = Path(__file__).parent.parent.parent / "configs" / "linux"
 
-            # Try platform-specific config first
-            platform_config = config_dir / f"{platform}.yaml"
-            if platform_config.exists():
+            # Try platform-specific config first if platform provided
+            platform_config = config_dir / f"{platform}.yaml" if platform else None
+            if platform_config and platform_config.exists():
                 config = BuildConfig.from_yaml(platform_config)
             else:
                 # Try 2023_R2 config
@@ -72,6 +73,22 @@ def load_config_with_overrides(
                 if default_config.exists():
                     config = BuildConfig.from_yaml(default_config)
                 else:
+                    # If platform was not provided, and default not found,
+                    # create empty config if we are in dynamic mode (platform=None)
+                    # But if we rely on default configs being present, raise error.
+                    # For Linux builds config is usually required.
+                    # For HDL builds with --project/--carrier, an empty config might suffice
+                    # if we inject platforms later.
+
+                    # Let's return empty config if no file found, to support dynamic builds without config file
+                    # provided we assume defaults for missing fields.
+                    # Or simpler: require a config file always, but fallback to empty dict
+                    # if we are just testing or in a very custom mode.
+
+                    # However, existing logic raised Error. Let's keep existing behavior for now
+                    # unless platform is None?
+
+                    # If no default config found, and no user config, raise error
                     raise ConfigurationError(
                         "No configuration file found. Please specify with --config"
                     )
@@ -97,8 +114,15 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
     Returns:
         Platform instance
     """
+
     try:
         platform_config = config.get_platform(platform_name)
+        # Inject platform name into config
+        platform_config["name"] = platform_name
+
+        # Check if it's an HDL config
+        if platform_config.get("hdl_project") or config.get_project() == "hdl":
+            return HDLPlatform(platform_config)
 
         # Create appropriate platform instance
         arch = platform_config.get("arch")

@@ -92,6 +92,7 @@ class VivadoToolchain(Toolchain):
         """Get default search paths for Vivado/Vitis."""
         paths = []
         for version in [
+            "2025.2",
             "2025.1",
             "2024.2",
             "2024.1",

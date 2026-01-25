@@ -19,6 +19,7 @@ from adibuild.cli.helpers import (
 )
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
+from adibuild.projects.hdl import HDLBuilder
 from adibuild.projects.linux import LinuxBuilder
 from adibuild.utils.logger import setup_logging
 
@@ -69,6 +70,122 @@ def cli(ctx, verbose, config):
     ctx.obj["verbose"] = verbose
 
 
+@cli.group()
+def hdl():
+    """HDL project build commands."""
+    pass
+
+
+@hdl.command(name="build")
+@click.option(
+    "--platform",
+    "-p",
+    required=False,
+    help="Target platform/build config (e.g. zed_fmcomms2)",
+)
+@click.option("--project", help="HDL project name (e.g. fmcomms2)")
+@click.option("--carrier", help="Carrier board name (e.g. zed)")
+@click.option("--arch", default="unknown", help="Architecture (e.g. arm, arm64)")
+@click.option("--tag", "-t", help="Git tag or branch to build")
+@click.option("--output", "-o", type=click.Path(), help="Output directory")
+@click.option("--clean", is_flag=True, help="Clean before building")
+@click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.option("--ignore-version-check", is_flag=True, help="Ignore Vivado version check")
+@click.option(
+    "--generate-script", is_flag=True, help="Generate bash script instead of executing build"
+)
+@click.pass_context
+def build_hdl(
+    ctx,
+    platform,
+    project,
+    carrier,
+    arch,
+    tag,
+    output,
+    clean,
+    jobs,
+    ignore_version_check,
+    generate_script,
+):
+    """
+    Build HDL project for specified platform.
+
+    You must specify either --platform OR both --project and --carrier.
+
+    Examples:
+
+        adibuild hdl build -p zed_fmcomms2
+
+        adibuild hdl build --project fmcomms2 --carrier zed
+
+        adibuild hdl build --project daq2 --carrier zcu102 --arch arm64
+    """
+    if not platform and not (project and carrier):
+        print_error("You must specify either --platform OR both --project and --carrier")
+
+    if platform and (project or carrier):
+        # We could allow overriding, but keeping it simple for now
+        print_error("Specify --platform OR --project/--carrier, not both")
+
+    try:
+        # Load configuration
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+        )
+
+        # Handle dynamic platform injection
+        if not platform:
+            platform = f"{carrier}_{project}"
+            # Inject config for this synthetic platform
+            config.set(
+                f"platforms.{platform}",
+                {
+                    "hdl_project": project,
+                    "carrier": carrier,
+                    "arch": arch,
+                    # Add "name" so it's available in platform object (used by HDLPlatform.name)
+                    "name": platform,
+                },
+            )
+
+        # Override parallel jobs if specified
+        if jobs:
+            config.set("build.parallel_jobs", jobs)
+
+        # Override output directory if specified
+        if output:
+            config.set("build.output_dir", output)
+
+        # Get platform instance
+        # Note: HDL platforms might just use generic Platform class
+        # or we might need specific ones if toolchain logic differs.
+        # For now, generic Platform with config dict is enough.
+        platform_obj = get_platform_instance(config, platform)
+
+        # Create builder
+        builder = HDLBuilder(config, platform_obj, script_mode=generate_script)
+
+        # Execute build
+        result = builder.build(clean_before=clean, ignore_version_check=ignore_version_check)
+
+        # Display summary (reuse or create new)
+        # display_build_summary is tailored for Linux (dtbs etc), but we can adapt it or make generic
+        # For now, just print success.
+        print_success(f"HDL Build completed. Artifacts in: {result['output_dir']}")
+
+    except BuildError as e:
+        print_error(f"Build failed: {e}")
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+        if ctx.obj.get("verbose", 0) > 1:
+            import traceback
+
+            traceback.print_exc()
+
+
 # Linux kernel command group
 @cli.group()
 def linux():
@@ -76,7 +193,7 @@ def linux():
     pass
 
 
-@linux.command()
+@linux.command(name="build")
 @click.option(
     "--platform",
     "-p",
@@ -94,7 +211,7 @@ def linux():
     "--generate-script", is_flag=True, help="Generate bash script instead of executing build"
 )
 @click.pass_context
-def build(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs, generate_script):
+def build_linux(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs, generate_script):
     """
     Build Linux kernel for specified platform.
 
