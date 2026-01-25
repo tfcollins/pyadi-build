@@ -6,6 +6,27 @@ This guide provides a complete reference for the pyadi-build command-line interf
 Overview
 --------
 
+The ``adibuild`` CLI is organized into command groups for managing configurations, toolchains, and project builds.
+
+.. mermaid::
+
+   graph LR
+       CLI[adibuild] --> Config[config]
+       CLI --> Linux[linux]
+       CLI --> HDL[hdl]
+       CLI --> Toolchain[toolchain]
+       
+       Config --> Init[init]
+       Config --> Validate[validate]
+       
+       Linux --> LBuild[build]
+       Linux --> LMenu[menuconfig]
+       Linux --> LDtbs[dtbs]
+       
+       HDL --> HBuild[build]
+       
+       style CLI fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
+
 The ``adibuild`` CLI is organized into command groups:
 
 - **linux** - Linux kernel build commands

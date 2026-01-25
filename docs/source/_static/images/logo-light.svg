@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <!-- Icon: Hexagon with Play Triangle -->
+  <g transform="translate(10, 5)">
+    <!-- Hexagon -->
+    <path d="M20 0 L37.32 10 V30 L20 40 L2.68 30 V10 Z" fill="#005c9a"/>
+    <!-- Play Triangle -->
+    <path d="M16 12 L28 20 L16 28 Z" fill="#ffffff"/>
+  </g>
+  
+  <!-- Text: pyadi-build -->
+  <text x="55" y="32" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#333333">
+    pyadi-build
+  </text>
+</svg>

@@ -16,11 +16,17 @@ High-Level Architecture
        Builder --> Executor[Executor]
        Builder --> Git[GitRepository]
        Executor --> Make[Make/Build Commands]
-       Git --> Repo[Kernel Repository]
+       Git --> Repo[Repository]
 
-       style CLI fill:#e1f5ff
-       style Builder fill:#fff3e0
-       style Executor fill:#c8e6c9
+       subgraph Builders
+       Builder --> Linux[LinuxBuilder]
+       Builder --> HDL[HDLBuilder]
+       end
+
+       style CLI fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
+       style Builder fill:#4dabf7,stroke:#333,stroke-width:2px,color:#fff
+       style Executor fill:#a5d8ff,stroke:#333,stroke-width:2px
+       style Config fill:#e7f5ff,stroke:#333,stroke-width:2px
 
 Components
 ----------
@@ -101,19 +107,38 @@ Build Workflow
 Class Hierarchy
 ---------------
 
-.. code-block:: text
+.. mermaid::
 
-   BuilderBase (abstract)
-   └── LinuxBuilder
+   classDiagram
+      class BuilderBase {
+          <<abstract>>
+          +build()
+          +prepare_source()
+      }
+      class LinuxBuilder {
+          +configure()
+          +menuconfig()
+      }
+      class HDLBuilder {
+          +build_win()
+          +check_version()
+      }
+      BuilderBase <|-- LinuxBuilder
+      BuilderBase <|-- HDLBuilder
 
-   PlatformBase (abstract)
-   ├── ZynqPlatform
-   └── ZynqMPPlatform
+      class PlatformBase {
+          <<abstract>>
+          +get_toolchain()
+      }
+      class ZynqPlatform
+      class ZynqMPPlatform
+      class HDLPlatform
+      PlatformBase <|-- ZynqPlatform
+      PlatformBase <|-- ZynqMPPlatform
+      PlatformBase <|-- HDLPlatform
 
-   ToolchainBase (abstract)
-   ├── VivadoToolchain
-   ├── ArmToolchain
-   └── SystemToolchain
+      style BuilderBase fill:#f9f,stroke:#333
+      style PlatformBase fill:#f9f,stroke:#333
 
 Key Design Decisions
 --------------------

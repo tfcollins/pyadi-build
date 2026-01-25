@@ -59,11 +59,11 @@ html_theme_options = {
 }
 
 # Logo files (light and dark variants)
-# html_logo = "_static/images/adi-logo-light.png"
-# html_theme_options["logo"] = {
-#     "image_light": "_static/images/adi-logo-light.png",
-#     "image_dark": "_static/images/adi-logo-dark.png",
-# }
+html_logo = "_static/images/logo-light.svg"
+html_theme_options["logo"] = {
+    "image_light": "_static/images/logo-light.svg",
+    "image_dark": "_static/images/logo-dark.svg",
+}
 
 # -- Options for autodoc -----------------------------------------------------
 autodoc_default_options = {

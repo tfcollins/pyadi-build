@@ -6,7 +6,29 @@ This guide explains how to build HDL projects for Analog Devices hardware using 
 Overview
 --------
 
-The HDL build process automates the generation of bitstreams (`.bit`) and hardware definition files (`.xsa`) for ADI reference designs. It handles:
+The HDL build process automates the generation of bitstreams (`.bit`) and hardware definition files (`.xsa`) for ADI reference designs. It handles cloning, version checking, and build execution across different operating systems.
+
+.. mermaid::
+
+   flowchart TD
+       Start([Start Build]) --> Config{Config Type?}
+       Config -->|Platform| LoadConfig[Load Config File]
+       Config -->|Args| ParseArgs[Parse CLI Args]
+       LoadConfig & ParseArgs --> PrepSource[Clone/Prepare Source]
+       PrepSource --> CheckVer{Check Vivado Ver}
+       CheckVer -->|Mismatch| Fail[Error]
+       CheckVer -->|Match/Ignore| DetectOS{OS?}
+       DetectOS -->|Linux| RunMake[Run make]
+       DetectOS -->|Windows| RunTcl[Run Vivado Tcl]
+       RunMake & RunTcl --> Collect[Collect Artifacts]
+       Collect --> End([Done])
+       
+       style Start fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
+       style End fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
+       style CheckVer fill:#f9f,stroke:#333,stroke-width:2px
+       style DetectOS fill:#f9f,stroke:#333,stroke-width:2px
+
+It handles:
 
 1.  Cloning the `hdl` repository.
 2.  Checking out the correct release tag.
