@@ -10,6 +10,7 @@ Modules
    :maxdepth: 1
 
    linux
+   hdl
 
 Overview
 --------
@@ -17,8 +18,8 @@ Overview
 The projects package contains builders for different project types:
 
 - **linux** - Linux kernel builder
+- **hdl** - HDL project builder
 
 Future project builders may include:
 
-- **hdl** - HDL project builder (planned)
 - **libiio** - libiio library builder (planned)

@@ -64,6 +64,15 @@ for using pyadi-build as both a CLI tool and Python library.
 
       Understanding build artifacts
 
+   .. grid-item-card:: HDL Builds
+      :link: hdl-builds
+      :link-type: doc
+      :text-align: center
+
+      :octicon:`circuit-board;2em`
+
+      Building HDL projects for ADI hardware
+
 Topics Covered
 --------------
 
@@ -81,6 +90,9 @@ Topics Covered
 
 **Platforms**
    Platform-specific details for Zynq, ZynqMP, and MicroBlaze
+
+**HDL Builds**
+   Guide for building HDL projects, including configuration and version management
 
 **Build Outputs**
    Understanding the structure and contents of build artifacts
@@ -114,4 +126,5 @@ Before using this guide, you should have:
    configuration-guide
    toolchain-management
    platforms
+   hdl-builds
    build-outputs

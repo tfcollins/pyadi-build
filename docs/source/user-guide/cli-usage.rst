@@ -52,6 +52,80 @@ Examples:
    # Use custom config
    adibuild --config my_config.yaml linux build -p zynqmp
 
+HDL Project Commands
+--------------------
+
+Build Command
+~~~~~~~~~~~~~
+
+Build an HDL project for the specified platform.
+
+.. code-block:: bash
+
+   adibuild hdl build [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   Target platform defined in config (e.g., ``zed_fmcomms2``). Mutually exclusive with ``--project``/``--carrier``.
+
+.. option:: --project PROJECT
+
+   HDL project name (e.g., ``fmcomms2``). Required if platform not used.
+
+.. option:: --carrier CARRIER
+
+   Carrier board name (e.g., ``zed``). Required if platform not used.
+
+.. option:: --arch ARCH
+
+   Target architecture (default: ``unknown``). Used for output directory naming.
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build.
+
+.. option:: --output DIR, -o DIR
+
+   Output directory for build artifacts.
+
+.. option:: --clean
+
+   Clean before building (runs ``make clean``).
+
+.. option:: --jobs N, -j N
+
+   Number of parallel jobs (sets ``ADI_MAX_OOC_JOBS``).
+
+.. option:: --ignore-version-check
+
+   Force build even if Vivado version does not match requirement.
+
+.. option:: --generate-script
+
+   Generate a bash script instead of executing the build.
+
+**Examples:**
+
+Using config file:
+
+.. code-block:: bash
+
+   adibuild hdl build -p zed_fmcomms2
+
+Using dynamic arguments:
+
+.. code-block:: bash
+
+   adibuild hdl build --project fmcomms2 --carrier zed
+
+Force build with version mismatch:
+
+.. code-block:: bash
+
+   adibuild hdl build -p zed_fmcomms2 --ignore-version-check
+
 Linux Kernel Commands
 ---------------------
 

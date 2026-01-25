@@ -54,7 +54,7 @@ Defines what project to build.
 
    :Type: string
    :Required: Yes
-   :Values: ``linux`` (``hdl`` and ``libiio`` planned for future)
+   :Values: ``linux``, ``hdl``
 
    Project type to build.
 
@@ -181,7 +181,14 @@ Platform Configuration
            - arm
            - system
 
-**Fields:**
+     zed_fmcomms2:
+       hdl_project: fmcomms2
+       carrier: zed
+       arch: arm
+       make_variables:
+         RX_LANE_RATE: 2.5
+
+**Fields (Linux):**
 
 .. describe:: arch
 
@@ -278,6 +285,37 @@ Platform Configuration
 
       # ARM32
       kernel_image_path: arch/arm/boot/uImage
+
+**Fields (HDL):**
+
+.. describe:: hdl_project
+
+   :Type: string
+   :Required: Yes (for HDL)
+
+   HDL project name (e.g., ``fmcomms2``, ``daq2``).
+
+.. describe:: carrier
+
+   :Type: string
+   :Required: Yes (for HDL)
+
+   Carrier board name (e.g., ``zed``, ``zcu102``).
+
+.. describe:: make_variables
+
+   :Type: dictionary
+   :Required: No
+
+   Variables to pass to make command.
+
+   **Example:**
+
+   .. code-block:: yaml
+
+      make_variables:
+        RX_LANE_RATE: 2.5
+        JESD_MODE: 64T64R
 
 Device Tree Blobs
 ~~~~~~~~~~~~~~~~~

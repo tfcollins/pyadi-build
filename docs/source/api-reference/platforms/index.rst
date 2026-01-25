@@ -13,6 +13,7 @@ Modules
    zynq
    zynqmp
    microblaze
+   hdl
 
 Overview
 --------
@@ -23,6 +24,7 @@ The platforms package contains platform-specific implementations:
 - **zynq** - Zynq (ARM32) platform
 - **zynqmp** - ZynqMP (ARM64) platform
 - **microblaze** - MicroBlaze (soft-core) platform
+- **hdl** - Generic platform wrapper for HDL projects
 
 Quick Example
 -------------
