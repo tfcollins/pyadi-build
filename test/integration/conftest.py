@@ -36,7 +36,11 @@ def real_toolchain_arm64():
 
 
 @pytest.fixture(scope="session")
-def real_toolchain_microblaze():
+def real_toolchain_hdl():
+    """Detect or skip if Vivado not available for HDL builds."""
+    if not shutil.which("vivado"):
+        pytest.skip("Vivado not found in PATH")
+    return "vivado"
     """Detect or skip if MicroBlaze toolchain not available."""
     from adibuild.core.toolchain import ToolchainError, select_toolchain
 
@@ -173,6 +177,27 @@ def minimal_microblaze_config(tmp_path, real_build_config):
                     "preferred": "vivado",
                     "fallback": [],
                 },
+            }
+        },
+    }
+
+
+@pytest.fixture
+def hdl_zed_fmcomms2_config(tmp_path, real_build_config):
+    """HDL configuration for Zedboard + FMCOMMS2."""
+    return {
+        "project": "hdl",
+        "repository": "https://github.com/analogdevicesinc/hdl.git",
+        "tag": "hdl_2023_r2",
+        "build": {
+            "parallel_jobs": real_build_config["parallel_jobs"],
+            "output_dir": str(tmp_path / "build"),
+        },
+        "platforms": {
+            "zed_fmcomms2": {
+                "hdl_project": "fmcomms2",
+                "carrier": "zed",
+                "arch": "arm",
             }
         },
     }
