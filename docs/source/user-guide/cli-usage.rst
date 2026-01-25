@@ -90,9 +90,14 @@ Options:
 
    Build only device tree blobs, not the kernel
 
+
 .. option:: --jobs N, -j N
 
    Number of parallel jobs (default: number of CPU cores)
+
+.. option:: --generate-script
+
+   Generate a bash script (e.g., ``build_linux_arm64.sh``) instead of executing the build. Useful for dry runs, debugging, or creating portable build scripts.
 
 **Examples:**
 
@@ -126,11 +131,18 @@ Custom output directory:
 
    adibuild linux build -p zynqmp -t 2023_R2 -o /tmp/build
 
+
 Override defconfig:
 
 .. code-block:: bash
 
    adibuild linux build -p zynq -t 2023_R2 --defconfig defconfig
+
+Generate build script (dry run):
+
+.. code-block:: bash
+
+   adibuild linux build -p zynqmp -t 2023_R2 --generate-script
 
 Configure Command
 ~~~~~~~~~~~~~~~~~
@@ -585,8 +597,22 @@ Faster Builds
    # Use all CPU cores
    adibuild linux build -p zynqmp -t 2023_R2 -j $(nproc)
 
+
    # Use tmpfs for faster I/O
    adibuild linux build -p zynqmp -t 2023_R2 -o /tmp/build
+
+Generate Portable Build Scripts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can generate a bash script to run the build later or on another machine:
+
+.. code-block:: bash
+
+   # Generate script for ZynqMP
+   adibuild linux build -p zynqmp -t 2023_R2 --generate-script
+
+   # Run the generated script
+   bash ~/.adibuild/work/build_linux_arm64.sh
 
 Debugging Build Issues
 ~~~~~~~~~~~~~~~~~~~~~~

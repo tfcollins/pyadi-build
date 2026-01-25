@@ -5,6 +5,7 @@ Command execution and build orchestration.
 
 .. currentmodule:: adibuild.core.executor
 
+
 .. autoclass:: BuildExecutor
    :members:
    :undoc-members:
@@ -61,6 +62,13 @@ Command execution and build orchestration.
           ['make', 'defconfig'],
           env=env
       )
+
+
+.. autoclass:: ScriptBuilder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members: __init__
 
 Exceptions
 ----------
