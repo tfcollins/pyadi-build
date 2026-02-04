@@ -73,6 +73,15 @@ for using pyadi-build as both a CLI tool and Python library.
 
       Building HDL projects for ADI hardware
 
+   .. grid-item-card:: MCP Server
+      :link: mcp-server
+      :link-type: doc
+      :text-align: center
+
+      :octicon:`server;2em`
+
+      Using the Model Context Protocol server
+
 Topics Covered
 --------------
 
@@ -93,6 +102,9 @@ Topics Covered
 
 **HDL Builds**
    Guide for building HDL projects, including configuration and version management
+
+**MCP Server**
+   Guide for using the Model Context Protocol server integration
 
 **Build Outputs**
    Understanding the structure and contents of build artifacts
@@ -127,4 +139,5 @@ Before using this guide, you should have:
    toolchain-management
    platforms
    hdl-builds
+   mcp-server
    build-outputs

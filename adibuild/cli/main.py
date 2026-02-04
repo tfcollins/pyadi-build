@@ -598,6 +598,21 @@ def config_show(config):
         print_error(f"Failed to load configuration: {e}")
 
 
+@cli.command()
+def mcp():
+    """
+    Start the MCP server.
+    """
+    try:
+        from adibuild.cli.mcp_server import mcp
+
+        mcp.run()
+    except ImportError:
+        print_error("fastmcp is not installed. Please install with 'pip install fastmcp'.")
+    except Exception as e:
+        print_error(f"Failed to start MCP server: {e}")
+
+
 # Main entry point
 def main():
     """Main entry point for CLI."""
