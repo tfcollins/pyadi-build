@@ -131,12 +131,13 @@ class Platform(ABC):
         """
         pass
 
-    def get_toolchain(self, vivado_version: str | None = None) -> ToolchainInfo:
+    def get_toolchain(self, tool_version: str | None = None) -> ToolchainInfo:
         """
         Get or select toolchain for this platform.
 
         Args:
-            vivado_version: Optional Vivado version for toolchain selection
+            tool_version: Preferred tool version (e.g., "2023.2") for toolchain selection.
+                          If not specified, checks self.config.get("tool_version").
 
         Returns:
             ToolchainInfo for selected toolchain
@@ -149,8 +150,22 @@ class Platform(ABC):
         preferred = toolchain_config.get("preferred", "vivado")
         fallbacks = toolchain_config.get("fallback", ["arm", "system"])
 
+        # Use tool_version from parameter, or fall back to config
+        if not tool_version:
+            tool_version = self.config.get("tool_version")
+
+        # Get strict_version from config (defaults to False)
+        strict_version = self.config.get("strict_version", False)
+
         self.logger.info(f"Selecting toolchain for {self.arch} architecture")
-        self._toolchain = select_toolchain(preferred, fallbacks, vivado_version)
+        if tool_version:
+            self.logger.info(f"Preferred tool version: {tool_version}")
+            if strict_version:
+                self.logger.info("Strict version matching enabled")
+
+        self._toolchain = select_toolchain(
+            preferred, fallbacks, tool_version, strict_version
+        )
 
         return self._toolchain
 

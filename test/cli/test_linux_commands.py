@@ -1,7 +1,36 @@
 """Tests for Linux kernel build commands."""
 
+import pytest
+
+from adibuild.cli.helpers import tag_to_tool_version
 from adibuild.cli.main import cli
 from adibuild.core.executor import BuildError
+
+# ============================================================================
+# tag_to_tool_version Tests
+# ============================================================================
+
+
+@pytest.mark.parametrize(
+    "tag,expected",
+    [
+        ("2023_R2", "2023.2"),
+        ("2023_R1", "2023.1"),
+        ("2022_R2", "2022.2"),
+        ("2021_R1", "2021.1"),
+        ("2023_R2_P1", "2023.2"),
+        ("2022_R2_P3", "2022.2"),
+        ("main", None),
+        ("master", None),
+        ("v1.0.0", None),
+        ("", None),
+        (None, None),
+    ],
+)
+def test_tag_to_tool_version(tag, expected):
+    """Test tag_to_tool_version mapping."""
+    assert tag_to_tool_version(tag) == expected
+
 
 # ============================================================================
 # Build Command Tests
@@ -424,3 +453,518 @@ def test_clean_failure(cli_runner, mock_config_loading, mocker):
 
     assert result.exit_code == 1
     assert "Clean failed" in result.output or "Error" in result.output
+
+
+# ============================================================================
+# Simpleimage Option Tests
+# ============================================================================
+
+
+def test_build_microblaze_with_simpleimage(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
+    """Test build command with --simpleimage for microblaze."""
+    mock_platform = mocker.MagicMock()
+    mock_platform.name = "microblaze"
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    result = cli_runner.invoke(
+        cli,
+        [
+            "linux",
+            "build",
+            "-p",
+            "microblaze",
+            "--simpleimage",
+            "simpleImage.vcu118_ad9081",
+        ],
+    )
+
+    assert result.exit_code == 0
+
+
+def test_build_simpleimage_invalid_for_zynqmp(cli_runner, mock_config_loading, mocker):
+    """Test --simpleimage errors for non-microblaze platforms."""
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "--simpleimage", "simpleImage.vcu118"],
+    )
+
+    assert result.exit_code == 1
+    assert "only valid for MicroBlaze" in result.output
+
+
+def test_build_microblaze_multiple_simpleimages(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
+    """Test multiple --simpleimage options."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    result = cli_runner.invoke(
+        cli,
+        [
+            "linux",
+            "build",
+            "-p",
+            "microblaze",
+            "-s",
+            "simpleImage.vcu118",
+            "-s",
+            "simpleImage.kcu105",
+        ],
+    )
+
+    assert result.exit_code == 0
+
+
+def test_build_microblaze_simpleimage_sets_config(cli_runner, mock_build_success, mocker):
+    """Test that --simpleimage correctly sets simpleimage_targets in config."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_config = mocker.MagicMock()
+    mock_config.get_platform.return_value = {}
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
+
+    result = cli_runner.invoke(
+        cli,
+        [
+            "linux",
+            "build",
+            "-p",
+            "microblaze",
+            "--simpleimage",
+            "simpleImage.vcu118_ad9081",
+        ],
+    )
+
+    assert result.exit_code == 0
+    # Verify simpleimage_targets was set
+    platform_config = mock_config.get_platform.return_value
+    assert platform_config["simpleimage_targets"] == ["simpleImage.vcu118_ad9081"]
+    assert platform_config["kernel_target"] == "simpleImage.vcu118_ad9081"
+
+
+# ============================================================================
+# Simpleimage Preset Option Tests
+# ============================================================================
+
+
+def test_build_simpleimage_preset_requires_tag(cli_runner, mock_config_loading, mocker):
+    """Test --simpleimage-preset requires -t tag."""
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "microblaze", "--simpleimage-preset"],
+    )
+    assert result.exit_code == 1
+    assert "requires -t/--tag" in result.output
+
+
+def test_build_simpleimage_preset_invalid_for_zynqmp(
+    cli_runner, mock_config_loading, mocker
+):
+    """Test --simpleimage-preset errors for non-microblaze platforms."""
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--simpleimage-preset"],
+    )
+    assert result.exit_code == 1
+    assert "only valid for MicroBlaze" in result.output
+
+
+def test_build_simpleimage_preset_conflicts_with_simpleimage(
+    cli_runner, mock_config_loading, mocker
+):
+    """Test cannot use both --simpleimage and --simpleimage-preset."""
+    result = cli_runner.invoke(
+        cli,
+        [
+            "linux",
+            "build",
+            "-p",
+            "microblaze",
+            "-t",
+            "2023_R2",
+            "--simpleimage",
+            "simpleImage.vcu118",
+            "--simpleimage-preset",
+        ],
+    )
+    assert result.exit_code == 1
+    assert "Cannot use both" in result.output
+
+
+def test_build_simpleimage_preset_interactive(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
+    """Test --simpleimage-preset interactive selection."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    # Mock the preset helpers
+    mock_presets = [
+        {
+            "project": "ad9081_fmca_ebz",
+            "carrier": "vcu118",
+            "simpleimage_target": "simpleImage.vcu118_ad9081",
+            "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081.dts",
+        },
+    ]
+    mocker.patch(
+        "adibuild.cli.helpers.get_simpleimage_presets", return_value=mock_presets
+    )
+
+    # Simulate user selecting option "1"
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "microblaze", "-t", "2023_R2", "--simpleimage-preset"],
+        input="1\n",
+    )
+
+    assert result.exit_code == 0
+
+
+def test_build_simpleimage_preset_with_carrier_filter(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
+    """Test --simpleimage-preset with --carrier filter."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_presets = [
+        {
+            "project": "ad9081_fmca_ebz",
+            "carrier": "vcu118",
+            "simpleimage_target": "simpleImage.vcu118_ad9081",
+            "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081.dts",
+        },
+    ]
+    mock_get_presets = mocker.patch(
+        "adibuild.cli.helpers.get_simpleimage_presets", return_value=mock_presets
+    )
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "microblaze", "-t", "2023_R2", "-sp", "-c", "vcu118"],
+        input="1\n",
+    )
+
+    assert result.exit_code == 0
+    # Verify carrier was passed to get_simpleimage_presets
+    mock_get_presets.assert_called_once_with("2023_R2", carrier="vcu118")
+
+
+def test_build_carrier_requires_simpleimage_preset(
+    cli_runner, mock_config_loading, mocker
+):
+    """Test --carrier requires --simpleimage-preset."""
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "microblaze", "-t", "2023_R2", "--carrier", "vcu118"],
+    )
+    assert result.exit_code == 1
+    assert "requires --simpleimage-preset" in result.output
+
+
+def test_build_simpleimage_preset_no_presets_found(
+    cli_runner, mock_config_loading, mocker
+):
+    """Test --simpleimage-preset with no presets found for tag."""
+    mocker.patch("adibuild.cli.helpers.get_simpleimage_presets", return_value=[])
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "microblaze", "-t", "invalid_tag", "-sp"],
+    )
+
+    assert result.exit_code == 1
+    assert "No simpleImage presets found" in result.output
+
+
+def test_build_simpleimage_preset_no_presets_for_carrier(
+    cli_runner, mock_config_loading, mocker
+):
+    """Test --simpleimage-preset with no presets found for carrier."""
+    mocker.patch("adibuild.cli.helpers.get_simpleimage_presets", return_value=[])
+
+    result = cli_runner.invoke(
+        cli,
+        [
+            "linux",
+            "build",
+            "-p",
+            "microblaze",
+            "-t",
+            "2023_R2",
+            "-sp",
+            "-c",
+            "invalid_carrier",
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "No simpleImage presets found" in result.output
+    assert "carrier" in result.output
+
+
+# ============================================================================
+# Tool Version Auto-Detection Tests
+# ============================================================================
+
+
+def test_tool_version_auto_detect_from_tag(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
+    """Test tool version is auto-detected from release tag."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "2023_R2"],
+    )
+
+    assert result.exit_code == 0
+    assert "Auto-detected tool version 2023.2 from tag 2023_R2" in result.output
+
+
+def test_tool_version_override(cli_runner, mock_build_success, mocker):
+    """Test --tool-version overrides auto-detection."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_config = mocker.MagicMock()
+    mock_config.get_platform.return_value = {}
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--tool-version", "2022.2"],
+    )
+
+    assert result.exit_code == 0
+    # Should NOT show auto-detected message since override was provided
+    assert "Auto-detected tool version" not in result.output
+    # Verify tool_version was set in platform config
+    platform_config = mock_config.get_platform.return_value
+    assert platform_config.get("tool_version") == "2022.2"
+
+
+def test_tool_version_patch_release(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
+    """Test patch release tag maps to base version."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "2023_R2_P1"],
+    )
+
+    assert result.exit_code == 0
+    assert "Auto-detected tool version 2023.2 from tag 2023_R2_P1" in result.output
+
+
+def test_tool_version_no_detection_for_main(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
+    """Test no auto-detection for non-release tags like 'main'."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "main"],
+    )
+
+    assert result.exit_code == 0
+    assert "Auto-detected tool version" not in result.output
+
+
+def test_tool_version_sets_platform_config(cli_runner, mock_build_success, mocker):
+    """Test that tool_version is properly set in platform config."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_config = mocker.MagicMock()
+    mock_config.get_platform.return_value = {"arch": "arm64"}
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "2023_R2"],
+    )
+
+    assert result.exit_code == 0
+    # Verify tool_version was set in platform config
+    platform_config = mock_config.get_platform.return_value
+    assert platform_config.get("tool_version") == "2023.2"
+
+
+# ============================================================================
+# Strict Vivado Version Matching Tests
+# ============================================================================
+
+
+def test_strict_vivado_version_by_default(cli_runner, mock_build_success, mocker):
+    """Test strict Vivado version matching is enabled when tag is used."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_config = mocker.MagicMock()
+    mock_config.get_platform.return_value = {"arch": "arm64"}
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "2023_R2"],
+    )
+
+    assert result.exit_code == 0
+    # Verify strict_version=True is set in platform config when tag provided
+    platform_config = mock_config.get_platform.return_value
+    assert platform_config.get("strict_version") is True
+
+
+def test_allow_any_vivado_flag(cli_runner, mock_build_success, mocker):
+    """Test --allow-any-vivado disables strict version matching."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_config = mocker.MagicMock()
+    mock_config.get_platform.return_value = {"arch": "arm64"}
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--allow-any-vivado"],
+    )
+
+    assert result.exit_code == 0
+    # Verify strict_version=False when --allow-any-vivado is used
+    platform_config = mock_config.get_platform.return_value
+    assert platform_config.get("strict_version") is False
+
+
+def test_strict_version_with_explicit_tool_version(
+    cli_runner, mock_build_success, mocker
+):
+    """Test strict version is enabled with explicit --tool-version."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_config = mocker.MagicMock()
+    mock_config.get_platform.return_value = {"arch": "arm64"}
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
+
+    result = cli_runner.invoke(
+        cli,
+        ["linux", "build", "-p", "zynqmp", "--tool-version", "2022.2"],
+    )
+
+    assert result.exit_code == 0
+    platform_config = mock_config.get_platform.return_value
+    assert platform_config.get("tool_version") == "2022.2"
+    assert platform_config.get("strict_version") is True
+
+
+def test_allow_any_vivado_with_explicit_tool_version(
+    cli_runner, mock_build_success, mocker
+):
+    """Test --allow-any-vivado with explicit --tool-version."""
+    mock_platform = mocker.MagicMock()
+    mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
+
+    mock_builder = mocker.MagicMock()
+    mock_builder.build.return_value = mock_build_success
+    mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
+    mocker.patch("adibuild.cli.main.display_build_summary")
+
+    mock_config = mocker.MagicMock()
+    mock_config.get_platform.return_value = {"arch": "arm64"}
+    mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
+
+    result = cli_runner.invoke(
+        cli,
+        [
+            "linux",
+            "build",
+            "-p",
+            "zynqmp",
+            "--tool-version",
+            "2022.2",
+            "--allow-any-vivado",
+        ],
+    )
+
+    assert result.exit_code == 0
+    platform_config = mock_config.get_platform.return_value
+    assert platform_config.get("tool_version") == "2022.2"
+    assert platform_config.get("strict_version") is False

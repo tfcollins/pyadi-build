@@ -450,13 +450,13 @@ class LinuxBuilder(BuilderBase):
         Clean build artifacts.
 
         Args:
-            deep: If True, run mrproper (full clean)
+            deep: If True, run mrproper (removes config files too)
         """
         if not self.source_dir:
             self.logger.warning("Source directory not set, nothing to clean")
             return
 
-        target = "mrproper" if deep else "clean"
+        target = "mrproper" if deep else "distclean"
         self.logger.info(f"Running make {target}...")
 
         # Get environment

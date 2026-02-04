@@ -81,7 +81,11 @@ def list_platforms(config_path: str = None) -> list[str]:
 
 @mcp.tool()
 def build_hdl_project(
-    project: str, carrier: str, arch: str = "unknown", clean: bool = False
+    project: str,
+    carrier: str,
+    arch: str = "unknown",
+    clean: bool = False,
+    tool_version: str = None,
 ) -> str:
     """Build an HDL project for a specific project/carrier combination.
 
@@ -90,20 +94,23 @@ def build_hdl_project(
         carrier: Carrier board name (e.g. zed)
         arch: Architecture (e.g. arm, arm64)
         clean: Whether to clean before building
+        tool_version: Override Vivado version (e.g., 2023.2)
     """
     try:
         platform_name = f"{carrier}_{project}"
 
         # Construct a minimal config for HDL
+        platform_config = {
+            "hdl_project": project,
+            "carrier": carrier,
+            "arch": arch,
+            "name": platform_name,
+        }
+        if tool_version:
+            platform_config["tool_version"] = tool_version
+
         config_data = {
-            "platforms": {
-                platform_name: {
-                    "hdl_project": project,
-                    "carrier": carrier,
-                    "arch": arch,
-                    "name": platform_name,
-                }
-            },
+            "platforms": {platform_name: platform_config},
             "build": {"output_dir": "build"},
         }
         config = BuildConfig(config_data)
@@ -117,18 +124,64 @@ def build_hdl_project(
 
 
 @mcp.tool()
+def list_simpleimage_presets(tag: str, carrier: str = None) -> list[dict]:
+    """List available simpleImage presets for a given release tag.
+
+    Args:
+        tag: Release tag (e.g., 2023_R2, 2022_R2)
+        carrier: Optional carrier filter (e.g., vcu118, kcu105)
+
+    Returns:
+        List of preset configurations with project, carrier, and simpleimage_target
+    """
+    try:
+        from adibuild.cli.helpers import get_simpleimage_presets
+
+        return get_simpleimage_presets(tag, carrier)
+    except Exception as e:
+        return [{"error": str(e)}]
+
+
+@mcp.tool()
 def build_linux_platform(
-    platform: str, config_path: str = None, clean: bool = False
+    platform: str,
+    config_path: str = None,
+    clean: bool = False,
+    simpleimage_targets: list[str] = None,
+    tool_version: str = None,
+    allow_any_vivado: bool = False,
 ) -> str:
     """Build Linux kernel for a specific platform.
 
     Args:
-        platform: Target platform (e.g., zynq, zynqmp)
+        platform: Target platform (e.g., zynq, zynqmp, microblaze)
         config_path: Path to configuration file
         clean: Whether to clean before building
+        simpleimage_targets: List of simpleImage targets for MicroBlaze builds
+        tool_version: Override toolchain version (e.g., 2023.2)
+        allow_any_vivado: Allow any Vivado version instead of requiring exact match
     """
     try:
+        if simpleimage_targets and platform.lower() != "microblaze":
+            return (
+                "Error: simpleimage_targets is only valid for MicroBlaze platform builds"
+            )
+
         config = _load_config(config_path, platform)
+
+        if simpleimage_targets:
+            platform_config = config.get_platform(platform)
+            platform_config["simpleimage_targets"] = simpleimage_targets
+            platform_config["kernel_target"] = simpleimage_targets[0]
+            config.set(f"platforms.{platform}", platform_config)
+
+        if tool_version:
+            platform_config = config.get_platform(platform)
+            platform_config["tool_version"] = tool_version
+            # Enable strict mode unless allow_any_vivado is set
+            platform_config["strict_version"] = not allow_any_vivado
+            config.set(f"platforms.{platform}", platform_config)
+
         platform_obj = _get_platform_instance(config, platform)
         builder = LinuxBuilder(config, platform_obj)
         result = builder.build(clean_before=clean)

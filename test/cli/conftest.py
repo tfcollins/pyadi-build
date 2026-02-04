@@ -246,6 +246,18 @@ def mock_config_loading(mocker, mock_config_file):
                     "fallback": ["arm", "system"],
                 },
             },
+            "microblaze": {
+                "arch": "microblaze",
+                "cross_compile": "microblaze-xilinx-linux-gnu-",
+                "defconfig": "adi_mb_defconfig",
+                "kernel_target": "simpleImage.vcu118",
+                "kernel_image_path": "arch/microblaze/boot/simpleImage.vcu118",
+                "simpleimage_targets": ["simpleImage.vcu118"],
+                "toolchain": {
+                    "preferred": "vivado",
+                    "fallback": [],
+                },
+            },
         },
     }
 

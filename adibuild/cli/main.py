@@ -15,6 +15,7 @@ from adibuild.cli.helpers import (
     print_error,
     print_success,
     print_version,
+    tag_to_tool_version,
     validate_config_file,
 )
 from adibuild.core.config import BuildConfig
@@ -96,6 +97,12 @@ def hdl():
     is_flag=True,
     help="Generate bash script instead of executing build",
 )
+@click.option(
+    "--tool-version",
+    "-tv",
+    "tool_version",
+    help="Override Vivado version (e.g., 2023.2). Auto-detected from tag if not specified.",
+)
 @click.pass_context
 def build_hdl(
     ctx,
@@ -109,6 +116,7 @@ def build_hdl(
     jobs,
     ignore_version_check,
     generate_script,
+    tool_version,
 ):
     """
     Build HDL project for specified platform.
@@ -130,6 +138,12 @@ def build_hdl(
         # We could allow overriding, but keeping it simple for now
         print_error("Specify --platform OR --project/--carrier, not both")
 
+    # Derive tool version from tag if not explicitly specified
+    if not tool_version and tag:
+        tool_version = tag_to_tool_version(tag)
+        if tool_version:
+            click.echo(f"Auto-detected tool version {tool_version} from tag {tag}")
+
     try:
         # Load configuration
         config = load_config_with_overrides(
@@ -142,16 +156,21 @@ def build_hdl(
         if not platform:
             platform = f"{carrier}_{project}"
             # Inject config for this synthetic platform
-            config.set(
-                f"platforms.{platform}",
-                {
-                    "hdl_project": project,
-                    "carrier": carrier,
-                    "arch": arch,
-                    # Add "name" so it's available in platform object (used by HDLPlatform.name)
-                    "name": platform,
-                },
-            )
+            platform_config = {
+                "hdl_project": project,
+                "carrier": carrier,
+                "arch": arch,
+                # Add "name" so it's available in platform object (used by HDLPlatform.name)
+                "name": platform,
+            }
+            if tool_version:
+                platform_config["tool_version"] = tool_version
+            config.set(f"platforms.{platform}", platform_config)
+        elif tool_version:
+            # Set tool_version in existing platform config
+            platform_config = config.get_platform(platform)
+            platform_config["tool_version"] = tool_version
+            config.set(f"platforms.{platform}", platform_config)
 
         # Override parallel jobs if specified
         if jobs:
@@ -216,9 +235,53 @@ def linux():
     is_flag=True,
     help="Generate bash script instead of executing build",
 )
+@click.option(
+    "--simpleimage",
+    "-s",
+    "simpleimage_targets",
+    multiple=True,
+    help="MicroBlaze simpleImage target(s) to build (only valid with -p microblaze)",
+)
+@click.option(
+    "--simpleimage-preset",
+    "-sp",
+    "simpleimage_preset",
+    is_flag=True,
+    help="Interactively select simpleImage from predefined presets (requires -t tag, microblaze only)",
+)
+@click.option(
+    "--carrier",
+    "-c",
+    "carrier",
+    help="Filter simpleImage presets by carrier board (e.g., vcu118, kcu105)",
+)
+@click.option(
+    "--tool-version",
+    "-tv",
+    "tool_version",
+    help="Override toolchain version (e.g., 2023.2). Auto-detected from tag if not specified.",
+)
+@click.option(
+    "--allow-any-vivado",
+    is_flag=True,
+    help="Allow any Vivado version instead of requiring exact match from tag.",
+)
 @click.pass_context
 def build_linux(
-    ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs, generate_script
+    ctx,
+    platform,
+    tag,
+    defconfig,
+    output,
+    clean,
+    dtbs_only,
+    jobs,
+    generate_script,
+    simpleimage_targets,
+    simpleimage_preset,
+    carrier,
+    tool_version,
+    allow_any_vivado,
 ):
     """
     Build Linux kernel for specified platform.
@@ -229,10 +292,66 @@ def build_linux(
 
         adibuild linux build -p zynq --clean
 
-        adibuild linux build -p zynqmp --dtbs-only
+        adibuild linux build -p microblaze --simpleimage simpleImage.vcu118_ad9081
+
+        adibuild linux build -p microblaze -t 2023_R2 --simpleimage-preset
+
+        adibuild linux build -p microblaze -t 2023_R2 -sp --carrier vcu118
 
         adibuild linux build -p zynqmp --generate-script
     """
+    # Validate --simpleimage is only for microblaze
+    if simpleimage_targets and platform.lower() != "microblaze":
+        print_error(
+            "The --simpleimage option is only valid for MicroBlaze platform builds."
+        )
+        return
+
+    # Validate --carrier requires --simpleimage-preset
+    if carrier and not simpleimage_preset:
+        print_error("--carrier requires --simpleimage-preset to be specified.")
+        return
+
+    # Validate --simpleimage-preset requirements
+    if simpleimage_preset:
+        if platform.lower() != "microblaze":
+            print_error("--simpleimage-preset is only valid for MicroBlaze platform.")
+            return
+        if not tag:
+            print_error("--simpleimage-preset requires -t/--tag to be specified.")
+            return
+        if simpleimage_targets:
+            print_error("Cannot use both --simpleimage and --simpleimage-preset.")
+            return
+
+        # Load presets and prompt for selection
+        from adibuild.cli.helpers import (
+            get_simpleimage_presets,
+            prompt_simpleimage_selection,
+        )
+
+        presets = get_simpleimage_presets(tag, carrier=carrier)
+        if not presets:
+            if carrier:
+                print_error(
+                    f"No simpleImage presets found for tag '{tag}' and carrier '{carrier}'."
+                )
+            else:
+                print_error(f"No simpleImage presets found for tag '{tag}'.")
+            return
+
+        # Group by carrier only when no specific carrier filter is applied
+        selected_target = prompt_simpleimage_selection(
+            presets, group_by_carrier=(carrier is None)
+        )
+        simpleimage_targets = (selected_target,)  # Convert to tuple for consistency
+
+    # Derive tool version from tag if not explicitly specified
+    if not tool_version and tag:
+        tool_version = tag_to_tool_version(tag)
+        if tool_version:
+            click.echo(f"Auto-detected tool version {tool_version} from tag {tag}")
+
     try:
         # Load configuration
         config = load_config_with_overrides(
@@ -253,6 +372,21 @@ def build_linux(
         if defconfig:
             platform_config = config.get_platform(platform)
             platform_config["defconfig"] = defconfig
+            config.set(f"platforms.{platform}", platform_config)
+
+        # Override simpleimage_targets if specified
+        if simpleimage_targets:
+            platform_config = config.get_platform(platform)
+            platform_config["simpleimage_targets"] = list(simpleimage_targets)
+            platform_config["kernel_target"] = simpleimage_targets[0]
+            config.set(f"platforms.{platform}", platform_config)
+
+        # Set tool_version and strict_version in platform config for toolchain selection
+        if tool_version:
+            platform_config = config.get_platform(platform)
+            platform_config["tool_version"] = tool_version
+            # Enable strict mode unless --allow-any-vivado is used
+            platform_config["strict_version"] = not allow_any_vivado
             config.set(f"platforms.{platform}", platform_config)
 
         # Get platform instance
@@ -428,13 +562,14 @@ def dtbs(ctx, platform, tag, dtb_files):
     help="Target platform",
 )
 @click.option("--tag", "-t", help="Git tag or branch")
-@click.option("--deep", is_flag=True, help="Deep clean (mrproper)")
+@click.option("--deep", is_flag=True, help="Use mrproper instead of distclean")
 @click.pass_context
 def clean(ctx, platform, tag, deep):
     """
     Clean kernel build artifacts.
 
-    Use --deep for full clean (make mrproper).
+    By default uses 'make distclean' (removes all generated files + config).
+    Use --deep for mrproper (same but without removing editor backup files).
     """
     try:
         # Load configuration

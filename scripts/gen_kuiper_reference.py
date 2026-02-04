@@ -404,6 +404,21 @@ def clone_repo(repo_url, branch, dest_dir):
     # subprocess.run(["git", "clone", "--depth", "1", "--branch", branch, repo_url, dest_dir], check=True)
     subprocess.run(["git", "clone", "--branch", branch, repo_url, dest_dir], check=True)
 
+def parse_dts_for_hdl_info(devicetree_file):
+    with open(devicetree_file, "r") as f:
+        devicetree_content = f.read()
+    # Look for line with hdl_project: <project/carrier> ex: <ad9081_fmca_ebz/zcu102>
+    for line in devicetree_content.split("\n"):
+        if "hdl_project" in line:
+            project_carrier = line.split(":")[1].strip()
+            project_carrier = project_carrier.replace("<", "").replace(">", "")
+            project = project_carrier.split("/")[0].strip()
+            if len(project_carrier.split("/")) != 2:
+                return project, None
+            carrier = project_carrier.split("/")[1].strip()
+            return project, carrier
+    return None, None
+
 def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_source_dir=None, score_required=0.90):
     """Parse Kuiper file list and generate map to source tree files.
 
@@ -467,20 +482,7 @@ def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_sour
                             return os.path.join(root, file)
         return None
 
-    def parse_dts_for_hdl_info(devicetree_file):
-        with open(devicetree_file, "r") as f:
-            devicetree_content = f.read()
-        # Look for line with hdl_project: <project/carrier> ex: <ad9081_fmca_ebz/zcu102>
-        for line in devicetree_content.split("\n"):
-            if "hdl_project" in line:
-                project_carrier = line.split(":")[1].strip()
-                project_carrier = project_carrier.replace("<", "").replace(">", "")
-                project = project_carrier.split("/")[0].strip()
-                if len(project_carrier.split("/")) != 2:
-                    return project, None
-                carrier = project_carrier.split("/")[1].strip()
-                return project, carrier
-        return None, None
+
         
 
     

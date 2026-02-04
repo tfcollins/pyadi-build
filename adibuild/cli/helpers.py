@@ -1,6 +1,9 @@
 """CLI helper functions and utilities."""
 
+import json
+import re
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 import click
@@ -17,6 +20,35 @@ from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
 
 console = Console()
+
+
+def tag_to_tool_version(tag: str) -> str | None:
+    """
+    Map ADI release tag to tool version.
+
+    Args:
+        tag: Release tag (e.g., 2023_R2, 2022_R2_P1, main)
+
+    Returns:
+        Tool version string (e.g., "2023.2") or None if tag doesn't match pattern
+
+    Examples:
+        2023_R2 -> 2023.2
+        2023_R2_P1 -> 2023.2
+        2022_R1 -> 2022.1
+        main -> None
+    """
+    if not tag:
+        return None
+
+    # Match pattern: YYYY_RN or YYYY_RN_Px (patch releases)
+    match = re.match(r"^(\d{4})_R(\d+)(?:_P\d+)?$", tag)
+    if match:
+        year = match.group(1)
+        release = match.group(2)
+        return f"{year}.{release}"
+
+    return None
 
 
 def print_version():
@@ -295,3 +327,97 @@ def create_default_config(output_path: Path):
     config.to_yaml(output_path)
 
     print_success(f"Configuration created: {output_path}")
+
+
+def load_fabric_release_info() -> dict:
+    """Load the fabric_release_info.json file."""
+    json_path = Path(__file__).parent.parent / "fabric_release_info.json"
+    if not json_path.exists():
+        raise FileNotFoundError(f"fabric_release_info.json not found at {json_path}")
+    with open(json_path) as f:
+        return json.load(f)
+
+
+def get_simpleimage_presets(tag: str, carrier: str = None) -> list[dict]:
+    """
+    Get available simpleImage presets for a given tag.
+
+    Args:
+        tag: Release tag (e.g., 2023_R2, 2022_R2)
+        carrier: Optional carrier filter (e.g., vcu118, kcu105)
+
+    Returns:
+        List of dicts with keys: project, carrier, simpleimage_target, dts_path
+    """
+    data = load_fabric_release_info()
+    if tag not in data:
+        return []
+
+    presets = []
+    for project_name, configs in data[tag].items():
+        for config in configs:
+            if carrier and config["carrier"] != carrier:
+                continue
+            # Convert dts_path to simpleImage target
+            # e.g., "arch/microblaze/boot/dts/vcu118_ad9081.dts" -> "simpleImage.vcu118_ad9081"
+            dts_file = Path(config["dts_path"]).stem
+            simpleimage_target = f"simpleImage.{dts_file}"
+            presets.append(
+                {
+                    "project": project_name,
+                    "carrier": config["carrier"],
+                    "simpleimage_target": simpleimage_target,
+                    "dts_path": config["dts_path"],
+                }
+            )
+    return presets
+
+
+def prompt_simpleimage_selection(
+    presets: list[dict], group_by_carrier: bool = True
+) -> str:
+    """
+    Prompt user to select a simpleImage preset interactively.
+
+    Args:
+        presets: List of preset dicts with project, carrier, simpleimage_target
+        group_by_carrier: If True, display presets grouped by carrier
+
+    Returns:
+        The selected simpleimage_target
+    """
+    click.echo("\nAvailable simpleImage presets:")
+
+    options = []  # (number, simpleimage_target)
+    idx = 1
+
+    if group_by_carrier:
+        # Group presets by carrier
+        by_carrier = defaultdict(list)
+        for p in presets:
+            by_carrier[p["carrier"]].append(p)
+
+        for carrier_name in sorted(by_carrier.keys()):
+            click.echo(f"\n  [{carrier_name}]")
+            for p in by_carrier[carrier_name]:
+                click.echo(f"    {idx}. {p['project']}: {p['simpleimage_target']}")
+                options.append((str(idx), p["simpleimage_target"]))
+                idx += 1
+    else:
+        for p in presets:
+            click.echo(
+                f"  {idx}. {p['carrier']}/{p['project']}: {p['simpleimage_target']}"
+            )
+            options.append((str(idx), p["simpleimage_target"]))
+            idx += 1
+
+    # Prompt for selection
+    valid_choices = [opt[0] for opt in options]
+    selection = click.prompt(
+        "\nSelect preset number",
+        type=click.Choice(valid_choices),
+        show_choices=False,
+    )
+
+    # Return the simpleimage_target for selected option
+    return options[int(selection) - 1][1]

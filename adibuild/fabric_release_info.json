@@ -1,0 +1,1959 @@
+{
+    "2022_R2": {
+        "ad_quadmxfe1_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_12_rxmode_13_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "2",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "16",
+                    "TX_JESD_M": "2",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "64"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_12_rxmode_13.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "2",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "16",
+                    "TX_JESD_M": "2",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "64"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_nshot_sysref_secondary_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_nshot_sysref_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_23_rxmode_25.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_direct_6g.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_revc.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_3_rxmode_2.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "1",
+                    "RX_JESD_NP": "16",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "2",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_3_rxmode_2_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "1",
+                    "RX_JESD_NP": "16",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "2",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_onchip_pll_revc.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_23_rxmode_25_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            }
+        ],
+        "ad9081_fmca_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_m8_l4.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_10_rxmode_11.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_24_rxmode_26_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_23_rxmode_25.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_10_rxmode_11_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9082_204c_txmode_18_rxmode_19_lr_24_75Gbps.dts",
+                "hdl_parameters": {
+                    "TX_RATE": "24.75 TX_JESD_M"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_23_rxmode_25_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "daq3": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_fmcdaq3.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcdaq3.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "ad9208_dual_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_dual_ad9208.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "adrv9371x": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_adrv9371x.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "fmcomms2": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcomms4.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcomms2-3.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "daq2": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcdaq2.dts",
+                "hdl_parameters": {}
+            }
+        ]
+    },
+    "2023_R2": {
+        "ad_quadmxfe1_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_12_rxmode_13_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "2",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "16",
+                    "TX_JESD_M": "2",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "64"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_12_rxmode_13.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "2",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "16",
+                    "TX_JESD_M": "2",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "64"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_nshot_sysref_secondary_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_nshot_sysref_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_23_rxmode_25.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_direct_6g.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_revc.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_3_rxmode_2.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "1",
+                    "RX_JESD_NP": "16",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "2",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_3_rxmode_2_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "1",
+                    "RX_JESD_NP": "16",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "2",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_onchip_pll_revc.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_23_rxmode_25_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            }
+        ],
+        "ad9081_fmca_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_m8_l4.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_10_rxmode_11.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_24_rxmode_26_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_23_rxmode_25.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_10_rxmode_11_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9082_204c_txmode_18_rxmode_19_lr_24_75Gbps.dts",
+                "hdl_parameters": {
+                    "TX_RATE": "24.75 TX_JESD_M"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_23_rxmode_25_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "adrv9026": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_adrv9025.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "daq3": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_fmcdaq3.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcdaq3.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "ad9082_fmca_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9082.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "ad9208_dual_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_dual_ad9208.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "adrv9371x": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_adrv9371x.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "fmcomms2": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcomms4.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcomms2-3.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "daq2": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcdaq2.dts",
+                "hdl_parameters": {}
+            }
+        ]
+    },
+    "2023_R2_P1": {
+        "ad_quadmxfe1_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_12_rxmode_13_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "2",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "16",
+                    "TX_JESD_M": "2",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "64"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_12_rxmode_13.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "2",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "16",
+                    "TX_JESD_M": "2",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "64"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_nshot_sysref_secondary_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_nshot_sysref_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_23_rxmode_25.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_direct_6g.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_revc.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_11_rxmode_4_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "2",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "16",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "32",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_3_rxmode_2.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "1",
+                    "RX_JESD_NP": "16",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "2",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_onchip_pll_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_3_rxmode_2_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "1",
+                    "RX_JESD_NP": "16",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "2",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "16",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10_revc.dts",
+                "hdl_parameters": {
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_5_rxmode_6_onchip_pll_revc.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_29_rxmode_24_revc.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "8",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "8",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_10_rxmode_11_onchip_pll_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "16.5",
+                    "TX_RATE": "16.5",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "1",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "1",
+                    "RX_KS_PER_CHANNEL": "64",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204b_txmode_9_rxmode_10.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9081_204c_txmode_23_rxmode_25_revc_nz1.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_quad_ad9082_204c_txmode_23_rxmode_25_onchip_pll.dts",
+                "hdl_parameters": {
+                    "RX_RATE": "24.75",
+                    "TX_RATE": "24.75",
+                    "REF_CLK_RATE": "250",
+                    "RX_JESD_M": "4",
+                    "RX_JESD_L": "4",
+                    "RX_JESD_S": "2",
+                    "RX_JESD_NP": "12",
+                    "TX_JESD_M": "4",
+                    "TX_JESD_L": "4",
+                    "TX_JESD_S": "2",
+                    "TX_JESD_NP": "12",
+                    "RX_KS_PER_CHANNEL": "16",
+                    "TX_KS_PER_CHANNEL": "16"
+                }
+            }
+        ],
+        "ad9081_fmca_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_m8_l4.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_10_rxmode_11.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_24_rxmode_26_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_23_rxmode_25.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_10_rxmode_11_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9082_204c_txmode_18_rxmode_19_lr_24_75Gbps.dts",
+                "hdl_parameters": {
+                    "TX_RATE": "24.75 TX_JESD_M"
+                }
+            },
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9081_204c_txmode_23_rxmode_25_lr_24_75Gbps.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "adrv9026": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_adrv9025.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "daq3": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_fmcdaq3.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcdaq3.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "ad9082_fmca_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_ad9082.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "ad9208_dual_ebz": [
+            {
+                "carrier": "vcu118",
+                "dts_path": "arch/microblaze/boot/dts/vcu118_dual_ad9208.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "adrv9371x": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_adrv9371x.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "fmcomms2": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcomms4.dts",
+                "hdl_parameters": {}
+            },
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcomms2-3.dts",
+                "hdl_parameters": {}
+            }
+        ],
+        "daq2": [
+            {
+                "carrier": "kcu105",
+                "dts_path": "arch/microblaze/boot/dts/kcu105_fmcdaq2.dts",
+                "hdl_parameters": {}
+            }
+        ]
+    }
+}

@@ -79,31 +79,52 @@ class VivadoToolchain(Toolchain):
         "2021.1": "10.2.0",
     }
 
-    def __init__(self, search_paths: list[Path] | None = None):
+    def __init__(
+        self,
+        search_paths: list[Path] | None = None,
+        preferred_version: str | None = None,
+        strict_version: bool = False,
+    ):
         """
         Initialize VivadoToolchain.
 
         Args:
             search_paths: Optional list of paths to search for Vivado/Vitis
+            preferred_version: Preferred Vivado version (e.g., "2023.2")
+            strict_version: If True and preferred_version set, ONLY search for that version
         """
         super().__init__()
+        self.preferred_version = preferred_version
+        self.strict_version = strict_version
         self.search_paths = search_paths or self._get_default_search_paths()
 
     def _get_default_search_paths(self) -> list[Path]:
         """Get default search paths for Vivado/Vitis."""
         paths = []
-        for version in [
-            "2025.2",
-            "2025.1",
-            "2024.2",
-            "2024.1",
-            "2023.2",
-            "2023.1",
-            "2022.2",
-            "2022.1",
-            "2021.2",
-            "2021.1",
-        ]:
+
+        # If strict mode with preferred version, ONLY search for that version
+        if self.strict_version and self.preferred_version:
+            versions = [self.preferred_version]
+        else:
+            versions = [
+                "2025.2",
+                "2025.1",
+                "2024.2",
+                "2024.1",
+                "2023.2",
+                "2023.1",
+                "2022.2",
+                "2022.1",
+                "2021.2",
+                "2021.1",
+            ]
+            # If preferred version specified (non-strict), search it first
+            if self.preferred_version and self.preferred_version in versions:
+                versions = versions.copy()
+                versions.remove(self.preferred_version)
+                versions.insert(0, self.preferred_version)
+
+        for version in versions:
             paths.append(Path(f"/opt/Xilinx/Vivado/{version}"))
             paths.append(Path(f"/opt/Xilinx/Vitis/{version}"))
             paths.append(Path(f"/opt/Xilinx/{version}/Vivado"))
@@ -229,10 +250,25 @@ class ArmToolchain(Toolchain):
         "2020.1": "10.2-2020.11",  # GCC 10.2.0
     }
 
+    # URL patterns for different ARM toolchain versions
+    # New versions (11.3.rel1+): gnu/ path + arm-gnu-toolchain- prefix
+    # Transition version (11.2-2022.02): gnu/ path + gcc-arm- prefix
+    # Old versions (10.x): gnu-a/ path + gcc-arm- prefix
+    ARM_URL_PATTERNS = {
+        # (base_path, file_prefix, extract_prefix)
+        "new": ("gnu", "arm-gnu-toolchain", "arm-gnu-toolchain"),
+        "transition": ("gnu", "gcc-arm", "gcc-arm"),
+        "old": ("gnu-a", "gcc-arm", "gcc-arm"),
+    }
+
+    # Versions that use each URL pattern
+    OLD_VERSIONS = ["10.2-2020.11", "10.3-2021.07"]
+    TRANSITION_VERSIONS = ["11.2-2022.02"]
+
     # Base URLs for ARM downloads (primary and fallback)
     ARM_BASE_URLS = [
-        "https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu/",
-        "https://developer.arm.com/-/media/Files/downloads/gnu/",
+        "https://armkeil.blob.core.windows.net/developer/Files/downloads/",
+        "https://developer.arm.com/-/media/Files/downloads/",
     ]
 
     def __init__(self, cache_dir: Path | None = None, version: str | None = None):
@@ -255,13 +291,14 @@ class ArmToolchain(Toolchain):
             return None
 
         # Look for ARM32 and ARM64 toolchains
-        # ARM toolchains use pattern: arm-gnu-toolchain-{version}-x86_64-{target}
+        # New versions use: arm-gnu-toolchain-{version}-x86_64-{target}
+        # Old versions use: gcc-arm-{version}-x86_64-{target}
         arm32_dirs = list(
             self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-arm-none-linux-gnueabihf")
-        )
+        ) + list(self.cache_dir.glob("gcc-arm-*-x86_64-arm-none-linux-gnueabihf"))
         arm64_dirs = list(
             self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-aarch64-none-linux-gnu")
-        )
+        ) + list(self.cache_dir.glob("gcc-arm-*-x86_64-aarch64-none-linux-gnu"))
 
         if arm32_dirs or arm64_dirs:
             # Use the most recent version
@@ -340,6 +377,23 @@ class ArmToolchain(Toolchain):
             cross_compile_arm64="aarch64-none-linux-gnu-",
         )
 
+    def _get_url_pattern(self, version: str) -> tuple[str, str, str]:
+        """
+        Get URL pattern for a specific ARM toolchain version.
+
+        Args:
+            version: ARM toolchain version (e.g., '12.2.rel1')
+
+        Returns:
+            Tuple of (base_path, file_prefix, extract_prefix)
+        """
+        if version in self.OLD_VERSIONS:
+            return self.ARM_URL_PATTERNS["old"]
+        elif version in self.TRANSITION_VERSIONS:
+            return self.ARM_URL_PATTERNS["transition"]
+        else:
+            return self.ARM_URL_PATTERNS["new"]
+
     def _download_toolchain(self, version: str, target: str) -> Path:
         """
         Download specific ARM GNU toolchain.
@@ -354,17 +408,21 @@ class ArmToolchain(Toolchain):
         Raises:
             ToolchainError: If download fails
         """
-        # Build URL
-        # Format: arm-gnu-toolchain-{version}-x86_64-{target}.tar.xz
-        filename = f"arm-gnu-toolchain-{version}-x86_64-{target}.tar.xz"
+        # Get URL pattern for this version
+        base_path, file_prefix, extract_prefix = self._get_url_pattern(version)
 
-        # URL structure: {base}/{version}/binrel/{filename}
+        # Build filename and URL
+        # Format: {file_prefix}-{version}-x86_64-{target}.tar.xz
+        filename = f"{file_prefix}-{version}-x86_64-{target}.tar.xz"
+
+        # URL structure: {base}/{base_path}/{version}/binrel/{filename}
         # Try multiple base URLs in case one is down
         urls = [
-            f"{base_url}{version}/binrel/{filename}" for base_url in self.ARM_BASE_URLS
+            f"{base_url}{base_path}/{version}/binrel/{filename}"
+            for base_url in self.ARM_BASE_URLS
         ]
 
-        extract_dir = self.cache_dir / f"arm-gnu-toolchain-{version}-x86_64-{target}"
+        extract_dir = self.cache_dir / f"{extract_prefix}-{version}-x86_64-{target}"
 
         # Check if already downloaded
         if extract_dir.exists():
@@ -422,13 +480,24 @@ class ArmToolchain(Toolchain):
 
     def _extract_version(self, dirname: str) -> str:
         """Extract version from directory name."""
-        # Format: arm-gnu-toolchain-{version}-x86_64-{target}
-        # Example: arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu
+        # Handle both naming formats:
+        # New: arm-gnu-toolchain-{version}-x86_64-{target}
+        #      e.g., arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu
+        # Old: gcc-arm-{version}-x86_64-{target}
+        #      e.g., gcc-arm-11.2-2022.02-x86_64-arm-none-linux-gnueabihf
         parts = dirname.split("-")
-        if len(parts) >= 4:
-            # Version is the 4th part (index 3)
-            # e.g., ['arm', 'gnu', 'toolchain', '12.2.rel1', 'x86_64', ...]
+        if dirname.startswith("arm-gnu-toolchain-") and len(parts) >= 4:
+            # New format: version is at index 3
             return parts[3]
+        elif dirname.startswith("gcc-arm-") and len(parts) >= 3:
+            # Old format: version is at index 2, but may contain hyphens (e.g., 11.2-2022.02)
+            # Find x86_64 to determine where version ends
+            try:
+                x86_idx = parts.index("x86_64")
+                version_parts = parts[2:x86_idx]
+                return "-".join(version_parts)
+            except ValueError:
+                return parts[2]
         return "unknown"
 
     def get_cross_compile(self, arch: str) -> str:
@@ -513,7 +582,8 @@ class SystemToolchain(Toolchain):
 def select_toolchain(
     preferred: str = "vivado",
     fallbacks: list[str] | None = None,
-    vivado_version: str | None = None,
+    tool_version: str | None = None,
+    strict_version: bool = False,
 ) -> ToolchainInfo:
     """
     Select and return best available toolchain.
@@ -521,7 +591,8 @@ def select_toolchain(
     Args:
         preferred: Preferred toolchain type
         fallbacks: List of fallback toolchain types
-        vivado_version: Vivado version for ARM toolchain mapping
+        tool_version: Preferred tool version (e.g., "2023.2") for Vivado/ARM toolchain
+        strict_version: If True and tool_version set, only accept exact Vivado version match
 
     Returns:
         ToolchainInfo for selected toolchain
@@ -540,7 +611,10 @@ def select_toolchain(
 
         try:
             if tc_type == "vivado":
-                tc = VivadoToolchain()
+                tc = VivadoToolchain(
+                    preferred_version=tool_version,
+                    strict_version=strict_version,
+                )
                 info = tc.detect()
                 if info:
                     logger.info(f"Selected Vivado toolchain version {info.version}")
@@ -555,7 +629,7 @@ def select_toolchain(
                 else:
                     # Try to download
                     logger.info("ARM GNU toolchain not found, downloading...")
-                    info = tc.download(vivado_version)
+                    info = tc.download(tool_version)
                     logger.info(
                         f"Downloaded and selected ARM GNU toolchain version {info.version}"
                     )
