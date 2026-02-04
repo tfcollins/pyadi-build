@@ -45,7 +45,9 @@ def test_build_basic_zynq(cli_runner, mock_build_success, mock_config_loading, m
     mock_builder.build.assert_called_once_with(clean_before=False, dtbs_only=False)
 
 
-def test_build_with_clean_flag(cli_runner, mock_build_success, mock_config_loading, mocker):
+def test_build_with_clean_flag(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
     """Test build command with --clean flag."""
     mock_platform = mocker.MagicMock()
     mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
@@ -56,13 +58,17 @@ def test_build_with_clean_flag(cli_runner, mock_build_success, mock_config_loadi
 
     mocker.patch("adibuild.cli.main.display_build_summary")
 
-    result = cli_runner.invoke(cli, ["linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--clean"])
+    result = cli_runner.invoke(
+        cli, ["linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--clean"]
+    )
 
     assert result.exit_code == 0
     mock_builder.build.assert_called_once_with(clean_before=True, dtbs_only=False)
 
 
-def test_build_with_dtbs_only(cli_runner, mock_build_success, mock_config_loading, mocker):
+def test_build_with_dtbs_only(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
     """Test build command with --dtbs-only flag."""
     mock_platform = mocker.MagicMock()
     mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
@@ -79,7 +85,9 @@ def test_build_with_dtbs_only(cli_runner, mock_build_success, mock_config_loadin
     mock_builder.build.assert_called_once_with(clean_before=False, dtbs_only=True)
 
 
-def test_build_with_jobs_override(cli_runner, mock_build_success, mock_config_loading, mocker):
+def test_build_with_jobs_override(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
     """Test build command with -j jobs override."""
     mock_platform = mocker.MagicMock()
     mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
@@ -100,7 +108,9 @@ def test_build_with_jobs_override(cli_runner, mock_build_success, mock_config_lo
     mock_config.set.assert_any_call("build.parallel_jobs", 16)
 
 
-def test_build_with_output_override(cli_runner, mock_build_success, mock_config_loading, mocker):
+def test_build_with_output_override(
+    cli_runner, mock_build_success, mock_config_loading, mocker
+):
     """Test build command with -o output directory override."""
     mock_platform = mocker.MagicMock()
     mocker.patch("adibuild.cli.main.get_platform_instance", return_value=mock_platform)
@@ -114,7 +124,9 @@ def test_build_with_output_override(cli_runner, mock_build_success, mock_config_
     mock_config = mocker.MagicMock()
     mocker.patch("adibuild.cli.main.load_config_with_overrides", return_value=mock_config)
 
-    result = cli_runner.invoke(cli, ["linux", "build", "-p", "zynqmp", "-o", "/tmp/output"])
+    result = cli_runner.invoke(
+        cli, ["linux", "build", "-p", "zynqmp", "-o", "/tmp/output"]
+    )
 
     assert result.exit_code == 0
     mock_config.set.assert_any_call("build.output_dir", "/tmp/output")
@@ -226,7 +238,9 @@ def test_configure_basic(cli_runner, mock_config_loading, mocker):
     mock_builder = mocker.MagicMock()
     mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
 
-    result = cli_runner.invoke(cli, ["linux", "configure", "-p", "zynqmp", "-t", "2023_R2"])
+    result = cli_runner.invoke(
+        cli, ["linux", "configure", "-p", "zynqmp", "-t", "2023_R2"]
+    )
 
     assert result.exit_code == 0
     mock_builder.prepare_source.assert_called_once()
@@ -283,7 +297,9 @@ def test_menuconfig_basic(cli_runner, mock_config_loading, mocker):
     mock_builder = mocker.MagicMock()
     mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
 
-    result = cli_runner.invoke(cli, ["linux", "menuconfig", "-p", "zynqmp", "-t", "2023_R2"])
+    result = cli_runner.invoke(
+        cli, ["linux", "menuconfig", "-p", "zynqmp", "-t", "2023_R2"]
+    )
 
     assert result.exit_code == 0
     mock_builder.prepare_source.assert_called_once()
@@ -320,7 +336,9 @@ def test_dtbs_specific_files(cli_runner, mock_config_loading, mocker):
     mock_builder.build_dtbs.return_value = ["file1.dtb", "file2.dtb"]
     mocker.patch("adibuild.cli.main.LinuxBuilder", return_value=mock_builder)
 
-    result = cli_runner.invoke(cli, ["linux", "dtbs", "-p", "zynqmp", "file1.dtb", "file2.dtb"])
+    result = cli_runner.invoke(
+        cli, ["linux", "dtbs", "-p", "zynqmp", "file1.dtb", "file2.dtb"]
+    )
 
     assert result.exit_code == 0
     mock_builder.build_dtbs.assert_called_once_with(dtbs=["file1.dtb", "file2.dtb"])

@@ -47,7 +47,9 @@ def test_zynqmp_platform_get_make_env(zynqmp_config_dict, mocker):
     )
 
     # Mock get_toolchain
-    mocker.patch.object(platform, "get_toolchain", return_value=toolchain_without_cross_compile)
+    mocker.patch.object(
+        platform, "get_toolchain", return_value=toolchain_without_cross_compile
+    )
 
     env = platform.get_make_env()
 
@@ -92,5 +94,7 @@ def test_zynqmp_get_dtb_make_target(zynqmp_config_dict):
     platform = ZynqMPPlatform(zynqmp_config_dict)
 
     # ZynqMP DTBs should have xilinx/ prefix
-    make_target = platform.get_dtb_make_target("zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dtb")
+    make_target = platform.get_dtb_make_target(
+        "zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dtb"
+    )
     assert make_target == "xilinx/zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dtb"

@@ -61,7 +61,10 @@ class ScriptBuilder:
             f.write("set -x  # Print commands\n\n")
 
     def write_command(
-        self, command: str | list[str], cwd: Path | None = None, env: dict[str, str] | None = None
+        self,
+        command: str | list[str],
+        cwd: Path | None = None,
+        env: dict[str, str] | None = None,
     ) -> None:
         """
         Write command to script.
@@ -324,7 +327,9 @@ class BuildExecutor:
             errors = self._extract_errors(result.stdout)
             error_msg = f"Make failed with return code {result.return_code}"
             if errors:
-                error_msg += "\n\nErrors found:\n" + "\n".join(f"  • {e}" for e in errors[:5])
+                error_msg += "\n\nErrors found:\n" + "\n".join(
+                    f"  • {e}" for e in errors[:5]
+                )
                 if len(errors) > 5:
                     error_msg += f"\n  ... and {len(errors) - 5} more errors"
 

@@ -42,7 +42,9 @@ def mock_git_repo_for_examples(mocker, mock_kernel_source, mock_toolchain, tmp_p
     mocker.patch("adibuild.utils.git.GitRepository.clone", return_value=MagicMock())
     mocker.patch("adibuild.utils.git.GitRepository.fetch", return_value=None)
     mocker.patch("adibuild.utils.git.GitRepository.checkout", return_value=None)
-    mocker.patch("adibuild.utils.git.GitRepository.get_commit_sha", return_value="abc123def456")
+    mocker.patch(
+        "adibuild.utils.git.GitRepository.get_commit_sha", return_value="abc123def456"
+    )
 
     # Also patch toolchain selection - need to patch where it's used, not where it's defined
     mocker.patch("adibuild.platforms.base.select_toolchain", return_value=mock_toolchain)

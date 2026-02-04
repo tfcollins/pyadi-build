@@ -41,7 +41,8 @@ class BuilderBase(ABC):
         script_builder = None
         if self.script_mode:
             script_path = (
-                self.work_dir / f"build_{self.config.get_project()}_{self.platform.arch}.sh"
+                self.work_dir
+                / f"build_{self.config.get_project()}_{self.platform.arch}.sh"
             )
             script_builder = ScriptBuilder(script_path)
             self.logger.info(f"Generating build script at {script_path}")

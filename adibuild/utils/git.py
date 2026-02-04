@@ -25,7 +25,11 @@ class GitRepository:
     """Manages git repository operations with caching support."""
 
     def __init__(
-        self, url: str, local_path: Path, cache_dir: Path | None = None, script_builder=None
+        self,
+        url: str,
+        local_path: Path,
+        cache_dir: Path | None = None,
+        script_builder=None,
     ):
         """
         Initialize GitRepository.
@@ -43,7 +47,9 @@ class GitRepository:
         self.repo: git.Repo | None = None
         self.script_builder = script_builder
 
-    def clone(self, depth: int | None = None, branch: str | None = None) -> git.Repo | None:
+    def clone(
+        self, depth: int | None = None, branch: str | None = None
+    ) -> git.Repo | None:
         """
         Clone repository if it doesn't exist locally.
 
@@ -69,7 +75,9 @@ class GitRepository:
                 self.repo = git.Repo(self.local_path)
                 return self.repo
             except git.exc.InvalidGitRepositoryError:
-                self.logger.warning(f"Invalid git repository at {self.local_path}, removing...")
+                self.logger.warning(
+                    f"Invalid git repository at {self.local_path}, removing..."
+                )
                 shutil.rmtree(self.local_path)
 
         self.logger.info(f"Cloning {self.url} to {self.local_path}...")

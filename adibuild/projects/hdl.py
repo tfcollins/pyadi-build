@@ -50,7 +50,9 @@ class HDLBuilder(BuilderBase):
         self.source_dir = repo_cache
 
         # Initialize git repository
-        self.repo = GitRepository(repo_url, repo_cache, script_builder=self.executor.script_builder)
+        self.repo = GitRepository(
+            repo_url, repo_cache, script_builder=self.executor.script_builder
+        )
 
         # Ensure repository is ready (clone/fetch/checkout)
         self.logger.info("Ensuring repository is ready...")
@@ -76,7 +78,9 @@ class HDLBuilder(BuilderBase):
         """Check if running on Windows."""
         return os.name == "nt"
 
-    def build(self, clean_before: bool = False, ignore_version_check: bool = False) -> dict:
+    def build(
+        self, clean_before: bool = False, ignore_version_check: bool = False
+    ) -> dict:
         """
         Execute HDL build.
 
@@ -358,7 +362,9 @@ class HDLBuilder(BuilderBase):
             if tc:
                 current_version = tc.version
             else:
-                self.logger.warning("Could not detect active Vivado version. Skipping check.")
+                self.logger.warning(
+                    "Could not detect active Vivado version. Skipping check."
+                )
                 return "0"
 
         self.logger.info(f"Active Vivado version: {current_version}")
@@ -402,14 +408,18 @@ class HDLBuilder(BuilderBase):
         project_dir = self.source_dir / "projects" / hdl_project / carrier
 
         if not self.script_mode and not project_dir.exists():
-            self.logger.warning(f"Project directory not found for cleaning: {project_dir}")
+            self.logger.warning(
+                f"Project directory not found for cleaning: {project_dir}"
+            )
             return
 
         target = "clean-all" if deep else "clean"
         self.logger.info(f"Cleaning project (target: {target})...")
         self.executor.make(target, extra_args=["-C", str(project_dir)])
 
-    def package_artifacts(self, project_dir: Path, hdl_project: str, carrier: str) -> dict:
+    def package_artifacts(
+        self, project_dir: Path, hdl_project: str, carrier: str
+    ) -> dict:
         """Collect and package build artifacts."""
         output_dir = self.get_output_dir()
         self.make_directory(output_dir)

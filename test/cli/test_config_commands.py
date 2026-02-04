@@ -113,13 +113,17 @@ def test_config_validate_invalid_file(cli_runner, mock_invalid_config_file, mock
 
     mock_from_yaml = mocker.patch("adibuild.core.config.BuildConfig.from_yaml")
     mock_config = mocker.MagicMock()
-    mock_config.validate.side_effect = ConfigurationError("Missing required field: repository")
+    mock_config.validate.side_effect = ConfigurationError(
+        "Missing required field: repository"
+    )
     mock_from_yaml.return_value = mock_config
 
     result = cli_runner.invoke(cli, ["config", "validate", str(mock_invalid_config_file)])
 
     assert result.exit_code == 1
-    assert "validation failed" in result.output.lower() or "error" in result.output.lower()
+    assert (
+        "validation failed" in result.output.lower() or "error" in result.output.lower()
+    )
 
 
 def test_config_validate_missing_schema(cli_runner, mock_config_file):
@@ -217,7 +221,8 @@ def test_config_show_load_failure(cli_runner, mocker):
     """Test config show when config loading fails."""
     # Mock BuildConfig.from_yaml to raise exception
     mocker.patch(
-        "adibuild.core.config.BuildConfig.from_yaml", side_effect=Exception("Failed to load config")
+        "adibuild.core.config.BuildConfig.from_yaml",
+        side_effect=Exception("Failed to load config"),
     )
 
     result = cli_runner.invoke(cli, ["config", "show"])

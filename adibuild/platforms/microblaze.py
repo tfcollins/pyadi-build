@@ -17,7 +17,9 @@ class MicroBlazePlatform(Platform):
 
         # Validate required configuration
         if self.arch != "microblaze":
-            raise ValueError(f"MicroBlazePlatform requires arch='microblaze', got '{self.arch}'")
+            raise ValueError(
+                f"MicroBlazePlatform requires arch='microblaze', got '{self.arch}'"
+            )
 
         if not self.kernel_target.startswith("simpleImage"):
             self.logger.warning(
@@ -95,4 +97,6 @@ class MicroBlazePlatform(Platform):
         Returns:
             Kernel image path
         """
-        return self.config.get("kernel_image_path") or self.get_default_kernel_image_path()
+        return (
+            self.config.get("kernel_image_path") or self.get_default_kernel_image_path()
+        )

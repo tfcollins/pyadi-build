@@ -92,7 +92,9 @@ def hdl():
 @click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
 @click.option("--ignore-version-check", is_flag=True, help="Ignore Vivado version check")
 @click.option(
-    "--generate-script", is_flag=True, help="Generate bash script instead of executing build"
+    "--generate-script",
+    is_flag=True,
+    help="Generate bash script instead of executing build",
 )
 @click.pass_context
 def build_hdl(
@@ -169,7 +171,9 @@ def build_hdl(
         builder = HDLBuilder(config, platform_obj, script_mode=generate_script)
 
         # Execute build
-        result = builder.build(clean_before=clean, ignore_version_check=ignore_version_check)
+        result = builder.build(
+            clean_before=clean, ignore_version_check=ignore_version_check
+        )
 
         # Display summary (reuse or create new)
         # display_build_summary is tailored for Linux (dtbs etc), but we can adapt it or make generic
@@ -208,10 +212,14 @@ def linux():
 @click.option("--dtbs-only", is_flag=True, help="Build only device tree blobs")
 @click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
 @click.option(
-    "--generate-script", is_flag=True, help="Generate bash script instead of executing build"
+    "--generate-script",
+    is_flag=True,
+    help="Generate bash script instead of executing build",
 )
 @click.pass_context
-def build_linux(ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs, generate_script):
+def build_linux(
+    ctx, platform, tag, defconfig, output, clean, dtbs_only, jobs, generate_script
+):
     """
     Build Linux kernel for specified platform.
 
@@ -548,7 +556,9 @@ def config_init():
     config_path = Path.home() / ".adibuild" / "config.yaml"
 
     if config_path.exists():
-        if not click.confirm(f"Configuration already exists at {config_path}. Overwrite?"):
+        if not click.confirm(
+            f"Configuration already exists at {config_path}. Overwrite?"
+        ):
             return
 
     create_default_config(config_path)
@@ -563,7 +573,10 @@ def config_validate(config_file):
     Checks if configuration file is valid according to the JSON schema.
     """
     schema_path = (
-        Path(__file__).parent.parent.parent / "configs" / "schema" / "linux_config.schema.json"
+        Path(__file__).parent.parent.parent
+        / "configs"
+        / "schema"
+        / "linux_config.schema.json"
     )
 
     if not schema_path.exists():
@@ -608,7 +621,9 @@ def mcp():
 
         mcp.run()
     except ImportError:
-        print_error("fastmcp is not installed. Please install with 'pip install fastmcp'.")
+        print_error(
+            "fastmcp is not installed. Please install with 'pip install fastmcp'."
+        )
     except Exception as e:
         print_error(f"Failed to start MCP server: {e}")
 

@@ -117,7 +117,9 @@ def build_hdl_project(
 
 
 @mcp.tool()
-def build_linux_platform(platform: str, config_path: str = None, clean: bool = False) -> str:
+def build_linux_platform(
+    platform: str, config_path: str = None, clean: bool = False
+) -> str:
     """Build Linux kernel for a specific platform.
 
     Args:

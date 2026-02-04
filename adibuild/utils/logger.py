@@ -10,7 +10,9 @@ from rich.logging import RichHandler
 class BuildLogger:
     """Enhanced logger for build operations with rich console output."""
 
-    def __init__(self, name: str, log_file: Path | None = None, level: int = logging.INFO):
+    def __init__(
+        self, name: str, log_file: Path | None = None, level: int = logging.INFO
+    ):
         """
         Initialize BuildLogger.
 

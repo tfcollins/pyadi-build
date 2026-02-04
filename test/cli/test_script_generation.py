@@ -40,7 +40,9 @@ def test_generate_script_microblaze(cli_runner, tmp_path, mocker):
 
     mocker.patch("pathlib.Path.home", return_value=tmp_path)
 
-    result = cli_runner.invoke(cli, ["linux", "build", "-p", "microblaze", "--generate-script"])
+    result = cli_runner.invoke(
+        cli, ["linux", "build", "-p", "microblaze", "--generate-script"]
+    )
 
     assert result.exit_code == 0
 
@@ -67,7 +69,16 @@ def test_generate_script_with_custom_config(cli_runner, tmp_path, mocker):
     config_file.write_text("CONFIG_TEST=y")
 
     result = cli_runner.invoke(
-        cli, ["linux", "build", "-p", "zynq", "--defconfig", str(config_file), "--generate-script"]
+        cli,
+        [
+            "linux",
+            "build",
+            "-p",
+            "zynq",
+            "--defconfig",
+            str(config_file),
+            "--generate-script",
+        ],
     )
 
     assert result.exit_code == 0

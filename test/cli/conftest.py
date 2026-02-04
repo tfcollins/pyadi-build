@@ -131,7 +131,9 @@ def mock_toolchain_vivado(mocker):
         cross_compile_arm64="aarch64-linux-gnu-",
     )
 
-    mocker.patch("adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info)
+    mocker.patch(
+        "adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info
+    )
     mocker.patch("adibuild.core.toolchain.ArmToolchain.detect", return_value=None)
     mocker.patch("adibuild.core.toolchain.SystemToolchain.detect", return_value=None)
 
@@ -168,9 +170,13 @@ def mock_toolchain_all(mocker):
         cross_compile_arm64="aarch64-linux-gnu-",
     )
 
-    mocker.patch("adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info)
+    mocker.patch(
+        "adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info
+    )
     mocker.patch("adibuild.core.toolchain.ArmToolchain.detect", return_value=arm_info)
-    mocker.patch("adibuild.core.toolchain.SystemToolchain.detect", return_value=system_info)
+    mocker.patch(
+        "adibuild.core.toolchain.SystemToolchain.detect", return_value=system_info
+    )
 
     return {"vivado": vivado_info, "arm": arm_info, "system": system_info}
 

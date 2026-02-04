@@ -214,13 +214,15 @@ def mock_kernel_source(tmp_path):
     # Create dummy kernel images
     (kernel_dir / "arch" / "arm" / "boot" / "uImage").write_text("dummy uImage")
     (kernel_dir / "arch" / "arm64" / "boot" / "Image").write_text("dummy Image")
-    (kernel_dir / "arch" / "microblaze" / "boot" / "simpleImage.vcu118_ad9081").write_text(
-        "dummy simpleImage"
-    )
+    (
+        kernel_dir / "arch" / "microblaze" / "boot" / "simpleImage.vcu118_ad9081"
+    ).write_text("dummy simpleImage")
 
     # Create dummy DTBs
     (kernel_dir / "arch" / "arm" / "boot" / "dts" / "test.dtb").write_text("dummy dtb")
-    (kernel_dir / "arch" / "arm64" / "boot" / "dts" / "xilinx" / "test.dtb").write_text("dummy dtb")
+    (kernel_dir / "arch" / "arm64" / "boot" / "dts" / "xilinx" / "test.dtb").write_text(
+        "dummy dtb"
+    )
 
     return kernel_dir
 

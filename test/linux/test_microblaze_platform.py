@@ -124,12 +124,16 @@ def test_microblaze_platform_get_make_env_fallback(microblaze_config_dict, mocke
     )
 
     # Mock get_toolchain
-    mocker.patch.object(platform, "get_toolchain", return_value=toolchain_without_microblaze)
+    mocker.patch.object(
+        platform, "get_toolchain", return_value=toolchain_without_microblaze
+    )
 
     env = platform.get_make_env()
 
     assert env["ARCH"] == "microblaze"
-    assert env["CROSS_COMPILE"] == "microblazeel-xilinx-linux-gnu-"  # Should use platform config
+    assert (
+        env["CROSS_COMPILE"] == "microblazeel-xilinx-linux-gnu-"
+    )  # Should use platform config
 
 
 def test_microblaze_platform_dtb_path(microblaze_config_dict):

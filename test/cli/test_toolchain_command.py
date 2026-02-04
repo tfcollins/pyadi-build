@@ -40,7 +40,9 @@ def test_toolchain_none_found(cli_runner, mock_toolchain_none):
     assert "auto-download" in result.output
 
 
-def test_toolchain_platform_specific_zynqmp(cli_runner, mock_toolchain_vivado, mocker, tmp_path):
+def test_toolchain_platform_specific_zynqmp(
+    cli_runner, mock_toolchain_vivado, mocker, tmp_path
+):
     """Test toolchain command for specific platform (zynqmp)."""
     # Mock config loading
     from adibuild.core.config import BuildConfig
@@ -110,7 +112,8 @@ def test_toolchain_detection_failure(cli_runner, mocker):
     """Test toolchain command when detection raises exception."""
     # Mock all toolchain detections to raise exceptions
     mocker.patch(
-        "adibuild.core.toolchain.VivadoToolchain.detect", side_effect=Exception("Detection error")
+        "adibuild.core.toolchain.VivadoToolchain.detect",
+        side_effect=Exception("Detection error"),
     )
     mocker.patch("adibuild.core.toolchain.ArmToolchain.detect", return_value=None)
     mocker.patch("adibuild.core.toolchain.SystemToolchain.detect", return_value=None)
@@ -121,7 +124,9 @@ def test_toolchain_detection_failure(cli_runner, mocker):
     assert "Toolchain detection failed" in result.output or "Error" in result.output
 
 
-def test_toolchain_with_custom_config(cli_runner, mock_toolchain_vivado, mock_config_file, mocker):
+def test_toolchain_with_custom_config(
+    cli_runner, mock_toolchain_vivado, mock_config_file, mocker
+):
     """Test toolchain command with custom config file."""
     from adibuild.core.config import BuildConfig
 
@@ -195,9 +200,13 @@ def test_toolchain_mixed_detection(cli_runner, mocker):
         cross_compile_arm64="aarch64-linux-gnu-",
     )
 
-    mocker.patch("adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info)
+    mocker.patch(
+        "adibuild.core.toolchain.VivadoToolchain.detect", return_value=vivado_info
+    )
     mocker.patch("adibuild.core.toolchain.ArmToolchain.detect", return_value=None)
-    mocker.patch("adibuild.core.toolchain.SystemToolchain.detect", return_value=system_info)
+    mocker.patch(
+        "adibuild.core.toolchain.SystemToolchain.detect", return_value=system_info
+    )
 
     result = cli_runner.invoke(cli, ["toolchain"])
 

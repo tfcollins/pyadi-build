@@ -94,4 +94,6 @@ class ZynqMPPlatform(Platform):
         Returns:
             Kernel image path
         """
-        return self.config.get("kernel_image_path") or self.get_default_kernel_image_path()
+        return (
+            self.config.get("kernel_image_path") or self.get_default_kernel_image_path()
+        )

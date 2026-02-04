@@ -43,7 +43,12 @@ class TestBuildZynqMPExample:
         assert platform.kernel_target == "Image"
 
     def test_build_method_single_call(
-        self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
+        self,
+        mocker,
+        mock_git_repo_for_examples,
+        tmp_path,
+        zynqmp_config_dict,
+        mock_kernel_source,
     ):
         """Test builder.build() single call as in example."""
         from adibuild import BuildConfig, LinuxBuilder
@@ -82,7 +87,12 @@ class TestBuildZynqMPExample:
         assert "artifacts" in result
 
     def test_result_structure(
-        self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
+        self,
+        mocker,
+        mock_git_repo_for_examples,
+        tmp_path,
+        zynqmp_config_dict,
+        mock_kernel_source,
     ):
         """Test that result dict has expected fields."""
         from adibuild import BuildConfig, LinuxBuilder
@@ -124,7 +134,12 @@ class TestBuildZynqMPExample:
 
     @pytest.mark.integration
     def test_full_zynqmp_workflow(
-        self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
+        self,
+        mocker,
+        mock_git_repo_for_examples,
+        tmp_path,
+        zynqmp_config_dict,
+        mock_kernel_source,
     ):
         """Test complete ZynqMP build workflow."""
         from adibuild import BuildConfig, LinuxBuilder

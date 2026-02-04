@@ -87,7 +87,12 @@ class TestCustomConfigExample:
 
     @pytest.mark.integration
     def test_full_custom_config_workflow(
-        self, mocker, mock_git_repo_for_examples, tmp_path, zynqmp_config_dict, mock_kernel_source
+        self,
+        mocker,
+        mock_git_repo_for_examples,
+        tmp_path,
+        zynqmp_config_dict,
+        mock_kernel_source,
     ):
         """Test complete custom config workflow from example."""
         from adibuild import BuildConfig, LinuxBuilder

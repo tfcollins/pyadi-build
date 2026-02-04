@@ -47,7 +47,9 @@ class TestMCPServer:
     @patch("adibuild.cli.mcp_server.HDLBuilder")
     @patch("adibuild.cli.mcp_server._get_platform_instance")
     @patch("adibuild.cli.mcp_server.BuildConfig")
-    def test_build_hdl_project_success(self, mock_config_cls, mock_get_platform, mock_builder_cls):
+    def test_build_hdl_project_success(
+        self, mock_config_cls, mock_get_platform, mock_builder_cls
+    ):
         """Test build_hdl_project success path."""
         # Setup mocks
         mock_builder = mock_builder_cls.return_value
@@ -74,7 +76,9 @@ class TestMCPServer:
     @patch("adibuild.cli.mcp_server.LinuxBuilder")
     @patch("adibuild.cli.mcp_server._get_platform_instance")
     @patch("adibuild.cli.mcp_server._load_config")
-    def test_build_linux_platform_success(self, mock_load, mock_get_platform, mock_builder_cls):
+    def test_build_linux_platform_success(
+        self, mock_load, mock_get_platform, mock_builder_cls
+    ):
         """Test build_linux_platform success path."""
         # Setup mocks
         mock_builder = mock_builder_cls.return_value

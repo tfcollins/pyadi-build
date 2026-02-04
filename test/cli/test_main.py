@@ -33,7 +33,11 @@ def test_no_command_shows_help(cli_runner):
 
     # Click shows help or usage when no command given (exit code can be 0 or 2)
     assert result.exit_code in (0, 2)
-    assert "adibuild" in result.output or "Usage" in result.output or "Commands" in result.output
+    assert (
+        "adibuild" in result.output
+        or "Usage" in result.output
+        or "Commands" in result.output
+    )
 
 
 def test_verbose_flag_default(cli_runner, mocker):

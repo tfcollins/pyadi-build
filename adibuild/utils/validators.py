@@ -70,7 +70,9 @@ def validate_tag(tag: str) -> str:
     return tag
 
 
-def validate_path(path: Path, must_exist: bool = False, must_be_dir: bool = False) -> Path:
+def validate_path(
+    path: Path, must_exist: bool = False, must_be_dir: bool = False
+) -> Path:
     """
     Validate file system path.
 

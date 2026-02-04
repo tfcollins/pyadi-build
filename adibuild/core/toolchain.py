@@ -70,6 +70,7 @@ class VivadoToolchain(Toolchain):
     # Vivado/Vitis version to GCC version mapping (for reference)
     # These GCC versions are what Vitis/Vivado ships with internally
     VIVADO_GCC_MAP = {
+        "2025.1": "13.3.0",
         "2023.2": "12.2.0",
         "2023.1": "12.2.0",
         "2022.2": "11.2.0",
@@ -172,7 +173,9 @@ class VivadoToolchain(Toolchain):
         try:
             # Source the script and dump environment
             cmd = f'bash -c "source {settings_script} > /dev/null 2>&1 && env"'
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, text=True, timeout=30
+            )
 
             if result.returncode != 0:
                 self.logger.warning(f"Failed to source {settings_script}")
@@ -190,7 +193,9 @@ class VivadoToolchain(Toolchain):
             return env_vars
 
         except (subprocess.TimeoutExpired, Exception) as e:
-            self.logger.warning(f"Error extracting environment from {settings_script}: {e}")
+            self.logger.warning(
+                f"Error extracting environment from {settings_script}: {e}"
+            )
             return {}
 
     def get_cross_compile(self, arch: str) -> str:
@@ -213,6 +218,7 @@ class ArmToolchain(Toolchain):
     # Vivado/Vitis version to ARM toolchain version mapping
     # Maps based on GCC version shipped with each Vitis release
     VIVADO_ARM_MAP = {
+        "2025.1": "13.3.rel1",  # GCC 13.3.0
         "2023.2": "12.2.rel1",  # GCC 12.2.0
         "2023.1": "12.2.rel1",  # GCC 12.2.0
         "2022.2": "11.2-2022.02",  # GCC 11.2.0
@@ -253,7 +259,9 @@ class ArmToolchain(Toolchain):
         arm32_dirs = list(
             self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-arm-none-linux-gnueabihf")
         )
-        arm64_dirs = list(self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-aarch64-none-linux-gnu"))
+        arm64_dirs = list(
+            self.cache_dir.glob("arm-gnu-toolchain-*-x86_64-aarch64-none-linux-gnu")
+        )
 
         if arm32_dirs or arm64_dirs:
             # Use the most recent version
@@ -272,7 +280,9 @@ class ArmToolchain(Toolchain):
             for tc_dir in arm64_dirs:
                 path_additions.append(str(tc_dir / "bin"))
 
-            env_vars = {"PATH": ":".join(path_additions) + ":" + os.environ.get("PATH", "")}
+            env_vars = {
+                "PATH": ":".join(path_additions) + ":" + os.environ.get("PATH", "")
+            }
 
             return ToolchainInfo(
                 type="arm",
@@ -350,7 +360,9 @@ class ArmToolchain(Toolchain):
 
         # URL structure: {base}/{version}/binrel/{filename}
         # Try multiple base URLs in case one is down
-        urls = [f"{base_url}{version}/binrel/{filename}" for base_url in self.ARM_BASE_URLS]
+        urls = [
+            f"{base_url}{version}/binrel/{filename}" for base_url in self.ARM_BASE_URLS
+        ]
 
         extract_dir = self.cache_dir / f"arm-gnu-toolchain-{version}-x86_64-{target}"
 
@@ -366,7 +378,9 @@ class ArmToolchain(Toolchain):
 
             try:
                 # Download to temporary file
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".tar.xz") as tmp_file:
+                with tempfile.NamedTemporaryFile(
+                    delete=False, suffix=".tar.xz"
+                ) as tmp_file:
                     response = requests.get(url, stream=True, timeout=300)
                     response.raise_for_status()
 
@@ -542,7 +556,9 @@ def select_toolchain(
                     # Try to download
                     logger.info("ARM GNU toolchain not found, downloading...")
                     info = tc.download(vivado_version)
-                    logger.info(f"Downloaded and selected ARM GNU toolchain version {info.version}")
+                    logger.info(
+                        f"Downloaded and selected ARM GNU toolchain version {info.version}"
+                    )
                     return info
 
             elif tc_type == "system":

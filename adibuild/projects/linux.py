@@ -60,7 +60,9 @@ class LinuxBuilder(BuilderBase):
         self.source_dir = repo_cache
 
         # Initialize git repository
-        self.repo = GitRepository(repo_url, repo_cache, script_builder=self.executor.script_builder)
+        self.repo = GitRepository(
+            repo_url, repo_cache, script_builder=self.executor.script_builder
+        )
 
         # Clone/update repository and checkout tag
 
@@ -79,7 +81,9 @@ class LinuxBuilder(BuilderBase):
 
         return self.source_dir
 
-    def configure(self, custom_config: Path | None = None, menuconfig: bool = False) -> None:
+    def configure(
+        self, custom_config: Path | None = None, menuconfig: bool = False
+    ) -> None:
         """
         Configure the kernel.
 
@@ -153,7 +157,9 @@ class LinuxBuilder(BuilderBase):
         kernel_image = self.platform.get_kernel_image_full_path(self.source_dir)
 
         if not self.script_mode and not kernel_image.exists():
-            raise BuildError(f"Kernel image not found at expected location: {kernel_image}")
+            raise BuildError(
+                f"Kernel image not found at expected location: {kernel_image}"
+            )
 
         self._kernel_built = True
         return kernel_image
@@ -172,7 +178,9 @@ class LinuxBuilder(BuilderBase):
 
         platform = self.platform
         if not isinstance(platform, MicroBlazePlatform):
-            raise BuildError("_build_microblaze_kernel called with non-MicroBlaze platform")
+            raise BuildError(
+                "_build_microblaze_kernel called with non-MicroBlaze platform"
+            )
 
         # Check for rootfs.cpio.gz
         rootfs_path = self.source_dir / "rootfs.cpio.gz"
@@ -209,7 +217,9 @@ class LinuxBuilder(BuilderBase):
                     built_images.append(image_path)
                     self.logger.debug(f"Built simpleImage: {target}")
                 else:
-                    self.logger.warning(f"simpleImage not found at expected location: {image_path}")
+                    self.logger.warning(
+                        f"simpleImage not found at expected location: {image_path}"
+                    )
 
             except BuildError as e:
                 self.logger.warning(f"Failed to build target {target}: {e}")
@@ -245,7 +255,9 @@ class LinuxBuilder(BuilderBase):
 
         # Skip DTB build for MicroBlaze (DT embedded in simpleImage)
         if isinstance(self.platform, MicroBlazePlatform):
-            self.logger.info("Skipping DTB build for MicroBlaze (DT embedded in simpleImage)")
+            self.logger.info(
+                "Skipping DTB build for MicroBlaze (DT embedded in simpleImage)"
+            )
             self._dtbs_built = True
             return []
 
@@ -378,7 +390,9 @@ class LinuxBuilder(BuilderBase):
                 for img in kernel_image:
                     output_kernel = output_dir / img.name
                     self.copy_file(img, output_kernel)
-                self.logger.info(f"Copied {len(kernel_image)} kernel images to {output_dir}")
+                self.logger.info(
+                    f"Copied {len(kernel_image)} kernel images to {output_dir}"
+                )
             else:
                 output_kernel = output_dir / kernel_image.name
                 self.copy_file(kernel_image, output_kernel)

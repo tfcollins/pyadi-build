@@ -47,7 +47,9 @@ def test_zynq_platform_get_make_env(zynq_config_dict, mocker):
     )
 
     # Mock get_toolchain
-    mocker.patch.object(platform, "get_toolchain", return_value=toolchain_without_cross_compile)
+    mocker.patch.object(
+        platform, "get_toolchain", return_value=toolchain_without_cross_compile
+    )
 
     env = platform.get_make_env()
 

@@ -50,7 +50,9 @@ class Platform(ABC):
         """
         cross_compile = self.config.get("cross_compile")
         if not cross_compile:
-            raise PlatformError("Cross-compile prefix not specified in platform configuration")
+            raise PlatformError(
+                "Cross-compile prefix not specified in platform configuration"
+            )
         return cross_compile
 
     @property
@@ -166,15 +168,21 @@ class Platform(ABC):
 
         # Check if toolchain supports this architecture
         if self.arch == "arm" and not toolchain.cross_compile_arm32:
-            raise PlatformError(f"Toolchain {toolchain.type} does not support ARM32 architecture")
+            raise PlatformError(
+                f"Toolchain {toolchain.type} does not support ARM32 architecture"
+            )
         elif self.arch == "arm64" and not toolchain.cross_compile_arm64:
-            raise PlatformError(f"Toolchain {toolchain.type} does not support ARM64 architecture")
+            raise PlatformError(
+                f"Toolchain {toolchain.type} does not support ARM64 architecture"
+            )
         elif self.arch == "microblaze" and not toolchain.cross_compile_microblaze:
             raise PlatformError(
                 f"Toolchain {toolchain.type} does not support MicroBlaze architecture"
             )
 
-        self.logger.info(f"Toolchain validation passed: {toolchain.type} v{toolchain.version}")
+        self.logger.info(
+            f"Toolchain validation passed: {toolchain.type} v{toolchain.version}"
+        )
         return True
 
     def get_dtb_full_paths(self, kernel_source: Path) -> list[Path]:
@@ -255,7 +263,9 @@ class Platform(ABC):
             Path to kernel image
         """
         if not self.kernel_image_path:
-            raise PlatformError("Kernel image path not specified in platform configuration")
+            raise PlatformError(
+                "Kernel image path not specified in platform configuration"
+            )
 
         return kernel_source / self.kernel_image_path
 

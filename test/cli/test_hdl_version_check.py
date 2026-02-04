@@ -56,7 +56,16 @@ platforms:
 """)
 
     result = cli_runner.invoke(
-        cli, ["--config", str(config_file), "hdl", "build", "-p", "test_plat", "--generate-script"]
+        cli,
+        [
+            "--config",
+            str(config_file),
+            "hdl",
+            "build",
+            "-p",
+            "test_plat",
+            "--generate-script",
+        ],
     )
 
     assert result.exit_code == 0

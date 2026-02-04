@@ -24,7 +24,15 @@ platforms:
 
     result = cli_runner.invoke(
         cli,
-        ["--config", str(config_file), "hdl", "build", "-p", "zed_fmcomms2", "--generate-script"],
+        [
+            "--config",
+            str(config_file),
+            "hdl",
+            "build",
+            "-p",
+            "zed_fmcomms2",
+            "--generate-script",
+        ],
     )
 
     assert result.exit_code == 0, f"Command failed: {result.output}"
@@ -134,4 +142,7 @@ def test_hdl_build_missing_args(cli_runner, tmp_path):
     result = cli_runner.invoke(cli, ["hdl", "build"])
 
     assert result.exit_code != 0
-    assert "You must specify either --platform OR both --project and --carrier" in result.output
+    assert (
+        "You must specify either --platform OR both --project and --carrier"
+        in result.output
+    )

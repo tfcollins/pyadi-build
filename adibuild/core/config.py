@@ -144,7 +144,11 @@ class BuildConfig:
         """
         result = base.copy()
         for key, value in override.items():
-            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            if (
+                key in result
+                and isinstance(result[key], dict)
+                and isinstance(value, dict)
+            ):
                 result[key] = BuildConfig._deep_merge(result[key], value)
             else:
                 result[key] = value
@@ -295,7 +299,9 @@ class BuildConfig:
         except json.JSONDecodeError as e:
             raise ConfigurationError(f"Failed to parse schema file: {e}") from e
         except jsonschema.ValidationError as e:
-            raise ConfigurationError(f"Configuration validation failed: {e.message}") from e
+            raise ConfigurationError(
+                f"Configuration validation failed: {e.message}"
+            ) from e
 
     def to_dict(self) -> dict[str, Any]:
         """
