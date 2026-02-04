@@ -1,0 +1,2057 @@
+{
+    "2022_R2": {
+        "project_map": {
+            "adrv9361z7035": [
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccfmc_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-fmc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccfmc_lvds"
+                }
+            ],
+            "adrv9364z7020": [
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9364-z7020-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9364z7020/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9364-z7020-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9364z7020/ccbob_lvds"
+                }
+            ],
+            "cn0540": [
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-cn0540.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0540/coraz7s"
+                }
+            ],
+            "cn0579": [
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-cn0579_i2c.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0579/coraz7s"
+                }
+            ],
+            "fmcomms5": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9361-fmcomms5.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms5-ext-lo-adf5355.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms5.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9361-fmcomms5.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms5/zcu102"
+                }
+            ],
+            "fmcomms2": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc702"
+                },
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms2/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9364-fmcomms4.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms2/zcu102"
+                }
+            ],
+            "adv7511": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-otg.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zed"
+                }
+            ],
+            "ad6676evb": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad6676-fmc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad6676evb/zc706"
+                }
+            ],
+            "ad9081_fmca_ebz": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9081.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9081_fmca_ebz/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9081.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9081_fmca_ebz/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                }
+            ],
+            "ad9082_fmca_ebz": [
+                {
+                    "carrier": "zc706 Special Synthesis parameters required",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9082.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9082_fmca_ebz/zc706 Special Synthesis parameters required"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9082-m4-l8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9082_fmca_ebz/zcu102"
+                }
+            ],
+            "dac_fmc_ebz": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9172-fmc-ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "dac_fmc_ebz/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9172-fmc-ebz-mode4.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "dac_fmc_ebz/zcu102"
+                }
+            ],
+            "fmcadc2": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9625-fmcadc3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcadc2/zc706"
+                }
+            ],
+            "adrv9001": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9002.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9001/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9002.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9001/zcu102"
+                }
+            ],
+            "adrv9009": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9008-1.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9008-2.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9009.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9008-1.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9008-2.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9009.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                }
+            ],
+            "adrv9371x": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9371.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9371x/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9375.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9371x/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9371.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9371x/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9375.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9371x/zcu102"
+                }
+            ],
+            "cn0506": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-mii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-rgmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-rmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-mii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-rgmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-rmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-mii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-rgmii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-rmii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                }
+            ],
+            "daq2": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcdaq2.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "daq2/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-fmcdaq2.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "daq2/zcu102"
+                }
+            ],
+            "daq3": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcdaq3-revC.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "daq3/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-fmcdaq3.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "daq3/zcu102"
+                }
+            ],
+            "fmcjesdadc1": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcjesdadc1.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcjesdadc1/zc706"
+                }
+            ],
+            "fmcomms11": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcomms11.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms11/zc706"
+                }
+            ],
+            "ad40xx_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4020.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad40xx_fmc/zed"
+                }
+            ],
+            "ad4630_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4630-24.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad4630_fmc/zed"
+                }
+            ],
+            "ad77681evb": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-1-evb.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad77681evb/zed"
+                }
+            ],
+            "ad7768evb": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-4-axi-adc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad7768evb/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-axi-adc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad7768evb/zed"
+                }
+            ],
+            "ad9467_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9467-fmc-250ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9467_fmc/zed"
+                }
+            ],
+            "adaq8092_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adaq8092.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adaq8092_fmc/zed"
+                }
+            ],
+            "cn0363": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0363.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0363/zed"
+                }
+            ],
+            "cn0577": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0577.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0577/zed"
+                }
+            ],
+            "imageon": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-imageon.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "imageon/zed"
+                }
+            ],
+            "adrv9009zu11eg": [
+                {
+                    "carrier": "adrv2crr_fmcxmwbr1",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-jesd204-fsm-fmcbridge.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcxmwbr1"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_xmicrowave",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-jesd204-fsm-xmicrowave.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_xmicrowave"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                }
+            ],
+            "ad9083_evb": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9083-fmc-ebz.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9083_evb/zcu102"
+                }
+            ],
+            "ad9695_fmc": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9695.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9695_fmc/zcu102"
+                }
+            ],
+            "ad9783_ebz": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9783.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9783_ebz/zcu102"
+                }
+            ],
+            "fmcomms8": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9009-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms8/zcu102"
+                }
+            ],
+            "ad9081_fmca_ebz_x_band": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                }
+            ]
+        },
+        "release_version": "2022_R2",
+        "linux_branch": "2022_R2",
+        "hdl_branch": "hdl_2022_r2"
+    },
+    "2023_R2": {
+        "project_map": {
+            "pulsar_adc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4003.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4020.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adaq4003.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/zed"
+                },
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-adaq4003.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/coraz7s"
+                }
+            ],
+            "adrv9361z7035": [
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccfmc_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-fmc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccfmc_lvds"
+                }
+            ],
+            "adrv9364z7020": [
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9364-z7020-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9364z7020/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9364-z7020-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9364z7020/ccbob_lvds"
+                }
+            ],
+            "cn0540": [
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-cn0540.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0540/coraz7s"
+                }
+            ],
+            "cn0579": [
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-cn0579_i2c.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0579/coraz7s"
+                }
+            ],
+            "fmcomms5": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9361-fmcomms5.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms5-ext-lo-adf5355.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms5.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9361-fmcomms5.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms5/zcu102"
+                }
+            ],
+            "fmcomms2": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc702"
+                },
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms2/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9364-fmcomms4.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms2/zcu102"
+                }
+            ],
+            "adv7511": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-otg.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zed"
+                }
+            ],
+            "ad6676evb": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad6676-fmc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad6676evb/zc706"
+                }
+            ],
+            "ad9081_fmca_ebz": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9081.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9081_fmca_ebz/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9081.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9081_fmca_ebz/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                }
+            ],
+            "ad9082_fmca_ebz": [
+                {
+                    "carrier": "zc706 Special Synthesis parameters required",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9082.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9082_fmca_ebz/zc706 Special Synthesis parameters required"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9082-m4-l8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9082_fmca_ebz/zcu102"
+                }
+            ],
+            "dac_fmc_ebz": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9172-fmc-ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "dac_fmc_ebz/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9172-fmc-ebz-mode4.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "dac_fmc_ebz/zcu102"
+                }
+            ],
+            "ad9434_fmc": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9434-fmc-500ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9434_fmc/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9434-fmc-500ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9434_fmc/zed"
+                }
+            ],
+            "adrv9001": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9002.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9001/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9002.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9001/zcu102"
+                }
+            ],
+            "adrv9009": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9008-1.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9008-2.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9009.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9008-1.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9008-2.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9009.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                }
+            ],
+            "adrv9371x": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9371.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9371x/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9375.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9371x/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9371.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9371x/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9375.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9371x/zcu102"
+                }
+            ],
+            "cn0506": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-mii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-rgmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-rmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-mii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-rgmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-rmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-mii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-rgmii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-rmii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                }
+            ],
+            "daq3": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcdaq3-revC.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "daq3/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-fmcdaq3.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "daq3/zcu102"
+                }
+            ],
+            "fmcjesdadc1": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcjesdadc1.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcjesdadc1/zc706"
+                }
+            ],
+            "fmcomms11": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcomms11.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms11/zc706"
+                }
+            ],
+            "ad4134_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4134.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad4134_fmc/zed"
+                }
+            ],
+            "ad4630_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4630-24.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad4630_fmc/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4630-24.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad4630_fmc/zed"
+                }
+            ],
+            "ad77681evb": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-1-evb.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad77681evb/zed"
+                }
+            ],
+            "ad7768evb": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-4-axi-adc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad7768evb/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-axi-adc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad7768evb/zed"
+                }
+            ],
+            "ad9265_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9265-fmc-125ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9265_fmc/zed"
+                }
+            ],
+            "ad9467_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9467-fmc-250ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9467_fmc/zed"
+                }
+            ],
+            "adaq8092_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adaq8092.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adaq8092_fmc/zed"
+                }
+            ],
+            "cn0363": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0363.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0363/zed"
+                }
+            ],
+            "cn0577": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0577.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0577/zed"
+                }
+            ],
+            "adrv9009zu11eg": [
+                {
+                    "carrier": "adrv2crr_fmcxmwbr1",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-jesd204-fsm-fmcbridge.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcxmwbr1"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcxmwbr1",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-jesd204-fsm-xmicrowave.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcxmwbr1"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                }
+            ],
+            "jupiter_sdr": [
+                {
+                    "carrier": null,
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-jupiter-sdr.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "jupiter_sdr"
+                }
+            ],
+            "ad9083_evb": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9083-fmc-ebz.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9083_evb/zcu102"
+                }
+            ],
+            "ad9695_fmc": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9695.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9695_fmc/zcu102"
+                }
+            ],
+            "ad9783_ebz": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9783.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9783_ebz/zcu102"
+                }
+            ],
+            "fmcomms8": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9009-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms8/zcu102"
+                }
+            ],
+            "adrv9026": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9025.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9026/zcu102"
+                }
+            ],
+            "daq2": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-fmcdaq2.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "daq2/zcu102"
+                }
+            ],
+            "ad9081_fmca_ebz_x_band": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                }
+            ]
+        },
+        "release_version": "2023_R2",
+        "linux_branch": "2023_R2",
+        "hdl_branch": "hdl_2023_r2"
+    },
+    "2023_R2_P1": {
+        "project_map": {
+            "pulsar_adc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4003.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4020.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adaq4003.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/zed"
+                },
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-adaq4003.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "pulsar_adc/coraz7s"
+                }
+            ],
+            "adrv9361z7035": [
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccfmc_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9361-z7035-fmc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9361z7035/ccfmc_lvds"
+                }
+            ],
+            "adrv9364z7020": [
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9364-z7020-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9364z7020/ccbob_lvds"
+                },
+                {
+                    "carrier": "ccbob_lvds",
+                    "devicetree": "arch/arm/boot/dts/zynq-adrv9364-z7020-bob.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9364z7020/ccbob_lvds"
+                }
+            ],
+            "cn0540": [
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-cn0540.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0540/coraz7s"
+                }
+            ],
+            "cn0579": [
+                {
+                    "carrier": "coraz7s",
+                    "devicetree": "arch/arm/boot/dts/zynq-coraz7s-cn0579_i2c.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0579/coraz7s"
+                }
+            ],
+            "fmcomms5": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9361-fmcomms5.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms5-ext-lo-adf5355.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms5.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms5/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9361-fmcomms5.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms5/zcu102"
+                }
+            ],
+            "fmcomms2": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc702"
+                },
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9364-fmcomms4.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms2/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9361-fmcomms2-3.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms2/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9364-fmcomms4.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms2/zcu102"
+                }
+            ],
+            "adv7511": [
+                {
+                    "carrier": "zc702",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc702-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zc702"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-otg.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adv7511/zed"
+                }
+            ],
+            "ad6676evb": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad6676-fmc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad6676evb/zc706"
+                }
+            ],
+            "ad9081_fmca_ebz": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9081.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9081_fmca_ebz/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9081.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9081_fmca_ebz/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9081.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz/zcu102"
+                }
+            ],
+            "ad9082_fmca_ebz": [
+                {
+                    "carrier": "zc706 Special Synthesis parameters required",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9082.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9082_fmca_ebz/zc706 Special Synthesis parameters required"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9082-m4-l8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9082_fmca_ebz/zcu102"
+                }
+            ],
+            "dac_fmc_ebz": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9172-fmc-ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "dac_fmc_ebz/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9172-fmc-ebz-mode4.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "dac_fmc_ebz/zcu102"
+                }
+            ],
+            "ad9434_fmc": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-ad9434-fmc-500ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9434_fmc/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9434-fmc-500ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9434_fmc/zed"
+                }
+            ],
+            "adrv9001": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adrv9002.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9001/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9002.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9001/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9002.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9001/zcu102"
+                }
+            ],
+            "adrv9009": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9008-1.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9008-2.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9009.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9009/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9008-1.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9008-2.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9009.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009/zcu102"
+                }
+            ],
+            "adrv9371x": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9371.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9371x/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-adrv9375.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adrv9371x/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9371.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9371x/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9375.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9371x/zcu102"
+                }
+            ],
+            "cn0506": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-mii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-rgmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-cn0506-rmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zc706"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-mii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-rgmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0506-rmii.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0506/zed"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-mii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-rgmii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-cn0506-rmii.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "cn0506/zcu102"
+                }
+            ],
+            "daq3": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcdaq3-revC.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "daq3/zc706"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-fmcdaq3.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "daq3/zcu102"
+                }
+            ],
+            "fmcjesdadc1": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcjesdadc1.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcjesdadc1/zc706"
+                }
+            ],
+            "fmcomms11": [
+                {
+                    "carrier": "zc706",
+                    "devicetree": "arch/arm/boot/dts/zynq-zc706-adv7511-fmcomms11.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "fmcomms11/zc706"
+                }
+            ],
+            "ad4134_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4134.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad4134_fmc/zed"
+                }
+            ],
+            "ad4630_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4630-24.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad4630_fmc/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad4630-24.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad4630_fmc/zed"
+                }
+            ],
+            "ad77681evb": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-1-evb.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad77681evb/zed"
+                }
+            ],
+            "ad7768evb": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-4-axi-adc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad7768evb/zed"
+                },
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad7768-axi-adc.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad7768evb/zed"
+                }
+            ],
+            "ad9265_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9265-fmc-125ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9265_fmc/zed"
+                }
+            ],
+            "ad9467_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-ad9467-fmc-250ebz.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "ad9467_fmc/zed"
+                }
+            ],
+            "adaq8092_fmc": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-adaq8092.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "adaq8092_fmc/zed"
+                }
+            ],
+            "cn0363": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0363.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0363/zed"
+                }
+            ],
+            "cn0577": [
+                {
+                    "carrier": "zed",
+                    "devicetree": "arch/arm/boot/dts/zynq-zed-adv7511-cn0577.dts",
+                    "kernel": "zynq-common/uImage",
+                    "hdl_project": "cn0577/zed"
+                }
+            ],
+            "adrv9009zu11eg": [
+                {
+                    "carrier": "adrv2crr_fmcxmwbr1",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-jesd204-fsm-fmcbridge.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcxmwbr1"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcomms8",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-sync-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcomms8"
+                },
+                {
+                    "carrier": "adrv2crr_fmcxmwbr1",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb-jesd204-fsm-xmicrowave.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmcxmwbr1"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                },
+                {
+                    "carrier": "adrv2crr_fmc",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-adrv9009-zu11eg-revb-adrv2crr-fmc-revb.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9009zu11eg/adrv2crr_fmc"
+                }
+            ],
+            "jupiter_sdr": [
+                {
+                    "carrier": null,
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-jupiter-sdr.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "jupiter_sdr"
+                }
+            ],
+            "ad9083_evb": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9083-fmc-ebz.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9083_evb/zcu102"
+                }
+            ],
+            "ad9695_fmc": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9695.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9695_fmc/zcu102"
+                }
+            ],
+            "ad9783_ebz": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-ad9783.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9783_ebz/zcu102"
+                }
+            ],
+            "fmcomms8": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9009-fmcomms8.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "fmcomms8/zcu102"
+                }
+            ],
+            "adrv9026": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-adrv9025.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "adrv9026/zcu102"
+                }
+            ],
+            "daq2": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-fmcdaq2.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "daq2/zcu102"
+                }
+            ],
+            "ad9081_fmca_ebz_x_band": [
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                },
+                {
+                    "carrier": "zcu102",
+                    "devicetree": "arch/arm64/boot/dts/xilinx/zynqmp-zcu102-rev10-stingray.dts",
+                    "kernel": "zynqmp-common/Image",
+                    "hdl_project": "ad9081_fmca_ebz_x_band/zcu102"
+                }
+            ]
+        },
+        "release_version": "2023_R2_P1",
+        "linux_branch": "2023_R2",
+        "hdl_branch": "hdl_2023_r2"
+    }
+}
