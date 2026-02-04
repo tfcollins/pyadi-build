@@ -41,6 +41,10 @@ def real_toolchain_hdl():
     if not shutil.which("vivado"):
         pytest.skip("Vivado not found in PATH")
     return "vivado"
+
+
+@pytest.fixture(scope="session")
+def real_toolchain_microblaze():
     """Detect or skip if MicroBlaze toolchain not available."""
     from adibuild.core.toolchain import ToolchainError, select_toolchain
 
