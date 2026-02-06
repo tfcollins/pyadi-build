@@ -33,6 +33,15 @@ Welcome to the documentation for **pyadi-build**, a Python module for generating
 
       Complete Python API documentation for using pyadi-build as a library.
 
+   .. grid-item-card:: MCP Server
+      :link: mcp-server/index
+      :link-type: doc
+      :text-align: center
+
+      :octicon:`server;2em`
+
+      Use pyadi-build with AI assistants like Claude via the Model Context Protocol.
+
    .. grid-item-card:: Developer Guide
       :link: developer-guide/index
       :link-type: doc
@@ -52,6 +61,7 @@ Features
 - **Device Tree Support**: Build and package device tree blobs (DTBs)
 - **Rich CLI**: Beautiful command-line interface with progress indicators
 - **Python API**: Use as a library in your own Python scripts
+- **MCP Server**: Integration with Model Context Protocol for AI assistants
 
 Quick Examples
 --------------
@@ -127,6 +137,7 @@ Documentation Sections
    getting-started/index
    user-guide/index
    api-reference/index
+   mcp-server/index
    developer-guide/index
    examples/index
 

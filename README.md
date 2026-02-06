@@ -300,6 +300,46 @@ Supported boards:
 
 **Note:** MicroBlaze kernels use `simpleImage` format with embedded device tree, not separate DTB files.
 
+## Model Context Protocol (MCP) Server
+
+pyadi-build includes a built-in MCP server to allow LLMs (like Claude) to directly interact with the build system. This provides a safe and structured way for AI assistants to explore, configure, and build projects.
+
+### Starting the Server
+
+```bash
+adibuild mcp
+```
+
+### Supported Tools
+
+The MCP server exposes the following tools:
+
+- **list_platforms**: List available platforms from configuration
+- **list_toolchains**: Detect and display available toolchains
+- **build_linux_platform**: Build Linux kernel (supports all CLI options)
+- **configure_linux_platform**: Configure kernel without building
+- **build_linux_dtbs**: Build specific device tree blobs
+- **clean_linux_platform**: Clean kernel build artifacts
+- **build_hdl_project**: Build HDL projects
+- **list_simpleimage_presets**: List simpleImage presets (MicroBlaze)
+- **validate_configuration**: Validate config files
+- **get_version**: Get pyadi-build version
+
+### Using with Claude Desktop
+
+Add the following to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "pyadi-build": {
+      "command": "adibuild",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
 ## Development
 
 ### Running Tests

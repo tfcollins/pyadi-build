@@ -1,7 +1,15 @@
 """Pytest configuration and fixtures."""
 
-from pathlib import Path
+import sys
 from unittest.mock import MagicMock
+
+# Mock git module if not present, to allow test collection
+try:
+    import git  # noqa: F401
+except ImportError:
+    sys.modules["git"] = MagicMock()
+
+from pathlib import Path
 
 import pytest
 
