@@ -148,7 +148,13 @@ class Platform(ABC):
         # Get toolchain preferences from config
         toolchain_config = self.config.get("toolchain", {})
         preferred = toolchain_config.get("preferred", "vivado")
-        fallbacks = toolchain_config.get("fallback", ["arm", "system"])
+        # If arm
+        if self.arch in ["arm", "arm64"]:
+            fallbacks = toolchain_config.get("fallback", ["arm", "system"])
+        elif self.arch == "microblaze":
+            fallbacks = toolchain_config.get("fallback", [])
+        else:
+            raise PlatformError(f"Unsupported architecture: {self.arch}")
 
         # Use tool_version from parameter, or fall back to config
         if not tool_version:
