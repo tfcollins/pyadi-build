@@ -389,6 +389,15 @@ def build_linux(
             platform_config["strict_version"] = not allow_any_vivado
             config.set(f"platforms.{platform}", platform_config)
 
+        # Remove arm compiler if building for microblaze, to avoid confusion in toolchain selection
+        if platform.lower() == "microblaze":
+            platform_config = config.get_platform(platform)
+            toolchain_config = platform_config.get("toolchain", {})
+            # Remove arm and system from fallback options for microblaze
+            toolchain_config["fallback"] = []
+            platform_config["toolchain"] = toolchain_config
+            config.set(f"platforms.{platform}", platform_config)
+
         # Get platform instance
         platform_obj = get_platform_instance(config, platform)
 
