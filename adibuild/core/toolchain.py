@@ -601,7 +601,8 @@ def select_toolchain(
         ToolchainError: If no suitable toolchain found
     """
     logger = get_logger("adibuild.toolchain")
-    fallbacks = fallbacks or ["arm", "system"]
+    if fallbacks is None:
+        fallbacks = ["arm", "system"]
 
     # Try preferred toolchain first
     toolchain_types = [preferred] + [fb for fb in fallbacks if fb != preferred]
