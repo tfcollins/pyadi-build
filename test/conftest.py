@@ -40,6 +40,7 @@ def pytest_collection_modifyitems(config, items):
 
     # Skip tests that require Vivado if it's not available
     import shutil
+
     vivado_available = shutil.which("vivado") is not None
     if not vivado_available:
         skip_vivado = pytest.mark.skip(reason="Vivado not found in PATH")
