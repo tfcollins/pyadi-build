@@ -1,3 +1,5 @@
+import pytest
+
 from adibuild.cli.main import cli
 
 
@@ -35,6 +37,7 @@ def test_generate_script_zynqmp(cli_runner, tmp_path, mocker):
     assert "Generating build script" in result.output
 
 
+@pytest.mark.requires_vivado
 def test_generate_script_microblaze(cli_runner, tmp_path, mocker):
     """Test generating a build script for MicroBlaze."""
 

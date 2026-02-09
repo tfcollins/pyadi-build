@@ -38,6 +38,15 @@ def pytest_collection_modifyitems(config, items):
             if "real_build" in item.keywords:
                 item.add_marker(skip_real_build)
 
+    # Skip tests that require Vivado if it's not available
+    import shutil
+    vivado_available = shutil.which("vivado") is not None
+    if not vivado_available:
+        skip_vivado = pytest.mark.skip(reason="Vivado not found in PATH")
+        for item in items:
+            if "requires_vivado" in item.keywords:
+                item.add_marker(skip_vivado)
+
 
 @pytest.fixture
 def tmp_dir(tmp_path):
