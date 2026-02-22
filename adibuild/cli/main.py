@@ -770,6 +770,14 @@ def build_linux(
         selected_target = prompt_simpleimage_selection(
             presets, group_by_carrier=(carrier is None)
         )
+        simpleimage_targets = (selected_target,)  # Convert to tuple for consistency
+
+    # Derive tool version from tag if not explicitly specified
+    if not tool_version and tag:
+        tool_version = tag_to_tool_version(tag)
+        if tool_version:
+            click.echo(f"Auto-detected tool version {tool_version} from tag {tag}")
+
     try:
         # Load configuration
         config = load_config_with_overrides(

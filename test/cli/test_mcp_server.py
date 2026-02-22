@@ -30,7 +30,7 @@ class TestMCPServer:
         """Test list_platforms with valid config."""
         # Setup mock config
         mock_config = MagicMock()
-        mock_config.config = {"platforms": {"zynq": {}, "zynqmp": {}}}
+        mock_config.to_dict.return_value = {"platforms": {"zynq": {}, "zynqmp": {}}}
         mock_load_config.return_value = mock_config
 
         platforms = mcp_server.list_platforms()
@@ -68,8 +68,12 @@ class TestMCPServer:
         mock_get_platform.assert_called_once()
         mock_builder.build.assert_called_once()
 
+    @patch("adibuild.cli.mcp_server._get_platform_instance")
+    @patch("adibuild.cli.mcp_server._load_config")
     @patch("adibuild.cli.mcp_server.HDLBuilder")
-    def test_build_hdl_project_failure(self, mock_builder_cls):
+    def test_build_hdl_project_failure(
+        self, mock_builder_cls, mock_load_config, mock_get_platform
+    ):
         """Test build_hdl_project failure path."""
         mock_builder_cls.side_effect = Exception("Build failed")
 

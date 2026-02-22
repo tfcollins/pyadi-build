@@ -66,7 +66,8 @@ jobs:
             device-tree-compiler \
             u-boot-tools \
             gcc-arm-linux-gnueabihf \
-            gcc-aarch64-linux-gnu
+            gcc-aarch64-linux-gnu \
+            gcc-arm-none-eabi
 
       - name: Install nox
         run: pip install nox

@@ -83,7 +83,8 @@ class UBootBuilder(BuilderBase):
         self.executor.check_tools(["swig", "bison", "flex", "pkg-config", "bc"])
 
         # Check for setuptools (needed for pylibfdt and binman)
-        res = self.executor.execute('python3 -c "import setuptools"', stream_output=False)
+        import sys
+        res = self.executor.execute(f'{sys.executable} -c "import setuptools"', stream_output=False)
         if res.failed:
             raise BuildError(
                 "Required Python package 'setuptools' not found. "
@@ -91,7 +92,7 @@ class UBootBuilder(BuilderBase):
             )
 
         # Check for pkg_resources (needed by binman)
-        res = self.executor.execute('python3 -c "import pkg_resources"', stream_output=False)
+        res = self.executor.execute(f'{sys.executable} -c "import pkg_resources"', stream_output=False)
         if res.failed:
             raise BuildError(
                 "Required Python package 'pkg_resources' not found (usually provided by setuptools < 60.0.0). "
