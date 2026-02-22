@@ -43,6 +43,7 @@ dev = [
     "pytest-cov>=4.0",
     "pytest-mock>=3.10",
     "setuptools<70.0.0",
+    "pyelftools",
     "nox>=2023.4.22",
     "black>=23.0",
     "ruff>=0.1.0",

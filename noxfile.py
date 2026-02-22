@@ -53,7 +53,7 @@ def tests_real(session):
     This includes actual kernel compilation and requires toolchains.
     Use with caution as it can take significant time.
     """
-    session.install(".[dev]", "setuptools<70.0.0")
+    session.install(".[dev]", "setuptools<70.0.0", "pyelftools")
     session.run(
         "pytest",
         "-v",
@@ -75,7 +75,7 @@ def tests_real_platform(session, platform):
     Args:
         platform: Platform to test (zynq, zynqmp, microblaze, boot, or noos)
     """
-    session.install(".[dev]", "setuptools<70.0.0")
+    session.install(".[dev]", "setuptools<70.0.0", "pyelftools")
     if platform == "boot":
         test_file = "test/integration/test_real_zynqmp_boot.py"
     elif platform == "noos":
