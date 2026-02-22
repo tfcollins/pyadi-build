@@ -371,13 +371,11 @@ class BootBuilder(BuilderBase):
                     f.write(
                         "    { type=bootimage, file=" + str(components["pdi"]) + " }\n"
                     )
-                f.write(
-                    "    { type=bootloader, file=" + str(components["plm"]) + " }\n"
-                )
+                f.write("    { type=bootloader, file=" + str(components["plm"]) + " }\n")
                 f.write("    { core=psm, file=" + str(components["psmfw"]) + " }\n")
                 f.write("  }\n")
                 f.write("  image {\n")
-                f.write("    id = 0x1c000000, name = \"apu_subsystem\",\n")
+                f.write('    id = 0x1c000000, name = "apu_subsystem",\n')
                 if components.get("dtb"):
                     f.write(
                         "    { type=raw, load=0x00001000, file="

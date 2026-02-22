@@ -102,9 +102,7 @@ class ATFBuilder(BuilderBase):
         self.make_directory(output_dir)
 
         # bl31.elf is typically in build/<plat>/release/bl31/bl31.elf
-        bl31_src = (
-            self.source_dir / "build" / atf_plat / "release" / "bl31" / "bl31.elf"
-        )
+        bl31_src = self.source_dir / "build" / atf_plat / "release" / "bl31" / "bl31.elf"
         if not self.script_mode and not bl31_src.exists():
             # Try debug build if release not found
             bl31_src = (
