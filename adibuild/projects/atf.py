@@ -1,7 +1,7 @@
 """ARM Trusted Firmware (ATF) builder."""
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
@@ -68,7 +68,7 @@ class ATFBuilder(BuilderBase):
             self.clean(deep=True)
 
         jobs = jobs or self.config.get_parallel_jobs()
-        
+
         # Build bl31.elf for ZynqMP
         # PLAT=zynqmp RESET_TO_BL31=1
         make_vars = {
@@ -76,7 +76,7 @@ class ATFBuilder(BuilderBase):
             "RESET_TO_BL31": "1",
             "CROSS_COMPILE": self.platform.get_toolchain().cross_compile_arm64,
         }
-        
+
         # Override with any config-specified variables
         make_vars.update(self.config.get("atf.make_variables", {}))
 
@@ -84,19 +84,34 @@ class ATFBuilder(BuilderBase):
         extra_args.extend(["-C", str(self.source_dir), "bl31"])
 
         self.logger.info(f"Building ATF for ZynqMP with {jobs} jobs...")
-        self.executor.make(jobs=jobs, extra_args=extra_args, env=self.platform.get_make_env())
+        self.executor.make(
+            jobs=jobs, extra_args=extra_args, env=self.platform.get_make_env()
+        )
 
         output_dir = self.get_output_dir()
         self.make_directory(output_dir)
-        
+
         # bl31.elf is typically in build/zynqmp/release/bl31/bl31.elf
         bl31_src = self.source_dir / "build" / "zynqmp" / "release" / "bl31" / "bl31.elf"
         if not self.script_mode and not bl31_src.exists():
             # Try debug build if release not found
-            bl31_src = self.source_dir / "build" / "zynqmp" / "debug" / "bl31" / "bl31.elf"
+            bl31_src = (
+                self.source_dir / "build" / "zynqmp" / "debug" / "bl31" / "bl31.elf"
+            )
 
         bl31_dst = output_dir / "bl31.elf"
         self.copy_file(bl31_src, bl31_dst)
+
+        # Also copy bl31.bin if it exists (U-Boot binman often needs it)
+        # It's usually in build/zynqmp/release/bl31.bin (parent of the bl31/ directory where .elf is)
+        bl31_bin_src = bl31_src.parent.parent / "bl31.bin"
+        if bl31_bin_src.exists() or self.script_mode:
+            bl31_bin_dst = output_dir / "bl31.bin"
+            self.copy_file(bl31_bin_src, bl31_bin_dst)
+            return {
+                "artifacts": {"bl31": str(bl31_dst), "bl31_bin": str(bl31_bin_dst)},
+                "output_dir": str(output_dir),
+            }
 
         return {
             "artifacts": {"bl31": str(bl31_dst)},
@@ -107,7 +122,7 @@ class ATFBuilder(BuilderBase):
         """Clean ATF build artifacts."""
         if not self.source_dir or not self.source_dir.exists():
             return
-        
+
         if deep:
             if self.script_mode:
                 self.executor.execute(f"rm -rf {self.source_dir / 'build'}")

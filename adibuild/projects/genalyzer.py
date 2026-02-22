@@ -165,9 +165,7 @@ class GenalyzerBuilder(BuilderBase):
         artifacts = self.package_artifacts()
         output_dir = self.get_output_dir()
 
-        self.logger.info(
-            f"Build complete. {len(artifacts)} artifact(s) in {output_dir}"
-        )
+        self.logger.info(f"Build complete. {len(artifacts)} artifact(s) in {output_dir}")
         return {
             "artifacts": [str(a) for a in artifacts],
             "output_dir": str(output_dir),
@@ -233,9 +231,7 @@ class GenalyzerBuilder(BuilderBase):
                         artifacts.append(dst)
 
             # pkg-config file (if generated)
-            for pc_file in list(build_dir.glob("*.pc")) + list(
-                build_dir.glob("**/*.pc")
-            ):
+            for pc_file in list(build_dir.glob("*.pc")) + list(build_dir.glob("**/*.pc")):
                 dst = output_dir / pc_file.name
                 shutil.copy2(pc_file, dst)
                 artifacts.append(dst)
@@ -245,9 +241,7 @@ class GenalyzerBuilder(BuilderBase):
                 "project": "genalyzer",
                 "tag": self.config.get_tag(),
                 "arch": self.platform.arch,
-                "artifacts": [
-                    str(a.relative_to(output_dir)) for a in artifacts
-                ],
+                "artifacts": [str(a.relative_to(output_dir)) for a in artifacts],
             }
             (output_dir / "metadata.json").write_text(json.dumps(metadata, indent=2))
 

@@ -685,7 +685,7 @@ Options:
 Boot Commands
 -------------
 
-The ``boot`` command group provides tools for building bootloaders and generating ZynqMP ``BOOT.BIN`` files.
+The ``boot`` command group provides tools for building bootloaders and generating ``BOOT.BIN`` files for Zynq, ZynqMP, and Versal platforms.
 
 Build ATF
 ~~~~~~~~~
@@ -700,7 +700,7 @@ Options:
 
 .. option:: --platform PLATFORM, -p PLATFORM
 
-   **Required.** Platform name (e.g., ``zynqmp``).
+   **Required.** Platform name (e.g., ``zynqmp``, ``versal``).
 
 .. option:: --tag TAG, -t TAG
 
@@ -719,7 +719,11 @@ Options:
 
 .. option:: --platform PLATFORM, -p PLATFORM
 
-   **Required.** Platform name (e.g., ``zynqmp``, ``zynq``).
+   **Required.** Platform name (e.g., ``zynqmp``, ``zynq``, ``versal``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build.
 
 .. option:: --defconfig DEFCONFIG
 
@@ -740,9 +744,13 @@ Options:
 
    **Required.** Platform name (e.g., ``zynqmp``, ``zynq``, ``versal``).
 
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build.
+
 .. option:: --xsa PATH
 
-   Path to hardware description file (.xsa). Required for Zynq/ZynqMP unless pre-built components are provided.
+   Path to hardware description file (.xsa). Required for Zynq/ZynqMP firmware generation.
 
 .. option:: --bit PATH
 
@@ -754,33 +762,41 @@ Options:
 
 .. option:: --plm PATH
 
-   Path to pre-built PLM for Versal.
+   Path to pre-built PLM for Versal. If not provided, it will be built from source using XSCT.
 
 .. option:: --psmfw PATH
 
-   Path to pre-built PSMFW for Versal.
+   Path to pre-built PSMFW for Versal. If not provided, it will be built from source using XSCT.
 
 .. option:: --atf PATH
 
-   Path to pre-built bl31.elf.
+   Path to pre-built bl31.elf. If not provided, it will be built from source.
 
 .. option:: --uboot PATH
 
-   Path to pre-built u-boot.elf.
+   Path to pre-built u-boot.elf. If not provided, it will be built from source.
+
+.. option:: --fsbl PATH
+
+   Path to pre-built FSBL for Zynq/ZynqMP. If not provided, it will be built from source using XSCT.
+
+.. option:: --pmufw PATH
+
+   Path to pre-built PMUFW for ZynqMP. If not provided, it will be built from source using XSCT.
 
 **Examples:**
 
-ZynqMP with XSA:
+ZynqMP from source:
 
 .. code-block:: bash
 
    adibuild boot build-boot -p zynqmp --xsa system_top.xsa
 
-Versal with pre-built components:
+Versal with pre-built ATF:
 
 .. code-block:: bash
 
-   adibuild boot build-boot -p versal --pdi system.pdi --plm plm.elf --psmfw psmfw.elf
+   adibuild boot build-boot -p versal --pdi system.pdi --atf build/atf/bl31.elf
 
 Toolchain Command
 -----------------

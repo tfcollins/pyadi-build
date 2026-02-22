@@ -1,8 +1,6 @@
 """U-Boot bootloader builder."""
 
 from pathlib import Path
-import shutil
-import os
 
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
@@ -72,14 +70,18 @@ class UBootBuilder(BuilderBase):
                 defconfig = "zynq_adi_defconfig"
 
         self.logger.info(f"Configuring U-Boot with {defconfig}...")
-        self.executor.make(defconfig, env=self.platform.get_make_env(), extra_args=["-C", str(self.source_dir)])
+        self.executor.make(
+            defconfig,
+            env=self.platform.get_make_env(),
+            extra_args=["-C", str(self.source_dir)],
+        )
 
     def validate_environment(self) -> bool:
         """Validate build environment for U-Boot."""
         super().validate_environment()
         # U-Boot needs some extra tools for modern versions (especially for pylibfdt)
         self.executor.check_tools(["swig", "bison", "flex", "pkg-config"])
-        
+
         # Check for gnutls (needed for tools/mkeficapsule)
         res = self.executor.execute("pkg-config --exists gnutls", stream_output=False)
         if res.failed:
@@ -87,10 +89,15 @@ class UBootBuilder(BuilderBase):
                 "Required library 'gnutls' not found (pkg-config check failed). "
                 "Please install 'libgnutls28-dev' (on Debian/Ubuntu) or equivalent."
             )
-            
+
         return True
 
-    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict:
+    def build(
+        self,
+        clean_before: bool = False,
+        jobs: int | None = None,
+        env_overrides: dict[str, str] | None = None,
+    ) -> dict:
         """Build U-Boot (u-boot.elf)."""
         self.prepare_source()
 
@@ -101,18 +108,22 @@ class UBootBuilder(BuilderBase):
 
         jobs = jobs or self.config.get_parallel_jobs()
         self.logger.info(f"Building U-Boot with {jobs} jobs...")
-        
+
         # U-Boot build output targets
         # ZynqMP: u-boot.elf
         # Zynq: u-boot.img, u-boot.elf
-        
-        self.executor.make(jobs=jobs, env=self.platform.get_make_env(), extra_args=["-C", str(self.source_dir)])
+
+        env = self.platform.get_make_env()
+        if env_overrides:
+            env.update(env_overrides)
+
+        self.executor.make(jobs=jobs, env=env, extra_args=["-C", str(self.source_dir)])
 
         output_dir = self.get_output_dir()
         self.make_directory(output_dir)
-        
+
         artifacts = {}
-        
+
         targets = ["u-boot.elf", "u-boot.img", "u-boot.bin", "u-boot"]
         for target in targets:
             src = self.source_dir / target
@@ -130,9 +141,13 @@ class UBootBuilder(BuilderBase):
         """Clean U-Boot build artifacts."""
         if not self.source_dir or not self.source_dir.exists():
             return
-        
+
         target = "distclean" if deep else "clean"
-        self.executor.make(target, env=self.platform.get_make_env(), extra_args=["-C", str(self.source_dir)])
+        self.executor.make(
+            target,
+            env=self.platform.get_make_env(),
+            extra_args=["-C", str(self.source_dir)],
+        )
 
     def get_output_dir(self) -> Path:
         """Get output directory for U-Boot artifacts."""

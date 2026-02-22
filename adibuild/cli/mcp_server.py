@@ -14,11 +14,11 @@ from adibuild.platforms.hdl import HDLPlatform
 from adibuild.platforms.microblaze import MicroBlazePlatform
 from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
+from adibuild.projects.genalyzer import GenalyzerBuilder
 from adibuild.projects.hdl import HDLBuilder
+from adibuild.projects.libad9361 import LibAD9361Builder
 from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
-from adibuild.projects.libad9361 import LibAD9361Builder
-from adibuild.projects.genalyzer import GenalyzerBuilder
 
 # Initialize FastMCP server
 mcp = FastMCP("pyadi-build")
@@ -90,7 +90,7 @@ def _load_config(
             if not default_config.exists():
                 # Fallback for linux which doesn't have default.yaml but uses 2023_R2.yaml
                 default_config = config_dir / "2023_R2.yaml"
-            
+
             if default_config.exists():
                 config = BuildConfig.from_yaml(default_config)
             else:

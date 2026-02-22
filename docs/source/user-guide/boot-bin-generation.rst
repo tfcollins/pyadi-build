@@ -1,47 +1,52 @@
 BOOT.BIN Generation
 ===================
 
-pyadi-build provides tools to generate a complete ``BOOT.BIN`` for Xilinx Zynq, ZynqMP, and Versal platforms. This process involves multiple components that must be built and then combined using Xilinx ``bootgen``.
+pyadi-build provides tools to generate a complete ``BOOT.BIN`` for Xilinx Zynq, ZynqMP, and Versal platforms. This process involves multiple components that must be built from source and then combined using Xilinx ``bootgen``.
 
 Platform Components
 -------------------
 
 The components required for ``BOOT.BIN`` vary by platform:
 
-Zynq (7000 series)
-~~~~~~~~~~~~~~~~~~
-1.  **FSBL** (First Stage Boot Loader)
-2.  **Bitstream** (Optional)
-3.  **U-Boot**
+Zynq-7000
+~~~~~~~~~
+
+*   **FSBL** (First Stage Boot Loader)
+*   **Bitstream** (Optional)
+*   **U-Boot**
 
 ZynqMP (UltraScale+)
 ~~~~~~~~~~~~~~~~~~~~
-1.  **FSBL** (First Stage Boot Loader)
-2.  **PMUFW** (Platform Management Unit Firmware)
-3.  **Bitstream** (Optional)
-4.  **ATF** (ARM Trusted Firmware - ``bl31.elf``)
-5.  **U-Boot**
+
+*   **FSBL** (First Stage Boot Loader)
+*   **PMUFW** (Platform Management Unit Firmware)
+*   **Bitstream** (Optional)
+*   **ATF** (ARM Trusted Firmware - ``bl31.elf``)
+*   **U-Boot**
 
 Versal
 ~~~~~~
-1.  **PLM** (Platform Loader and Manager)
-2.  **PSMFW** (Processor System Manager Firmware)
-3.  **PDI** (Programmable Device Image - replaces Bitstream)
-4.  **ATF** (ARM Trusted Firmware)
-5.  **U-Boot**
+
+*   **PLM** (Platform Loader and Manager)
+*   **PSMFW** (Processor System Manager Firmware)
+*   **PDI** (Programmable Device Image - replaces Bitstream)
+*   **ATF** (ARM Trusted Firmware - ``bl31.elf``)
+*   **U-Boot**
 
 Builders
 --------
 
-### Component Builders
+Component Builders
+~~~~~~~~~~~~~~~~~~
 
 All boot components are built from source unless a path to a pre-built binary is provided in the configuration.
 
-- **ATF**: Cloned from `<https://github.com/analogdevicesinc/arm-trusted-firmware>` and built using ``make``.
-- **U-Boot**: Cloned from `<https://github.com/analogdevicesinc/u-boot>` and built using ``make``.
-- **FSBL/PMUFW/PLM/PSMFW**: Generated and compiled from source using Xilinx ``xsct`` and the hardware description file (.xsa or .pdi).
+*   **ATF**: Cloned from `<https://github.com/analogdevicesinc/arm-trusted-firmware>`_ and built using ``make``.
+*   **U-Boot**: Cloned from `<https://github.com/analogdevicesinc/u-boot>`_ and built using ``make``.
+*   **Firmware (FSBL/PMUFW/PLM/PSMFW)**: Generated and compiled from source using Xilinx ``xsct`` and the hardware description file (``.xsa`` or ``.pdi``).
 
-### Generic Boot Builder
+Generic Boot Builder
+~~~~~~~~~~~~~~~~~~~~
 
 The ``build-boot`` command orchestrates the entire process for any supported platform.
 
@@ -56,29 +61,17 @@ The ``build-boot`` command orchestrates the entire process for any supported pla
    # For Versal
    adibuild boot build-boot -p versal --pdi system_top.pdi --plm plm.elf --psmfw psmfw.elf
 
-### Component Builders
-
-You can also build individual components:
-
-.. code-block:: bash
-
-   # Build ATF for ZynqMP/Versal
-   adibuild boot build-atf -p zynqmp
-
-   # Build U-Boot
-   adibuild boot build-uboot -p zynqmp
-
 Required Tools
 --------------
 
-- **Xilinx Vivado/Vitis**: Provides ``bootgen`` and ``xsct``.
-- **XSCT**: Used to generate FSBL and PMUFW from the hardware description (XSA).
-- **Cross-compiler**: GNU toolchain appropriate for the target architecture (ARM32 for Zynq, ARM64 for ZynqMP/Versal).
+*   **Xilinx Vivado/Vitis**: Provides ``bootgen`` and ``xsct``.
+*   **XSCT**: Used to generate FSBL and PMUFW from the hardware description file.
+*   **Cross-compiler**: GNU toolchain appropriate for the target architecture (ARM32 for Zynq, ARM64 for ZynqMP/Versal).
 
 Configuration
 -------------
 
-Component paths can be specified in your configuration file:
+Component paths can be specified in your configuration file to skip source builds:
 
 .. code-block:: yaml
 

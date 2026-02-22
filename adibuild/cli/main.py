@@ -20,14 +20,14 @@ from adibuild.cli.helpers import (
 )
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
+from adibuild.projects.atf import ATFBuilder
+from adibuild.projects.boot import BootBuilder
 from adibuild.projects.genalyzer import GenalyzerBuilder
 from adibuild.projects.hdl import HDLBuilder
 from adibuild.projects.libad9361 import LibAD9361Builder
 from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
-from adibuild.projects.atf import ATFBuilder
 from adibuild.projects.uboot import UBootBuilder
-from adibuild.projects.boot import BootBuilder, ZynqMPBootBuilder
 from adibuild.utils.logger import setup_logging
 
 
@@ -1258,11 +1258,17 @@ def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
 @click.option("--bit", type=click.Path(exists=True), help="Path to bitstream file")
 @click.option("--pdi", type=click.Path(exists=True), help="Path to PDI file (Versal)")
 @click.option("--atf", type=click.Path(exists=True), help="Path to pre-built bl31.elf")
-@click.option("--uboot", type=click.Path(exists=True), help="Path to pre-built u-boot.elf")
+@click.option(
+    "--uboot", type=click.Path(exists=True), help="Path to pre-built u-boot.elf"
+)
 @click.option("--fsbl", type=click.Path(exists=True), help="Path to pre-built FSBL")
 @click.option("--pmufw", type=click.Path(exists=True), help="Path to pre-built PMUFW")
-@click.option("--plm", type=click.Path(exists=True), help="Path to pre-built PLM (Versal)")
-@click.option("--psmfw", type=click.Path(exists=True), help="Path to pre-built PSMFW (Versal)")
+@click.option(
+    "--plm", type=click.Path(exists=True), help="Path to pre-built PLM (Versal)"
+)
+@click.option(
+    "--psmfw", type=click.Path(exists=True), help="Path to pre-built PSMFW (Versal)"
+)
 @click.option("--clean", is_flag=True, help="Clean before building")
 @click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
 @click.option(
@@ -1272,7 +1278,21 @@ def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
 )
 @click.pass_context
 def build_boot(
-    ctx, platform, tag, xsa, bit, pdi, atf, uboot, fsbl, pmufw, plm, psmfw, clean, jobs, generate_script
+    ctx,
+    platform,
+    tag,
+    xsa,
+    bit,
+    pdi,
+    atf,
+    uboot,
+    fsbl,
+    pmufw,
+    plm,
+    psmfw,
+    clean,
+    jobs,
+    generate_script,
 ):
     """Generate BOOT.BIN for Zynq, ZynqMP or Versal."""
     try:

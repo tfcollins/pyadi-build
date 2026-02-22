@@ -2,14 +2,12 @@
 
 import json
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
 from adibuild.core.config import BuildConfig
 from adibuild.platforms.lib import DEFAULT_CROSS_COMPILE, LibPlatform
 from adibuild.projects.genalyzer import GenalyzerBuilder
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -308,7 +306,7 @@ class TestGenalyzerBuilder:
         (include_dir / "version.h").write_text("#define VERSION 1")
 
         builder.source_dir = fake_source
-        artifacts = builder.package_artifacts()
+        builder.package_artifacts()
 
         out_include = builder.get_output_dir() / "include"
         assert (out_include / "fourier_analysis.hpp").exists()
@@ -509,7 +507,6 @@ class TestGenalyzerCLI:
         script_files = list(tmp_path.rglob("build_genalyzer_arm.sh"))
         if not script_files:
             # Look in the default work dir
-            import os
 
             work_dir = Path.home() / ".adibuild" / "work"
             script_files = list(work_dir.glob("build_genalyzer_arm.sh"))
@@ -526,9 +523,7 @@ class TestGenalyzerCLI:
 
         cfg = self._make_config_file(tmp_path)
         runner = CliRunner()
-        result = runner.invoke(
-            cli, ["--config", str(cfg), "genalyzer", "build"]
-        )
+        result = runner.invoke(cli, ["--config", str(cfg), "genalyzer", "build"])
         assert result.exit_code != 0
         assert "platform" in result.output.lower() or "missing" in result.output.lower()
 
@@ -548,7 +543,9 @@ class TestGenalyzerCLI:
             original_init(self, config, platform, *args, **kwargs)
 
         mocker.patch.object(GenalyzerBuilder, "__init__", mock_init)
-        mocker.patch.object(GenalyzerBuilder, "build", return_value={"artifacts": [], "output_dir": ""})
+        mocker.patch.object(
+            GenalyzerBuilder, "build", return_value={"artifacts": [], "output_dir": ""}
+        )
 
         runner = CliRunner()
         runner.invoke(
