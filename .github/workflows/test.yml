@@ -62,8 +62,13 @@ jobs:
             libgnutls28-dev \
             pkg-config \
             python3-setuptools \
+            python3-dev \
+            python3-pyelftools \
             uuid-dev \
             libssl-dev \
+            libyaml-dev \
+            lz4 \
+            lzop \
             device-tree-compiler \
             u-boot-tools \
             gcc-arm-linux-gnueabihf \

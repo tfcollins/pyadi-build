@@ -102,6 +102,14 @@ class UBootBuilder(BuilderBase):
                 "Binman requires this to run."
             )
 
+        # Check for pyelftools (needed by binman)
+        res = self.executor.execute(f'{sys.executable} -c "import elftools"', stream_output=False)
+        if res.failed:
+            raise BuildError(
+                "Required Python package 'pyelftools' not found. "
+                "Please install it using 'pip install pyelftools' or 'apt install python3-pyelftools'."
+            )
+
         # Check for uuid (needed for tools/mkfwumdata)
         res = self.executor.execute("pkg-config --exists uuid", stream_output=False)
         if res.failed:
@@ -109,6 +117,9 @@ class UBootBuilder(BuilderBase):
                 "Required library 'uuid' not found (pkg-config check failed). "
                 "Please install 'uuid-dev' (on Debian/Ubuntu) or equivalent."
             )
+
+        # Check for compression tools
+        self.executor.check_tools(["lz4", "lzop"])
 
         return True
 
