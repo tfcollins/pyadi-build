@@ -787,7 +787,6 @@ def build_linux(
             project_type="linux",
         )
 
-
         # Override parallel jobs if specified
         if jobs:
             config.set("build.parallel_jobs", jobs)
