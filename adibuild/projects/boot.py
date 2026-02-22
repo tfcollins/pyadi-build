@@ -63,15 +63,19 @@ class BootBuilder(BuilderBase):
                 self.logger.info(f"Auto-detected hardware file from HDL build: {hw_file}")
             elif "Versal" not in platform_name:
                 raise BuildError("XSA file not found. Specify boot.xsa_path in config.")
-            # Versal might not need XSA if PDI is provided separately
 
         # 2. Collect/Build components
         components = self._ensure_components(hw_file, jobs=jobs)
 
-        # 3. Generate BIF file
+        # 3. Handle optional DTB
+        dtb_path = self.config.get("boot.dtb_path")
+        if dtb_path:
+            components["dtb"] = Path(dtb_path)
+
+        # 4. Generate BIF file
         bif_path = self._generate_bif(components)
 
-        # 4. Run bootgen
+        # 5. Run bootgen
         boot_bin = output_dir / "BOOT.BIN"
         self.logger.info("Running bootgen...")
 
@@ -341,6 +345,8 @@ class BootBuilder(BuilderBase):
                 f.write(f"  [bootloader] {components['fsbl']}\n")
                 if components.get("bitstream"):
                     f.write(f"  {components['bitstream']}\n")
+                if components.get("dtb"):
+                    f.write(f"  [load=0x00100000] {components['dtb']}\n")
                 f.write(f"  {components['uboot']}\n")
 
             elif "ZynqMPPlatform" == platform_name:
@@ -351,26 +357,43 @@ class BootBuilder(BuilderBase):
                 f.write(
                     f"  [destination_cpu=a53-0, exception_level=el-3, trustzone] {components['atf']}\n"
                 )
+                if components.get("dtb"):
+                    f.write(
+                        f"  [destination_cpu=a53-0, load=0x00100000] {components['dtb']}\n"
+                    )
                 f.write(
                     f"  [destination_cpu=a53-0, exception_level=el-2] {components['uboot']}\n"
                 )
 
             elif "VersalPlatform" == platform_name:
                 f.write("  image {\n")
-                f.write("    { type=bootloader, file=" + str(components["plm"]) + " }\n")
-                f.write("    { type=pmufw, file=" + str(components["psmfw"]) + " }\n")
                 if components.get("pdi"):
-                    f.write("    { type=pdi, file=" + str(components["pdi"]) + " }\n")
-                f.write("  }\n")
-                f.write("  image {\n")
-                f.write('    id = 0x1c000000, name = "atf",\n')
+                    f.write(
+                        "    { type=bootimage, file=" + str(components["pdi"]) + " }\n"
+                    )
                 f.write(
-                    "    { type=el-3, trustzone, file=" + str(components["atf"]) + " }\n"
+                    "    { type=bootloader, file=" + str(components["plm"]) + " }\n"
                 )
+                f.write("    { core=psm, file=" + str(components["psmfw"]) + " }\n")
                 f.write("  }\n")
                 f.write("  image {\n")
-                f.write('    id = 0x1e000000, name = "u-boot",\n')
-                f.write("    { type=el-2, file=" + str(components["uboot"]) + " }\n")
+                f.write("    id = 0x1c000000, name = \"apu_subsystem\",\n")
+                if components.get("dtb"):
+                    f.write(
+                        "    { type=raw, load=0x00001000, file="
+                        + str(components["dtb"])
+                        + " }\n"
+                    )
+                f.write(
+                    "    { core=a72-0, exception_level=el-3, trustzone, file="
+                    + str(components["atf"])
+                    + " }\n"
+                )
+                f.write(
+                    "    { core=a72-0, exception_level=el-2, file="
+                    + str(components["uboot"])
+                    + " }\n"
+                )
                 f.write("  }\n")
 
             f.write("}\n")

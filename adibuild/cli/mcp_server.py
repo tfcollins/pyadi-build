@@ -255,6 +255,7 @@ def build_boot_bin(
     config_path: str = None,
     xsa: str = None,
     bit: str = None,
+    dtb: str = None,
     pdi: str = None,
     atf: str = None,
     uboot: str = None,
@@ -274,6 +275,7 @@ def build_boot_bin(
         config_path: Path to configuration file
         xsa: Path to XSA file
         bit: Path to bitstream file
+        dtb: Path to device tree blob (.dtb)
         pdi: Path to PDI file (Versal)
         atf: Path to pre-built bl31.elf
         uboot: Path to pre-built u-boot.elf
@@ -291,6 +293,8 @@ def build_boot_bin(
             config.set("boot.xsa_path", xsa)
         if bit:
             config.set("boot.bit_path", bit)
+        if dtb:
+            config.set("boot.dtb_path", dtb)
         if pdi:
             config.set("boot.pdi_path", pdi)
         if atf:

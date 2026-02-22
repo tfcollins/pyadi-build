@@ -119,7 +119,11 @@ class TestBootBuilder:
         # Verify BIF content for Versal
         bif_content = Path(result["artifacts"][1]).read_text()
         assert "type=bootloader, file=/tmp/plm.elf" in bif_content
-        assert "type=pdi, file=/tmp/test.pdi" in bif_content
+        assert "core=psm, file=/tmp/psmfw.elf" in bif_content
+        assert "type=bootimage, file=/tmp/test.pdi" in bif_content
+        assert "id = 0x1c000000, name = \"apu_subsystem\"" in bif_content
+        assert "core=a72-0, exception_level=el-3, trustzone, file=/tmp/bl31.elf" in bif_content
+        assert "core=a72-0, exception_level=el-2, file=/tmp/u-boot.elf" in bif_content
 
     def test_build_from_source_calls_sub_builders(self, tmp_path, mocker):
         """Verify that ATFBuilder and UBootBuilder are called when paths are not provided."""
