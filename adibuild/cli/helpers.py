@@ -169,6 +169,10 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
             arch = platform_config.get("arch")
             if arch == "arm" or platform_name == "zynq":
                 return ZynqPlatform(platform_config)
+            elif platform_name == "versal" or platform_config.get("versal"):
+                from adibuild.platforms.versal import VersalPlatform
+
+                return VersalPlatform(platform_config)
             elif arch == "arm64" or platform_name == "zynqmp":
                 return ZynqMPPlatform(platform_config)
 

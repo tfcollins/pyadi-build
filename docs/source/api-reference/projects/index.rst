@@ -16,7 +16,7 @@ Modules
    genalyzer
    atf
    uboot
-   zynqmp_boot
+   boot
 
 Overview
 --------
@@ -30,4 +30,4 @@ The projects package contains builders for different project types:
 - **genalyzer** - Genalyzer DSP analysis library builder
 - **atf** - ARM Trusted Firmware builder
 - **uboot** - U-Boot bootloader builder
-- **zynqmp_boot** - ZynqMP BOOT.BIN builder
+- **boot** - BOOT.BIN builder (Zynq, ZynqMP, Versal)

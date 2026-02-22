@@ -40,7 +40,7 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
 
        Boot --> BAtf[build-atf]
        Boot --> BUboot[build-uboot]
-       Boot --> BZynqmp[build-zynqmp-boot]
+       Boot --> BBoot[build-boot]
 
        style CLI fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
 
@@ -51,7 +51,7 @@ The ``adibuild`` CLI is organized into command groups:
 - **noos** - no-OS bare-metal firmware build commands
 - **libad9361** - libad9361-iio library build commands
 - **genalyzer** - Genalyzer DSP analysis library build commands
-- **boot** - Bootloader and BOOT.BIN build commands
+- **boot** - Bootloader and BOOT.BIN build commands (Zynq, ZynqMP, Versal)
 - **config** - Configuration management
 - **toolchain** - Toolchain detection and information
 
@@ -725,28 +725,62 @@ Options:
 
    Override default U-Boot defconfig.
 
-Build ZynqMP BOOT.BIN
-~~~~~~~~~~~~~~~~~~~~~
+Build BOOT.BIN
+~~~~~~~~~~~~~~
 
-Orchestrate the generation of a complete ``BOOT.BIN`` for ZynqMP.
+Orchestrate the generation of a complete ``BOOT.BIN`` for Zynq, ZynqMP, or Versal.
 
 .. code-block:: bash
 
-   adibuild boot build-zynqmp-boot [OPTIONS]
+   adibuild boot build-boot [OPTIONS]
 
 Options:
 
 .. option:: --platform PLATFORM, -p PLATFORM
 
-   **Required.** Platform name.
+   **Required.** Platform name (e.g., ``zynqmp``, ``zynq``, ``versal``).
 
 .. option:: --xsa PATH
 
-   Path to hardware description file (.xsa).
+   Path to hardware description file (.xsa). Required for Zynq/ZynqMP unless pre-built components are provided.
 
 .. option:: --bit PATH
 
    Path to bitstream file (.bit).
+
+.. option:: --pdi PATH
+
+   Path to Programmable Device Image (.pdi) for Versal.
+
+.. option:: --plm PATH
+
+   Path to pre-built PLM for Versal.
+
+.. option:: --psmfw PATH
+
+   Path to pre-built PSMFW for Versal.
+
+.. option:: --atf PATH
+
+   Path to pre-built bl31.elf.
+
+.. option:: --uboot PATH
+
+   Path to pre-built u-boot.elf.
+
+**Examples:**
+
+ZynqMP with XSA:
+
+.. code-block:: bash
+
+   adibuild boot build-boot -p zynqmp --xsa system_top.xsa
+
+Versal with pre-built components:
+
+.. code-block:: bash
+
+   adibuild boot build-boot -p versal --pdi system.pdi --plm plm.elf --psmfw psmfw.elf
 
 Toolchain Command
 -----------------

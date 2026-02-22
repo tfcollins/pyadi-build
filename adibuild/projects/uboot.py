@@ -64,7 +64,9 @@ class UBootBuilder(BuilderBase):
 
         defconfig = self.config.get("uboot.defconfig")
         if not defconfig:
-            if self.platform.arch == "arm64":
+            if self.platform.__class__.__name__ == "VersalPlatform":
+                defconfig = "xilinx_versal_virt_defconfig"
+            elif self.platform.arch == "arm64":
                 defconfig = "zynqmp_adi_defconfig"
             else:
                 defconfig = "zynq_adi_defconfig"

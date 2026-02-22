@@ -27,7 +27,7 @@ from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
 from adibuild.projects.atf import ATFBuilder
 from adibuild.projects.uboot import UBootBuilder
-from adibuild.projects.zynqmp_boot import ZynqMPBootBuilder
+from adibuild.projects.boot import BootBuilder, ZynqMPBootBuilder
 from adibuild.utils.logger import setup_logging
 
 
@@ -1246,20 +1246,23 @@ def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
         print_error(f"U-Boot build failed: {e}")
 
 
-@boot.command(name="build-zynqmp-boot")
+@boot.command(name="build-boot")
 @click.option(
     "--platform",
     "-p",
     required=True,
-    help="Platform name (e.g. zynqmp)",
+    help="Platform name (e.g. zynqmp, zynq, versal)",
 )
 @click.option("--tag", "-t", help="Git tag or branch")
 @click.option("--xsa", type=click.Path(exists=True), help="Path to XSA file")
 @click.option("--bit", type=click.Path(exists=True), help="Path to bitstream file")
+@click.option("--pdi", type=click.Path(exists=True), help="Path to PDI file (Versal)")
 @click.option("--atf", type=click.Path(exists=True), help="Path to pre-built bl31.elf")
 @click.option("--uboot", type=click.Path(exists=True), help="Path to pre-built u-boot.elf")
 @click.option("--fsbl", type=click.Path(exists=True), help="Path to pre-built FSBL")
 @click.option("--pmufw", type=click.Path(exists=True), help="Path to pre-built PMUFW")
+@click.option("--plm", type=click.Path(exists=True), help="Path to pre-built PLM (Versal)")
+@click.option("--psmfw", type=click.Path(exists=True), help="Path to pre-built PSMFW (Versal)")
 @click.option("--clean", is_flag=True, help="Clean before building")
 @click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
 @click.option(
@@ -1268,16 +1271,18 @@ def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
     help="Generate bash script instead of executing build",
 )
 @click.pass_context
-def build_zynqmp_boot(
-    ctx, platform, tag, xsa, bit, atf, uboot, fsbl, pmufw, clean, jobs, generate_script
+def build_boot(
+    ctx, platform, tag, xsa, bit, pdi, atf, uboot, fsbl, pmufw, plm, psmfw, clean, jobs, generate_script
 ):
-    """Generate BOOT.BIN for ZynqMP."""
+    """Generate BOOT.BIN for Zynq, ZynqMP or Versal."""
     try:
         config = load_config_with_overrides(ctx.obj.get("config_path"), platform, tag)
         if xsa:
             config.set("boot.xsa_path", xsa)
         if bit:
             config.set("boot.bit_path", bit)
+        if pdi:
+            config.set("boot.pdi_path", pdi)
         if atf:
             config.set("boot.atf_path", atf)
         if uboot:
@@ -1286,13 +1291,24 @@ def build_zynqmp_boot(
             config.set("boot.fsbl_path", fsbl)
         if pmufw:
             config.set("boot.pmufw_path", pmufw)
+        if plm:
+            config.set("boot.plm_path", plm)
+        if psmfw:
+            config.set("boot.psmfw_path", psmfw)
 
         platform_obj = get_platform_instance(config, platform)
-        builder = ZynqMPBootBuilder(config, platform_obj, script_mode=generate_script)
+        builder = BootBuilder(config, platform_obj, script_mode=generate_script)
         result = builder.build(clean_before=clean, jobs=jobs)
         print_success(f"BOOT.BIN generated: {result['boot_bin']}")
     except BuildError as e:
         print_error(f"BOOT.BIN generation failed: {e}")
+
+
+@boot.command(name="build-zynqmp-boot", hidden=True)
+@click.pass_context
+def build_zynqmp_boot_alias(ctx, **kwargs):
+    """Alias for build-boot."""
+    ctx.invoke(build_boot, **kwargs)
 
 
 # Main entry point

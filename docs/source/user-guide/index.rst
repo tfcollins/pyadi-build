@@ -149,6 +149,6 @@ Before using this guide, you should have:
    platforms
    hdl-builds
    noos-builds
-   zynqmp-boot
+   boot-bin-generation
    build-outputs
 

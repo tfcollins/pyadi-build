@@ -7,7 +7,7 @@ from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
 from adibuild.projects.atf import ATFBuilder
 from adibuild.projects.uboot import UBootBuilder
-from adibuild.projects.zynqmp_boot import ZynqMPBootBuilder
+from adibuild.projects.boot import BootBuilder, ZynqMPBootBuilder
 
 __all__ = [
     "LinuxBuilder",
@@ -17,5 +17,6 @@ __all__ = [
     "GenalyzerBuilder",
     "ATFBuilder",
     "UBootBuilder",
+    "BootBuilder",
     "ZynqMPBootBuilder",
 ]

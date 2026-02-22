@@ -97,3 +97,13 @@ class ZynqPlatform(Platform):
         return (
             self.config.get("kernel_image_path") or self.get_default_kernel_image_path()
         )
+
+    @property
+    def fsbl_path(self) -> str | None:
+        """Get path to FSBL executable."""
+        return self.config.get("fsbl_path")
+
+    @property
+    def uboot_path(self) -> str | None:
+        """Get path to U-Boot executable."""
+        return self.config.get("uboot_path")

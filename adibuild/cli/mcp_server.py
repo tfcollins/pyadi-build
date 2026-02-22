@@ -52,6 +52,10 @@ def _get_platform_instance(config: BuildConfig, platform_name: str):
     arch = platform_config.get("arch")
     if arch == "arm" or platform_name == "zynq":
         return ZynqPlatform(platform_config)
+    elif platform_name == "versal" or platform_config.get("versal"):
+        from adibuild.platforms.versal import VersalPlatform
+
+        return VersalPlatform(platform_config)
     elif arch == "arm64" or platform_name == "zynqmp":
         return ZynqMPPlatform(platform_config)
     elif arch == "microblaze" or platform_name.startswith("microblaze"):
@@ -242,6 +246,78 @@ def build_noos_project(
         return f"no-OS build completed. Artifacts in: {result['output_dir']}"
     except Exception as e:
         return f"Build failed: {str(e)}"
+
+
+@mcp.tool()
+def build_boot_bin(
+    platform: str,
+    tag: str = None,
+    config_path: str = None,
+    xsa: str = None,
+    bit: str = None,
+    pdi: str = None,
+    atf: str = None,
+    uboot: str = None,
+    fsbl: str = None,
+    pmufw: str = None,
+    plm: str = None,
+    psmfw: str = None,
+    clean: bool = False,
+    jobs: int = None,
+    generate_script: bool = False,
+) -> str:
+    """Generate BOOT.BIN for Zynq, ZynqMP or Versal.
+
+    Args:
+        platform: Target platform (e.g. zynq, zynqmp, versal)
+        tag: Git tag or branch
+        config_path: Path to configuration file
+        xsa: Path to XSA file
+        bit: Path to bitstream file
+        pdi: Path to PDI file (Versal)
+        atf: Path to pre-built bl31.elf
+        uboot: Path to pre-built u-boot.elf
+        fsbl: Path to pre-built FSBL
+        pmufw: Path to pre-built PMUFW
+        plm: Path to pre-built PLM (Versal)
+        psmfw: Path to pre-built PSMFW (Versal)
+        clean: Whether to clean before building
+        jobs: Number of parallel jobs
+        generate_script: Generate bash script instead of executing build
+    """
+    try:
+        config = _load_config(config_path, platform, tag, project_type="boot")
+        if xsa:
+            config.set("boot.xsa_path", xsa)
+        if bit:
+            config.set("boot.bit_path", bit)
+        if pdi:
+            config.set("boot.pdi_path", pdi)
+        if atf:
+            config.set("boot.atf_path", atf)
+        if uboot:
+            config.set("boot.uboot_path", uboot)
+        if fsbl:
+            config.set("boot.fsbl_path", fsbl)
+        if pmufw:
+            config.set("boot.pmufw_path", pmufw)
+        if plm:
+            config.set("boot.plm_path", plm)
+        if psmfw:
+            config.set("boot.psmfw_path", psmfw)
+
+        platform_obj = _get_platform_instance(config, platform)
+        from adibuild.projects.boot import BootBuilder
+
+        builder = BootBuilder(config, platform_obj, script_mode=generate_script)
+        result = builder.build(clean_before=clean, jobs=jobs)
+
+        if generate_script:
+            return f"Script generated: {result}"
+
+        return f"BOOT.BIN generated: {result['boot_bin']}"
+    except Exception as e:
+        return f"BOOT.BIN generation failed: {str(e)}"
 
 
 @mcp.tool()
