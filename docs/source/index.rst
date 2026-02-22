@@ -55,6 +55,9 @@ Features
 --------
 
 - **Linux Kernel Builder**: Build ADI Linux kernels for Zynq, ZynqMP, and MicroBlaze platforms
+- **HDL Project Builder**: Build HDL projects using Xilinx Vivado/Vitis
+- **no-OS Firmware Builder**: Build bare-metal firmware for embedded targets
+- **Library Builders**: Build userspace libraries like **libad9361-iio** and **genalyzer**
 - **Automatic Toolchain Management**: Auto-detect or download cross-compilation toolchains
 - **Configuration Management**: YAML-based configuration with schema validation
 - **Multiple Platform Support**: Zynq (ARM32), ZynqMP (ARM64), and MicroBlaze (soft-core) platforms

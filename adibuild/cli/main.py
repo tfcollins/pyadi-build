@@ -20,6 +20,7 @@ from adibuild.cli.helpers import (
 )
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
+from adibuild.projects.genalyzer import GenalyzerBuilder
 from adibuild.projects.hdl import HDLBuilder
 from adibuild.projects.libad9361 import LibAD9361Builder
 from adibuild.projects.linux import LinuxBuilder
@@ -481,6 +482,137 @@ def clean_libad9361(ctx, platform, tag, deep):
 
         platform_obj = get_platform_instance(config, platform)
         builder = LibAD9361Builder(config, platform_obj)
+
+        builder.prepare_source()
+        builder.clean(deep=deep)
+
+        print_success("Clean completed")
+
+    except BuildError as e:
+        print_error(f"Clean failed: {e}")
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+
+
+# Genalyzer command group
+@cli.group()
+def genalyzer():
+    """Genalyzer DSP analysis library build commands."""
+    pass
+
+
+@genalyzer.command(name="build")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name from config (e.g. arm, arm64, native)",
+)
+@click.option("--tag", "-t", help="Git tag or branch (e.g. main, v0.1.2)")
+@click.option(
+    "--arch",
+    type=click.Choice(["arm", "arm64", "native"], case_sensitive=False),
+    help="Target architecture (overrides config)",
+)
+@click.option(
+    "--cross-compile",
+    help="Cross-compiler prefix override (e.g. arm-linux-gnueabihf-)",
+)
+@click.option(
+    "--fftw-path",
+    type=click.Path(),
+    help="Path to pre-built FFTW3 installation (must contain include/ and lib/)",
+)
+@click.option("--clean", is_flag=True, help="Remove build directory before building")
+@click.option("--jobs", "-j", type=int, help="Number of parallel make jobs")
+@click.option(
+    "--generate-script",
+    is_flag=True,
+    help="Write a bash build script instead of building",
+)
+@click.pass_context
+def build_genalyzer(
+    ctx, platform, tag, arch, cross_compile, fftw_path, clean, jobs, generate_script
+):
+    """
+    Build the genalyzer DSP analysis library.
+
+    Clones https://github.com/analogdevicesinc/genalyzer, configures it
+    with CMake, and builds a shared library for the target architecture.
+    Requires FFTW3 on the build host; for cross-compiled targets supply
+    a pre-built FFTW3 via --fftw-path.
+
+    Example:
+
+        adibuild --config configs/genalyzer/default.yaml genalyzer build -p native
+    """
+    try:
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+        )
+
+        platform_obj = get_platform_instance(config, platform)
+
+        # Apply CLI overrides to platform config
+        if arch:
+            platform_obj.config["arch"] = arch
+        if cross_compile:
+            platform_obj.config["cross_compile"] = cross_compile
+        if fftw_path:
+            platform_obj.config["fftw_path"] = fftw_path
+
+        builder = GenalyzerBuilder(config, platform_obj, script_mode=generate_script)
+        result = builder.build(clean_before=clean, jobs=jobs)
+
+        if generate_script:
+            print_success(
+                f"Build script written to {result.get('script', 'build script')}"
+            )
+        else:
+            print_success(
+                f"genalyzer built successfully. "
+                f"{len(result.get('artifacts', []))} artifact(s) in "
+                f"{result.get('output_dir', '')}"
+            )
+
+    except BuildError as e:
+        print_error(f"Build failed: {e}")
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+
+
+@genalyzer.command(name="clean")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name from config",
+)
+@click.option("--tag", "-t", help="Git tag or branch")
+@click.option(
+    "--deep",
+    is_flag=True,
+    help="Remove entire build directory (default: make clean)",
+)
+@click.pass_context
+def clean_genalyzer(ctx, platform, tag, deep):
+    """
+    Clean genalyzer build artifacts.
+
+    By default runs ``make clean`` inside the build directory.
+    Use --deep to remove the entire build directory tree.
+    """
+    try:
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+        )
+
+        platform_obj = get_platform_instance(config, platform)
+        builder = GenalyzerBuilder(config, platform_obj)
 
         builder.prepare_source()
         builder.clean(deep=deep)

@@ -324,6 +324,34 @@ def libad9361_config(libad9361_config_dict):
 
 
 @pytest.fixture
+def genalyzer_config_dict():
+    """Genalyzer platform configuration dictionary (ARM example)."""
+    return {
+        "arch": "arm",
+        "cross_compile": "arm-linux-gnueabihf-",
+        "toolchain": {"preferred": "system", "fallback": []},
+    }
+
+
+@pytest.fixture
+def genalyzer_config(genalyzer_config_dict):
+    """BuildConfig with genalyzer ARM configuration."""
+    config_data = {
+        "project": "genalyzer",
+        "repository": "https://github.com/analogdevicesinc/genalyzer.git",
+        "tag": "main",
+        "build": {
+            "parallel_jobs": 4,
+            "output_dir": "./build",
+        },
+        "platforms": {
+            "arm": genalyzer_config_dict,
+        },
+    }
+    return BuildConfig.from_dict(config_data)
+
+
+@pytest.fixture
 def mock_git_repo(mocker, tmp_path):
     """Mock GitRepository for testing."""
     mock_repo = MagicMock()

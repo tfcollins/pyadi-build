@@ -1,0 +1,46 @@
+# Genalyzer build configuration
+#
+# Builds the genalyzer C++ DSP analysis library using CMake.
+# https://github.com/analogdevicesinc/genalyzer
+#
+# Primary dependency: FFTW3 (must be installed on the host, or provided
+# via fftw_path for cross-compiled targets).
+#
+# Usage:
+#   adibuild --config configs/genalyzer/default.yaml genalyzer build -p native
+#   adibuild --config configs/genalyzer/default.yaml genalyzer build -p arm
+#   adibuild --config configs/genalyzer/default.yaml genalyzer build -p arm64
+
+project: genalyzer
+repository: https://github.com/analogdevicesinc/genalyzer.git
+
+# Branch / tag to check out.
+tag: main
+
+build:
+  parallel_jobs: 8
+  output_dir: ./build
+
+platforms:
+  # Native build (host machine — requires FFTW3 installed system-wide)
+  native:
+    arch: native
+
+  # ARM32 cross-compilation (Zynq targets)
+  arm:
+    arch: arm
+    cross_compile: arm-linux-gnueabihf-
+    # fftw_path: /path/to/fftw3-arm   # must contain include/ and lib/
+    # sysroot: /path/to/sysroot        # optional cmake sysroot
+
+  # ARM64 cross-compilation (ZynqMP targets)
+  arm64:
+    arch: arm64
+    cross_compile: aarch64-linux-gnu-
+    # fftw_path: /path/to/fftw3-arm64
+
+  # Extra cmake options example
+  # native_static:
+  #   arch: native
+  #   cmake_options:
+  #     BUILD_SHARED_LIBS: "OFF"

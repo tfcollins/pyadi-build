@@ -15,6 +15,8 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        CLI --> Linux[linux]
        CLI --> HDL[hdl]
        CLI --> NoOS[noos]
+       CLI --> LibAD9361[libad9361]
+       CLI --> Genalyzer[genalyzer]
        CLI --> Toolchain[toolchain]
 
        Config --> Init[init]
@@ -29,6 +31,12 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        NoOS --> NBuild[build]
        NoOS --> NClean[clean]
 
+       LibAD9361 --> LibBuild[build]
+       LibAD9361 --> LibClean[clean]
+
+       Genalyzer --> GBuild[build]
+       Genalyzer --> GClean[clean]
+
        style CLI fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
 
 The ``adibuild`` CLI is organized into command groups:
@@ -36,6 +44,8 @@ The ``adibuild`` CLI is organized into command groups:
 - **linux** - Linux kernel build commands
 - **hdl** - HDL project build commands
 - **noos** - no-OS bare-metal firmware build commands
+- **libad9361** - libad9361-iio library build commands
+- **genalyzer** - Genalyzer DSP analysis library build commands
 - **config** - Configuration management
 - **toolchain** - Toolchain detection and information
 
@@ -511,6 +521,160 @@ Deep clean (removes .config):
 .. code-block:: bash
 
    adibuild linux clean -p zynq -t 2023_R2 --deep
+
+libad9361-iio Commands
+----------------------
+
+Build Command
+~~~~~~~~~~~~~
+
+Build the libad9361-iio library for the specified platform.
+
+.. code-block:: bash
+
+   adibuild libad9361 build [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config (e.g., ``arm``, ``arm64``, ``native``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build (e.g., ``main``, ``2023_R2``).
+
+.. option:: --arch ARCH
+
+   Target architecture (overrides config).
+
+.. option:: --libiio-path PATH
+
+   Path to cross-compiled libiio installation (must contain ``include/`` and ``lib/``).
+
+.. option:: --clean
+
+   Remove build directory before building.
+
+.. option:: --jobs N, -j N
+
+   Number of parallel make jobs.
+
+.. option:: --generate-script
+
+   Generate a bash build script instead of executing the build.
+
+**Examples:**
+
+Build for ARM:
+
+.. code-block:: bash
+
+   adibuild --config configs/libad9361/default.yaml libad9361 build -p arm
+
+Clean Command
+~~~~~~~~~~~~~
+
+Remove libad9361-iio build artifacts.
+
+.. code-block:: bash
+
+   adibuild libad9361 clean [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config.
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch.
+
+.. option:: --deep
+
+   Remove the entire build directory.
+
+Genalyzer Commands
+------------------
+
+Build Command
+~~~~~~~~~~~~~
+
+Build the genalyzer DSP analysis library.
+
+.. code-block:: bash
+
+   adibuild genalyzer build [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config (e.g., ``arm``, ``arm64``, ``native``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build (e.g., ``main``, ``v0.1.2``).
+
+.. option:: --arch ARCH
+
+   Target architecture (overrides config).
+
+.. option:: --fftw-path PATH
+
+   Path to pre-built FFTW3 installation (must contain ``include/`` and ``lib/``).
+   Required for cross-compiled targets.
+
+.. option:: --clean
+
+   Remove build directory before building.
+
+.. option:: --jobs N, -j N
+
+   Number of parallel make jobs.
+
+.. option:: --generate-script
+
+   Generate a bash build script instead of executing the build.
+
+**Examples:**
+
+Build natively:
+
+.. code-block:: bash
+
+   adibuild --config configs/genalyzer/default.yaml genalyzer build -p native
+
+Build for ARM64 with custom FFTW3:
+
+.. code-block:: bash
+
+   adibuild --config configs/genalyzer/default.yaml genalyzer build -p arm64 \
+     --fftw-path /opt/fftw3-arm64
+
+Clean Command
+~~~~~~~~~~~~~
+
+Remove genalyzer build artifacts.
+
+.. code-block:: bash
+
+   adibuild genalyzer clean [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config.
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch.
+
+.. option:: --deep
+
+   Remove the entire build directory.
 
 Toolchain Command
 -----------------

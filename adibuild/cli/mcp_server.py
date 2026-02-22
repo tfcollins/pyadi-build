@@ -16,6 +16,9 @@ from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
 from adibuild.projects.hdl import HDLBuilder
 from adibuild.projects.linux import LinuxBuilder
+from adibuild.projects.noos import NoOSBuilder
+from adibuild.projects.libad9361 import LibAD9361Builder
+from adibuild.projects.genalyzer import GenalyzerBuilder
 
 # Initialize FastMCP server
 mcp = FastMCP("pyadi-build")
@@ -28,6 +31,18 @@ def _get_platform_instance(config: BuildConfig, platform_name: str):
     platform_config = config.get_platform(platform_name)
     # Inject platform name into config
     platform_config["name"] = platform_name
+
+    # Check if it's a no-OS config
+    if platform_config.get("noos_platform") or config.get_project() == "noos":
+        from adibuild.platforms.noos import NoOSPlatform
+
+        return NoOSPlatform(platform_config)
+
+    # Check if it's a libad9361 or genalyzer (CMake userspace library) config
+    if config.get_project() in ("libad9361", "genalyzer"):
+        from adibuild.platforms.lib import LibPlatform
+
+        return LibPlatform(platform_config)
 
     # Check if it's an HDL config
     if platform_config.get("hdl_project") or config.get_project() == "hdl":
@@ -49,6 +64,7 @@ def _load_config(
     config_file: str | None,
     platform: str | None = None,
     tag: str | None = None,
+    project_type: str = "linux",
 ) -> BuildConfig:
     """
     Load configuration (Safe version).
@@ -57,21 +73,25 @@ def _load_config(
         config = BuildConfig.from_yaml(config_file)
     else:
         # Try to load default configs
-        # We assume we are in adibuild/cli/mcp_server.py, so go up 3 levels
-        config_dir = Path(__file__).parent.parent.parent / "configs" / "linux"
+        # Use project_type to find the right directory
+        config_dir = Path(__file__).parent.parent.parent / "configs" / project_type
 
         # Try platform-specific config first if platform provided
         platform_config = config_dir / f"{platform}.yaml" if platform else None
         if platform_config and platform_config.exists():
             config = BuildConfig.from_yaml(platform_config)
         else:
-            # Try 2023_R2 config
-            default_config = config_dir / "2023_R2.yaml"
+            # Try default config
+            default_config = config_dir / "default.yaml"
+            if not default_config.exists():
+                # Fallback for linux which doesn't have default.yaml but uses 2023_R2.yaml
+                default_config = config_dir / "2023_R2.yaml"
+            
             if default_config.exists():
                 config = BuildConfig.from_yaml(default_config)
             else:
                 raise ConfigurationError(
-                    "No configuration file found and no default available."
+                    f"No configuration file found and no default available for {project_type}."
                 )
 
     # Apply tag override
@@ -88,13 +108,140 @@ def get_version() -> str:
 
 
 @mcp.tool()
-def list_platforms(config_path: str = None) -> list[str]:
-    """List available platforms from the configuration."""
+def list_platforms(config_path: str = None, project_type: str = "linux") -> list[str]:
+    """List available platforms from the configuration.
+
+    Args:
+        config_path: Path to configuration file
+        project_type: Project type (linux, hdl, noos, libad9361, genalyzer)
+    """
     try:
-        config = _load_config(config_path)
-        return list(config.config.get("platforms", {}).keys())
+        config = _load_config(config_path, project_type=project_type)
+        return list(config.to_dict().get("platforms", {}).keys())
     except Exception as e:
         return [f"Error: {str(e)}"]
+
+
+@mcp.tool()
+def build_lib_project(
+    project_type: str,
+    platform: str,
+    tag: str = None,
+    config_path: str = None,
+    arch: str = None,
+    cross_compile: str = None,
+    libiio_path: str = None,
+    fftw_path: str = None,
+    clean: bool = False,
+    jobs: int = None,
+    generate_script: bool = False,
+) -> str:
+    """Build a CMake-based userspace library (libad9361-iio or genalyzer).
+
+    Args:
+        project_type: Project type (libad9361 or genalyzer)
+        platform: Target platform (e.g. arm, arm64, native)
+        tag: Git tag or branch
+        config_path: Path to configuration file
+        arch: Override target architecture
+        cross_compile: Override cross-compiler prefix
+        libiio_path: Path to libiio (for libad9361)
+        fftw_path: Path to FFTW3 (for genalyzer)
+        clean: Whether to clean before building
+        jobs: Number of parallel jobs
+        generate_script: Generate bash script instead of executing build
+    """
+    try:
+        if project_type not in ("libad9361", "genalyzer"):
+            return "Error: project_type must be either 'libad9361' or 'genalyzer'"
+
+        config = _load_config(config_path, platform, tag, project_type=project_type)
+        platform_obj = _get_platform_instance(config, platform)
+
+        # Apply overrides
+        if arch:
+            platform_obj.config["arch"] = arch
+        if cross_compile:
+            platform_obj.config["cross_compile"] = cross_compile
+        if libiio_path:
+            platform_obj.config["libiio_path"] = libiio_path
+        if fftw_path:
+            platform_obj.config["fftw_path"] = fftw_path
+
+        if project_type == "libad9361":
+            builder = LibAD9361Builder(config, platform_obj, script_mode=generate_script)
+        else:
+            builder = GenalyzerBuilder(config, platform_obj, script_mode=generate_script)
+
+        result = builder.build(clean_before=clean, jobs=jobs)
+
+        if generate_script:
+            return f"Script generated: {result}"
+
+        return (
+            f"{project_type} built successfully. "
+            f"Artifacts in: {result.get('output_dir', '')}"
+        )
+    except Exception as e:
+        return f"Build failed: {str(e)}"
+
+
+@mcp.tool()
+def build_noos_project(
+    platform: str,
+    tag: str = None,
+    config_path: str = None,
+    hardware_file: str = None,
+    profile: str = None,
+    iiod: bool = None,
+    clean: bool = False,
+    jobs: int = None,
+    generate_script: bool = False,
+    tool_version: str = None,
+) -> str:
+    """Build a no-OS bare-metal firmware project.
+
+    Args:
+        platform: Target platform (e.g. xilinx_ad9081)
+        tag: Git tag or branch
+        config_path: Path to configuration file
+        hardware_file: Path to .xsa or .ioc file
+        profile: Hardware profile (PROFILE=...)
+        iiod: Enable IIO daemon (IIOD=y)
+        clean: Whether to clean before building
+        jobs: Number of parallel jobs
+        generate_script: Generate bash script instead of executing build
+        tool_version: Override toolchain version (e.g., 2023.2)
+    """
+    try:
+        # Derive tool version from tag if not explicitly specified
+        if not tool_version and tag:
+            detected_version = tag_to_tool_version(tag)
+            if detected_version:
+                tool_version = detected_version
+
+        config = _load_config(config_path, platform, tag, project_type="noos")
+        platform_obj = _get_platform_instance(config, platform)
+
+        # Apply overrides to platform config
+        if hardware_file:
+            platform_obj.config["hardware_file"] = hardware_file
+        if profile:
+            platform_obj.config["profile"] = profile
+        if iiod is not None:
+            platform_obj.config["iiod"] = iiod
+        if tool_version:
+            platform_obj.config["tool_version"] = tool_version
+
+        builder = NoOSBuilder(config, platform_obj, script_mode=generate_script)
+        result = builder.build(clean_before=clean, jobs=jobs)
+
+        if generate_script:
+            return f"Script generated: {result}"
+
+        return f"no-OS build completed. Artifacts in: {result['output_dir']}"
+    except Exception as e:
+        return f"Build failed: {str(e)}"
 
 
 @mcp.tool()
