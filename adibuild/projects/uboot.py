@@ -95,21 +95,19 @@ class UBootBuilder(BuilderBase):
             )
 
         # Check for pkg_resources (needed by binman)
-        res = self.executor.execute(
-            f'{sys.executable} -c "import pkg_resources"', stream_output=False
-        )
+        res = self.executor.execute(f'{sys.executable} -c "import pkg_resources"', stream_output=False)
         if res.failed:
             raise BuildError(
                 "Required Python package 'pkg_resources' not found (usually provided by setuptools < 60.0.0). "
                 "Binman requires this to run."
             )
 
-        # Check for gnutls (needed for tools/mkeficapsule)
-        res = self.executor.execute("pkg-config --exists gnutls", stream_output=False)
+        # Check for uuid (needed for tools/mkfwumdata)
+        res = self.executor.execute("pkg-config --exists uuid", stream_output=False)
         if res.failed:
             raise BuildError(
-                "Required library 'gnutls' not found (pkg-config check failed). "
-                "Please install 'libgnutls28-dev' (on Debian/Ubuntu) or equivalent."
+                "Required library 'uuid' not found (pkg-config check failed). "
+                "Please install 'uuid-dev' (on Debian/Ubuntu) or equivalent."
             )
 
         return True

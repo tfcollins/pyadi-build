@@ -62,6 +62,7 @@ jobs:
             libgnutls28-dev \
             pkg-config \
             python3-setuptools \
+            uuid-dev \
             libssl-dev \
             device-tree-compiler \
             u-boot-tools \
