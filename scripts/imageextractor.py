@@ -49,9 +49,11 @@ class IMGFileExtractor:
                             "index": partition.addr,
                             "start": partition.start * 512,  # Convert sectors to bytes
                             "length": partition.len * 512,
-                            "description": partition.desc.decode("utf-8")
-                            if partition.desc
-                            else "Unknown",
+                            "description": (
+                                partition.desc.decode("utf-8")
+                                if partition.desc
+                                else "Unknown"
+                            ),
                         }
                     )
 
@@ -59,14 +61,18 @@ class IMGFileExtractor:
         except Exception as e:
             print(f"Error getting partitions: {e}")
             # If volume info fails, try to detect filesystem at offset 0
-            return [{"index": 0, "start": 0, "length": 0, "description": "Single partition"}]
+            return [
+                {"index": 0, "start": 0, "length": 0, "description": "Single partition"}
+            ]
 
     def open_filesystem(self, partition_offset):
         """Open filesystem at a specific partition offset"""
         try:
             return pytsk3.FS_Info(self.img_handle, offset=partition_offset)
         except Exception as e:
-            raise Exception(f"Could not open filesystem at offset {partition_offset}: {e}") from e
+            raise Exception(
+                f"Could not open filesystem at offset {partition_offset}: {e}"
+            ) from e
 
     def list_files(self, fs, path="/"):
         """Recursively list all files in a directory"""
@@ -84,12 +90,17 @@ class IMGFileExtractor:
                 full_path = f"{path}/{name}".replace("//", "/")
 
                 # Check if it's a directory
-                if entry.info.meta and entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR:
+                if (
+                    entry.info.meta
+                    and entry.info.meta.type == pytsk3.TSK_FS_META_TYPE_DIR
+                ):
                     files.append({"path": full_path, "type": "dir", "size": 0})
                     # Recursively list subdirectory
                     files.extend(self.list_files(fs, full_path))
                 elif entry.info.meta:
-                    files.append({"path": full_path, "type": "file", "size": entry.info.meta.size})
+                    files.append(
+                        {"path": full_path, "type": "file", "size": entry.info.meta.size}
+                    )
 
             return files
         except Exception as e:

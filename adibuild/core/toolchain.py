@@ -24,13 +24,14 @@ class ToolchainError(Exception):
 class ToolchainInfo:
     """Information about a detected toolchain."""
 
-    type: str  # 'vivado', 'arm', 'system'
+    type: str  # 'vivado', 'arm', 'system', 'bare_metal'
     version: str
     path: Path
     env_vars: dict[str, str]
     cross_compile_arm32: str | None = None
     cross_compile_arm64: str | None = None
     cross_compile_microblaze: str | None = None
+    cross_compile_bare_metal: str | None = None
 
 
 class Toolchain(ABC):
@@ -579,6 +580,52 @@ class SystemToolchain(Toolchain):
             raise ToolchainError(f"Unsupported architecture: {arch}")
 
 
+class BareMetalToolchain(Toolchain):
+    """Bare-metal ARM toolchain (arm-none-eabi-gcc from system PATH)."""
+
+    def detect(self) -> ToolchainInfo | None:
+        """Detect system-installed arm-none-eabi-gcc."""
+        gcc = shutil.which("arm-none-eabi-gcc")
+        if not gcc:
+            return None
+
+        version = self._get_gcc_version(gcc)
+        self.logger.info(f"Found bare-metal toolchain (arm-none-eabi-gcc {version})")
+        return ToolchainInfo(
+            type="bare_metal",
+            version=version,
+            path=Path(gcc).parent.parent,
+            env_vars={},
+            cross_compile_bare_metal="arm-none-eabi-",
+        )
+
+    def _get_gcc_version(self, gcc_path: str) -> str:
+        """Get GCC version."""
+        try:
+            result = subprocess.run(
+                [gcc_path, "--version"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            if result.returncode == 0:
+                first_line = result.stdout.splitlines()[0]
+                import re
+
+                match = re.search(r"(\d+\.\d+\.\d+)", first_line)
+                if match:
+                    return match.group(1)
+        except Exception:
+            pass
+        return "unknown"
+
+    def get_cross_compile(self, arch: str) -> str:
+        """Get cross-compile prefix for architecture."""
+        if arch in ("arm", "bare_metal"):
+            return "arm-none-eabi-"
+        raise ToolchainError(f"BareMetalToolchain does not support arch: {arch}")
+
+
 def select_toolchain(
     preferred: str = "vivado",
     fallbacks: list[str] | None = None,
@@ -641,6 +688,13 @@ def select_toolchain(
                 info = tc.detect()
                 if info:
                     logger.info(f"Selected system toolchain version {info.version}")
+                    return info
+
+            elif tc_type == "bare_metal":
+                tc = BareMetalToolchain()
+                info = tc.detect()
+                if info:
+                    logger.info(f"Selected bare-metal toolchain version {info.version}")
                     return info
 
         except Exception as e:

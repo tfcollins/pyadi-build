@@ -8,7 +8,7 @@ to build a Linux kernel for the Zynq platform.
 
 from pathlib import Path
 
-from adibuild import LinuxBuilder, BuildConfig
+from adibuild import BuildConfig, LinuxBuilder
 from adibuild.platforms import ZynqPlatform
 
 

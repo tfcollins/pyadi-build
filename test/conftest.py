@@ -29,6 +29,8 @@ def pytest_addoption(parser):
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection based on options."""
+    import shutil
+
     # Skip real_build tests by default
     if not config.getoption("--real-build"):
         skip_real_build = pytest.mark.skip(
@@ -39,14 +41,24 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_real_build)
 
     # Skip tests that require Vivado if it's not available
-    import shutil
-
     vivado_available = shutil.which("vivado") is not None
     if not vivado_available:
         skip_vivado = pytest.mark.skip(reason="Vivado not found in PATH")
         for item in items:
             if "requires_vivado" in item.keywords:
                 item.add_marker(skip_vivado)
+
+    # Skip tests that require no-OS toolchain if neither is available
+    noos_toolchain_available = (
+        shutil.which("arm-none-eabi-gcc") is not None or vivado_available
+    )
+    if not noos_toolchain_available:
+        skip_noos = pytest.mark.skip(
+            reason="no-OS toolchain not found (arm-none-eabi-gcc or Vivado required)"
+        )
+        for item in items:
+            if "requires_noos_toolchain" in item.keywords:
+                item.add_marker(skip_noos)
 
 
 @pytest.fixture
@@ -243,6 +255,36 @@ def mock_kernel_source(tmp_path):
     )
 
     return kernel_dir
+
+
+@pytest.fixture
+def noos_config_dict():
+    """no-OS platform configuration dictionary (Xilinx example)."""
+    return {
+        "noos_platform": "xilinx",
+        "noos_project": "ad9081_fmca_ebz",
+        "hardware_file": "/tmp/system_top.xsa",
+        "iiod": False,
+        "toolchain": {"preferred": "vivado", "fallback": []},
+    }
+
+
+@pytest.fixture
+def noos_config(noos_config_dict):
+    """BuildConfig with no-OS Xilinx configuration."""
+    config_data = {
+        "project": "noos",
+        "repository": "https://github.com/analogdevicesinc/no-OS.git",
+        "tag": "2023_R2",
+        "build": {
+            "parallel_jobs": 4,
+            "output_dir": "./build",
+        },
+        "platforms": {
+            "xilinx_ad9081": noos_config_dict,
+        },
+    }
+    return BuildConfig.from_dict(config_data)
 
 
 @pytest.fixture

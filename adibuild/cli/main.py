@@ -22,6 +22,7 @@ from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
 from adibuild.projects.hdl import HDLBuilder
 from adibuild.projects.linux import LinuxBuilder
+from adibuild.projects.noos import NoOSBuilder
 from adibuild.utils.logger import setup_logging
 
 
@@ -207,6 +208,159 @@ def build_hdl(
             import traceback
 
             traceback.print_exc()
+
+
+# no-OS command group
+@cli.group()
+def noos():
+    """no-OS bare-metal firmware build commands."""
+    pass
+
+
+@noos.command(name="build")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name from config (e.g. xilinx_ad9081)",
+)
+@click.option("--tag", "-t", help="Git tag or branch")
+@click.option(
+    "--hardware-file",
+    "hardware_file",
+    type=click.Path(),
+    help="Path to hardware file (.xsa for Xilinx, .ioc for STM32)",
+)
+@click.option("--profile", help="Hardware profile (e.g., vcu118_ad9081_m8_l4)")
+@click.option("--iiod", is_flag=True, default=None, help="Enable IIO daemon (IIOD=y)")
+@click.option("--clean", is_flag=True, help="Clean before building")
+@click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.option(
+    "--generate-script",
+    is_flag=True,
+    help="Generate bash script instead of executing build",
+)
+@click.option(
+    "--tool-version",
+    "-tv",
+    "tool_version",
+    help="Override Vivado version (e.g., 2023.2). Auto-detected from tag if not specified.",
+)
+@click.pass_context
+def build_noos(
+    ctx,
+    platform,
+    tag,
+    hardware_file,
+    profile,
+    iiod,
+    clean,
+    jobs,
+    generate_script,
+    tool_version,
+):
+    """
+    Build no-OS bare-metal firmware for specified platform.
+
+    Examples:
+
+        adibuild noos build -p xilinx_ad9081
+
+        adibuild noos build -p stm32_ad9081 --hardware-file project.ioc
+
+        adibuild noos build -p xilinx_ad9081 --generate-script
+    """
+    # Derive tool version from tag if not explicitly specified
+    if not tool_version and tag:
+        tool_version = tag_to_tool_version(tag)
+        if tool_version:
+            click.echo(f"Auto-detected tool version {tool_version} from tag {tag}")
+
+    try:
+        # Load configuration
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+        )
+
+        # Apply CLI overrides to platform config
+        platform_config = config.get_platform(platform)
+
+        if hardware_file:
+            platform_config["hardware_file"] = hardware_file
+
+        if profile:
+            platform_config["profile"] = profile
+
+        if iiod is not None:
+            platform_config["iiod"] = iiod
+
+        if tool_version:
+            platform_config["tool_version"] = tool_version
+
+        config.set(f"platforms.{platform}", platform_config)
+
+        # Override parallel jobs if specified
+        if jobs:
+            config.set("build.parallel_jobs", jobs)
+
+        # Get platform instance
+        platform_obj = get_platform_instance(config, platform)
+
+        # Create builder
+        builder = NoOSBuilder(config, platform_obj, script_mode=generate_script)
+
+        # Execute build
+        result = builder.build(clean_before=clean)
+
+        print_success(f"no-OS Build completed. Artifacts in: {result['output_dir']}")
+
+    except BuildError as e:
+        print_error(f"Build failed: {e}")
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+        if ctx.obj.get("verbose", 0) > 1:
+            import traceback
+
+            traceback.print_exc()
+
+
+@noos.command(name="clean")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name from config",
+)
+@click.option("--tag", "-t", help="Git tag or branch")
+@click.option("--deep", is_flag=True, help="Use 'reset' target instead of 'clean'")
+@click.pass_context
+def clean_noos(ctx, platform, tag, deep):
+    """
+    Clean no-OS build artifacts.
+
+    By default uses 'make clean'. Use --deep for 'make reset'.
+    """
+    try:
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+        )
+
+        platform_obj = get_platform_instance(config, platform)
+        builder = NoOSBuilder(config, platform_obj)
+
+        builder.prepare_source()
+        builder.clean(deep=deep)
+
+        print_success("Clean completed")
+
+    except BuildError as e:
+        print_error(f"Clean failed: {e}")
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
 
 
 # Linux kernel command group

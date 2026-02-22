@@ -73,6 +73,15 @@ for using pyadi-build as both a CLI tool and Python library.
 
       Building HDL projects for ADI hardware
 
+   .. grid-item-card:: no-OS Builds
+      :link: noos-builds
+      :link-type: doc
+      :text-align: center
+
+      :octicon:`cpu;2em`
+
+      Building no-OS bare-metal firmware
+
    .. grid-item-card:: MCP Server
       :link: mcp-server
       :link-type: doc
@@ -139,5 +148,6 @@ Before using this guide, you should have:
    toolchain-management
    platforms
    hdl-builds
+   noos-builds
    mcp-server
    build-outputs

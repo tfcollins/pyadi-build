@@ -81,6 +81,7 @@ markers = [
     "integration: integration tests combining multiple components",
     "slow: slow-running tests",
     "requires_vivado: tests requiring Xilinx Vivado/Vitis",
+    "requires_noos_toolchain: tests requiring no-OS toolchain (arm-none-eabi-gcc or Vivado)",
 ]
 addopts = "-v --strict-markers"
 
@@ -95,6 +96,12 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "T20"]
 ignore = ["E501"]  # Line too long (handled by black)
+
+[tool.ruff.lint.per-file-ignores]
+"examples/*.py" = ["T201", "T203"]   # print() is intentional in examples
+"scripts/*.py" = ["T201", "T203", "B007", "A001"]  # print/pprint in scripts; hash/hash shadowing OK
+"docs/source/conf.py" = ["A001"]    # copyright = "..." is standard Sphinx convention
+"noxfile.py" = ["A001"]             # format/lint are conventional nox session names
 
 [tool.coverage.run]
 source = ["adibuild"]

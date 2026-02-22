@@ -1,17 +1,19 @@
 """Similar to Kuiper gen but for fabric devices (Virtex/Kintex)."""
+
+import json
 import os
 from pprint import pprint
-import json
 
 from gen_kuiper_reference import clone_repo, parse_dts_for_hdl_info
 
+
 def find_hdl_parameters(dts_path):
     """Find the HDL parameters in the given DTS file."""
-    with open(dts_path, "r") as f:
+    with open(dts_path) as f:
         content = f.read()
     lines = content.splitlines()
-    keys = ['JESD_', 'KS_PER_CHANNEL', 'REF_CLK=', 'RATE=']
-    negatives = ['MODE', 'SUBCLASS','VERSION','AD9']
+    keys = ["JESD_", "KS_PER_CHANNEL", "REF_CLK=", "RATE="]
+    negatives = ["MODE", "SUBCLASS", "VERSION", "AD9"]
     parameters = {}
     for line in lines:
         for key in keys:
@@ -20,11 +22,12 @@ def find_hdl_parameters(dts_path):
                     print(f"Skipping line due to negative match: {line}")
                     continue
                 # Extract the value after the '=' sign and before the ';' sign
-                value = line.split('=')[1].strip()
-                param = line.split('=')[0].strip().replace("/","").strip()
+                value = line.split("=")[1].strip()
+                param = line.split("=")[0].strip().replace("/", "").strip()
                 parameters[param] = value
-                
+
     return parameters
+
 
 def parse_fabric_designs(release):
     """Parse the fabric design files for the given release."""
@@ -49,7 +52,7 @@ def parse_fabric_designs(release):
                     print(f"Path: {full_path}")
                 else:
                     continue
-                with open(full_path, "r") as f:
+                with open(full_path) as f:
                     content = f.read()
                 lines = content.splitlines()
                 for line in lines:
@@ -61,18 +64,19 @@ def parse_fabric_designs(release):
                             dts_path = os.path.relpath(full_path, linux_source_dir)
                             if project not in project_map:
                                 project_map[project] = []
-                            project_map[project].append({
-                                "carrier": fpga,
-                                "dts_path": dts_path,
-                                "hdl_parameters": find_hdl_parameters(full_path)
-                            })
+                            project_map[project].append(
+                                {
+                                    "carrier": fpga,
+                                    "dts_path": dts_path,
+                                    "hdl_parameters": find_hdl_parameters(full_path),
+                                }
+                            )
                         break
-    
+
     print("\nSummary of fabric designs:")
     pprint(project_map)
 
     return project_map
-
 
 
 if __name__ == "__main__":
@@ -95,4 +99,6 @@ if __name__ == "__main__":
     target_dir = os.path.join(here, "..", "adibuild")
     if not os.path.exists(target_dir):
         raise FileNotFoundError(f"Target directory {target_dir} does not exist.")
-    os.rename("fabric_release_info.json", os.path.join(target_dir, "fabric_release_info.json"))
+    os.rename(
+        "fabric_release_info.json", os.path.join(target_dir, "fabric_release_info.json")
+    )

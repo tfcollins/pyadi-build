@@ -1,22 +1,21 @@
 import hashlib
 import json
+import logging
 import lzma
 import os
 import pathlib
 import shutil
+import subprocess
 import time
 import zipfile
-import logging
-import requests
-import subprocess
 from difflib import SequenceMatcher
 from pprint import pprint
 
+import requests
+from imageextractor import IMGFileExtractor
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from tqdm import tqdm
-
-from imageextractor import IMGFileExtractor
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +26,7 @@ logger.setLevel(logging.ERROR)
 # Custom Exception
 class NoDTSFoundError(Exception):
     """Raised when no DTS file is found in the extracted image."""
+
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -77,12 +77,16 @@ class Downloader:
             rel["zipmd5"] = "6c92259dd61520d08244012f6c92d7c6"
             rel["imgmd5"] = "873b4977617e40725025aa4958f3ca7e"
         else:
-            raise Exception(f"Unknown release version {release}. Valid releases: {valid_releases}")
+            raise Exception(
+                f"Unknown release version {release}. Valid releases: {valid_releases}"
+            )
         if "xzmd5" in rel:
             rel["link"] = "http://swdownloads.analog.com/cse/" + rel["imgname"] + ".xz"
             rel["xzname"] = rel["imgname"] + ".xz"
         elif "zipmd5" in rel:
-            rel["link"] = "https://swdownloads.analog.com/cse/kuiper/" + rel["imgname"] + ".zip"
+            rel["link"] = (
+                "https://swdownloads.analog.com/cse/kuiper/" + rel["imgname"] + ".zip"
+            )
             rel["zipname"] = rel["imgname"] + ".zip"
         return rel
 
@@ -276,13 +280,17 @@ class KuiperDLDriver:
 
         if get_boot_files:
             url = self.sw_downloads_template.format(release=release_version)
-            self.logger.info(f"Downloading Kuiper boot_files {release_version} from {url}")
+            self.logger.info(
+                f"Downloading Kuiper boot_files {release_version} from {url}"
+            )
 
             cache_path = self.cache_path
             if not os.path.exists(cache_path):
                 os.makedirs(cache_path)
 
-            tarball_path = os.path.join(cache_path, f"{release_version}_boot_partition.tar.gz")
+            tarball_path = os.path.join(
+                cache_path, f"{release_version}_boot_partition.tar.gz"
+            )
             raise NotImplementedError("Boot files download not implemented yet.")
         else:
             downloader = Downloader()
@@ -301,15 +309,21 @@ class KuiperDLDriver:
             else:
                 raise Exception("Unknown file name for release " + release_version)
 
-            name_archive = rel_info["xzname"] if "xzname" in rel_info else rel_info["zipname"]
+            name_archive = (
+                rel_info["xzname"] if "xzname" in rel_info else rel_info["zipname"]
+            )
             md5_archive = rel_info["xzmd5"] if "xzmd5" in rel_info else rel_info["zipmd5"]
             downloader.download(rel_info["link"], name_archive)
             downloader.check(name_archive, md5_archive)
             downloader.extract(name_archive, rel_info["imgname"])
-            img_file = downloader.check(rel_info["imgname"], rel_info["imgmd5"], find_img=True)
+            img_file = downloader.check(
+                rel_info["imgname"], rel_info["imgmd5"], find_img=True
+            )
 
             # Move img file to cache path
-            self.logger.info(f"Caching Kuiper release {release_version} files to {cache_path}")
+            self.logger.info(
+                f"Caching Kuiper release {release_version} files to {cache_path}"
+            )
             img_filename = os.path.basename(img_file)
             target_path = os.path.join(cache_path, img_filename)
             shutil.move(img_file, target_path)
@@ -360,7 +374,9 @@ class KuiperDLDriver:
 
         img = IMGFileExtractor(release_info["image_path"], logger=self.logger)
         for i, part in enumerate(img.get_partitions()):
-            self.logger.debug(f"  {i}: {part['description']} - Offset: {part['start']} bytes")
+            self.logger.debug(
+                f"  {i}: {part['description']} - Offset: {part['start']} bytes"
+            )
 
         # List files in FAT partition
         partitions_info = img.get_partitions()
@@ -381,6 +397,7 @@ class KuiperDLDriver:
         if get_all_files:
             return files
 
+
 def clone_repo(repo_url, branch, dest_dir):
     """Clone a git repository to a destination directory.
 
@@ -394,7 +411,9 @@ def clone_repo(repo_url, branch, dest_dir):
     if os.path.exists(dest_dir):
         print(f"Directory {dest_dir} already exists. Skipping clone.")
         # Check branch of the repository is what we want
-        output = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=dest_dir)
+        output = subprocess.check_output(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=dest_dir
+        )
         current_branch = output.decode("utf-8").strip()
         if current_branch != branch:
             print(f"Changing branch from {current_branch} to {branch}")
@@ -404,8 +423,9 @@ def clone_repo(repo_url, branch, dest_dir):
     # subprocess.run(["git", "clone", "--depth", "1", "--branch", branch, repo_url, dest_dir], check=True)
     subprocess.run(["git", "clone", "--branch", branch, repo_url, dest_dir], check=True)
 
+
 def parse_dts_for_hdl_info(devicetree_file):
-    with open(devicetree_file, "r") as f:
+    with open(devicetree_file) as f:
         devicetree_content = f.read()
     # Look for line with hdl_project: <project/carrier> ex: <ad9081_fmca_ebz/zcu102>
     for line in devicetree_content.split("\n"):
@@ -419,7 +439,14 @@ def parse_dts_for_hdl_info(devicetree_file):
             return project, carrier
     return None, None
 
-def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_source_dir=None, score_required=0.90):
+
+def parse_kuiper_release(
+    release_version,
+    files,
+    linux_source_dir=None,
+    hdl_source_dir=None,
+    score_required=0.90,
+):
     """Parse Kuiper file list and generate map to source tree files.
 
     Args:
@@ -432,7 +459,6 @@ def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_sour
     """
     if not linux_source_dir:
         linux_source_dir = os.path.join(os.path.dirname(__file__), "linux")
-
 
     if not hdl_source_dir:
         hdl_source_dir = os.path.join(os.path.dirname(__file__), "hdl")
@@ -447,8 +473,9 @@ def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_sour
     else:
         raise Exception(f"Linux branch not found for release version {release_version}")
 
-
-    clone_repo("https://github.com/analogdevicesinc/linux.git", linux_branch, linux_source_dir)
+    clone_repo(
+        "https://github.com/analogdevicesinc/linux.git", linux_branch, linux_source_dir
+    )
 
     # Map hdl branch to release version
     if release_version == "2023_R2_P1":
@@ -464,7 +491,9 @@ def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_sour
 
     project_map = {}
 
-    def find_devicetree_file_in_kernel_source(devicetree_filename, kernel_source_dir, fuzzy=False, score_required=0.7):
+    def find_devicetree_file_in_kernel_source(
+        devicetree_filename, kernel_source_dir, fuzzy=False, score_required=0.7
+    ):
         # Make sure devicetree_filename ends with .dts
         ext = devicetree_filename[-4:]
         if ext != ".dts":
@@ -482,69 +511,99 @@ def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_sour
                             return os.path.join(root, file)
         return None
 
-
-        
-
-    
-
-
     # Handl all xilinx/amd designs
     not_found = []
     for file in files:
-        if "zynq" in file['path'] and file['type'] == "file":
-            filename = file['path'].split("/")[-1]
+        if "zynq" in file["path"] and file["type"] == "file":
+            filename = file["path"].split("/")[-1]
             if filename[-4:] != ".dtb":
                 continue
-            slash_count = file['path'].count("/")
+            slash_count = file["path"].count("/")
             # if slash_count == 3:
             #     devicetree_filename = file['path'].split("/")[2]
             # else:
             #     devicetree_filename = file['path'].split("/")[1]
 
-            for i in range(1,slash_count):
-                devicetree_filename = file['path'].split("/")[i]
-                devicetree_file = find_devicetree_file_in_kernel_source(devicetree_filename, linux_source_dir)
+            for i in range(1, slash_count):
+                devicetree_filename = file["path"].split("/")[i]
+                devicetree_file = find_devicetree_file_in_kernel_source(
+                    devicetree_filename, linux_source_dir
+                )
                 if devicetree_file:
                     break
             if not devicetree_file:
                 # Try fuzzy find
-                for i in range(1,slash_count):
-                    devicetree_filename = file['path'].split("/")[i]
-                    devicetree_file = find_devicetree_file_in_kernel_source(devicetree_filename, linux_source_dir, fuzzy=True, score_required=score_required)
+                for i in range(1, slash_count):
+                    devicetree_filename = file["path"].split("/")[i]
+                    devicetree_file = find_devicetree_file_in_kernel_source(
+                        devicetree_filename,
+                        linux_source_dir,
+                        fuzzy=True,
+                        score_required=score_required,
+                    )
                     if devicetree_file:
                         break
-
 
             if devicetree_file:
                 logger.debug(f"Found {devicetree_filename}")
                 project, carrier = parse_dts_for_hdl_info(devicetree_file)
                 # Get devicetree file in reference to linux path
-                devicetree_file_from_linux = os.path.relpath(devicetree_file, linux_source_dir)
-                kernel_common = "zynqmp-common/Image" if "zynqmp" in devicetree_file_from_linux else "zynq-common/uImage"
-                hdl_project_folder = f"{project}/{carrier}" if project and carrier else project
-                logger.debug(f"HDL Project: {hdl_project_folder} : {devicetree_file_from_linux}")
+                devicetree_file_from_linux = os.path.relpath(
+                    devicetree_file, linux_source_dir
+                )
+                kernel_common = (
+                    "zynqmp-common/Image"
+                    if "zynqmp" in devicetree_file_from_linux
+                    else "zynq-common/uImage"
+                )
+                hdl_project_folder = (
+                    f"{project}/{carrier}" if project and carrier else project
+                )
+                logger.debug(
+                    f"HDL Project: {hdl_project_folder} : {devicetree_file_from_linux}"
+                )
                 if project:
                     if project not in project_map:
-                        project_map[project] = [{'carrier': carrier, 'devicetree': devicetree_file_from_linux, 'kernel': kernel_common, 'hdl_project': hdl_project_folder}]
+                        project_map[project] = [
+                            {
+                                "carrier": carrier,
+                                "devicetree": devicetree_file_from_linux,
+                                "kernel": kernel_common,
+                                "hdl_project": hdl_project_folder,
+                            }
+                        ]
                     else:
-                        project_map[project].append({'carrier': carrier, 'devicetree': devicetree_file_from_linux, 'kernel': kernel_common, 'hdl_project': hdl_project_folder})
+                        project_map[project].append(
+                            {
+                                "carrier": carrier,
+                                "devicetree": devicetree_file_from_linux,
+                                "kernel": kernel_common,
+                                "hdl_project": hdl_project_folder,
+                            }
+                        )
                 else:
-                    not_found.append({"devicetree_filename": devicetree_filename, "path":  file['path']})
+                    not_found.append(
+                        {"devicetree_filename": devicetree_filename, "path": file["path"]}
+                    )
             if not devicetree_file:
-                not_found.append({"devicetree_filename": devicetree_filename, "path":  file['path']})
-                raise NoDTSFoundError(f"Devicetree file {devicetree_filename} not found in kernel source directory {linux_source_dir}")
-    
+                not_found.append(
+                    {"devicetree_filename": devicetree_filename, "path": file["path"]}
+                )
+                raise NoDTSFoundError(
+                    f"Devicetree file {devicetree_filename} not found in kernel source directory {linux_source_dir}"
+                )
+
     # Check for duplicate devicetrees
     # all_dts = []
     # for project in project_map:
     #     for carrier in project_map[project]:
     #         all_dts.append(carrier['devicetree'])
-    
+
     # duplicates = []
     # for dts in all_dts:
     #     if all_dts.count(dts) > 1:
     #         duplicates.append(dts)
-    
+
     # print(f"Duplicate devicetrees: {duplicates}")
     # if len(duplicates) > 0:
     #     raise Exception(f"Duplicate devicetrees found: {duplicates}")
@@ -561,7 +620,6 @@ def parse_kuiper_release(release_version, files, linux_source_dir=None, hdl_sour
     return metadata, not_found
 
 
-
 if __name__ == "__main__":
 
     release_metadata = {}
@@ -572,10 +630,12 @@ if __name__ == "__main__":
         )
         files = kuiper_dl_driver.get_boot_files_from_release()
         for fuzz_score in range(99, 89, -1):
-            fuzz_score = float(fuzz_score)/100
+            fuzz_score = float(fuzz_score) / 100
             print(f"\nParse release {release} with fuzz score {fuzz_score}")
             try:
-                metadata, not_found = parse_kuiper_release(kuiper_dl_driver.release_version, files, score_required=fuzz_score)
+                metadata, not_found = parse_kuiper_release(
+                    kuiper_dl_driver.release_version, files, score_required=fuzz_score
+                )
                 if not not_found:
                     break
             except NoDTSFoundError as e:
@@ -584,7 +644,7 @@ if __name__ == "__main__":
                 metadata = None
         release_metadata[release] = metadata
         # break # Debug
-    
+
     pprint(release_metadata)
 
     # Write to JSON
@@ -600,5 +660,3 @@ if __name__ == "__main__":
         raise Exception(f"adibuild folder not found at {adibuild}")
     os.rename(json_filename, os.path.join(adibuild, json_filename))
     print(f"Moved to {adibuild}")
-
-        

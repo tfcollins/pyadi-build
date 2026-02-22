@@ -152,6 +152,12 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
         # Inject platform name into config
         platform_config["name"] = platform_name
 
+        # Check if it's a no-OS config
+        if platform_config.get("noos_platform") or config.get_project() == "noos":
+            from adibuild.platforms.noos import NoOSPlatform
+
+            return NoOSPlatform(platform_config)
+
         # Check if it's an HDL config
         if platform_config.get("hdl_project") or config.get_project() == "hdl":
             return HDLPlatform(platform_config)

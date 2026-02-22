@@ -14,6 +14,7 @@ Modules
    zynqmp
    microblaze
    hdl
+   noos
 
 Overview
 --------
@@ -25,6 +26,7 @@ The platforms package contains platform-specific implementations:
 - **zynqmp** - ZynqMP (ARM64) platform
 - **microblaze** - MicroBlaze (soft-core) platform
 - **hdl** - Generic platform wrapper for HDL projects
+- **noos** - no-OS bare-metal firmware platform
 
 Quick Example
 -------------

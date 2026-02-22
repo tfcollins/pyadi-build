@@ -8,7 +8,7 @@ and run menuconfig before building.
 
 from pathlib import Path
 
-from adibuild import LinuxBuilder, BuildConfig
+from adibuild import BuildConfig, LinuxBuilder
 from adibuild.platforms import ZynqMPPlatform
 
 
@@ -56,7 +56,7 @@ def main():
     output_dir = builder.package_artifacts(kernel_image, dtbs)
 
     print()
-    print(f"Build completed with custom configuration!")
+    print("Build completed with custom configuration!")
     print(f"Output directory: {output_dir}")
 
 

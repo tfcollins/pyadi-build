@@ -11,6 +11,7 @@ Modules
 
    linux
    hdl
+   noos
 
 Overview
 --------
@@ -19,7 +20,4 @@ The projects package contains builders for different project types:
 
 - **linux** - Linux kernel builder
 - **hdl** - HDL project builder
-
-Future project builders may include:
-
-- **libiio** - libiio library builder (planned)
+- **noos** - no-OS bare-metal firmware builder

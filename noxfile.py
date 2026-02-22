@@ -133,7 +133,9 @@ def docs(session):
     """Build documentation."""
     session.install("-e", ".[docs]")
     session.cd("docs")
-    session.run("sphinx-build", "-b", "html", "-W", "-n", "-j", "auto", "source", "build/html")
+    session.run(
+        "sphinx-build", "-b", "html", "-W", "-n", "-j", "auto", "source", "build/html"
+    )
     session.log("Documentation built in docs/build/html/index.html")
 
 

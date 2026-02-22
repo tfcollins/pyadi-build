@@ -14,22 +14,28 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        CLI[adibuild] --> Config[config]
        CLI --> Linux[linux]
        CLI --> HDL[hdl]
+       CLI --> NoOS[noos]
        CLI --> Toolchain[toolchain]
-       
+
        Config --> Init[init]
        Config --> Validate[validate]
-       
+
        Linux --> LBuild[build]
        Linux --> LMenu[menuconfig]
        Linux --> LDtbs[dtbs]
-       
+
        HDL --> HBuild[build]
-       
+
+       NoOS --> NBuild[build]
+       NoOS --> NClean[clean]
+
        style CLI fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
 
 The ``adibuild`` CLI is organized into command groups:
 
 - **linux** - Linux kernel build commands
+- **hdl** - HDL project build commands
+- **noos** - no-OS bare-metal firmware build commands
 - **config** - Configuration management
 - **toolchain** - Toolchain detection and information
 
@@ -146,6 +152,125 @@ Force build with version mismatch:
 .. code-block:: bash
 
    adibuild hdl build -p zed_fmcomms2 --ignore-version-check
+
+.. _noos-cli:
+
+no-OS Commands
+--------------
+
+Build Command
+~~~~~~~~~~~~~
+
+Build a no-OS bare-metal firmware project.
+
+.. code-block:: bash
+
+   adibuild noos build [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config (e.g., ``xilinx_ad9081``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build (e.g., ``2023_R2``).
+
+.. option:: --hardware-file PATH
+
+   Path to hardware file (``.xsa`` for Xilinx, ``.ioc`` for STM32).
+   Overrides the ``hardware_file`` key in the config.
+
+.. option:: --profile PROFILE
+
+   Hardware profile variant. Passed as ``PROFILE=<value>`` to make.
+
+.. option:: --iiod
+
+   Enable IIO daemon (passes ``IIOD=y`` to make). Overrides config.
+
+.. option:: --clean
+
+   Run ``make clean`` before building.
+
+.. option:: --jobs N, -j N
+
+   Number of parallel make jobs.
+
+.. option:: --generate-script
+
+   Generate a bash build script instead of executing the build.
+   Written to ``~/.adibuild/work/build_noos_bare_metal.sh``.
+
+.. option:: --tool-version VERSION, -tv VERSION
+
+   Override Vivado version (e.g., ``2023.2``). Auto-detected from
+   the release tag if not specified.
+
+**Examples:**
+
+Build with a config file:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos build -p xilinx_ad9081
+
+Override hardware file:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos build -p xilinx_ad9081 \
+     --hardware-file /path/to/system_top.xsa
+
+Enable IIO daemon and clean first:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos build -p xilinx_ad9081 --iiod --clean
+
+Generate a portable build script:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos build -p stm32_ad9081 --generate-script
+
+Clean Command
+~~~~~~~~~~~~~
+
+Remove no-OS build artifacts.
+
+.. code-block:: bash
+
+   adibuild noos clean [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config.
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch (to locate the correct repository checkout).
+
+.. option:: --deep
+
+   Use ``make reset`` instead of ``make clean`` for a full clean.
+
+**Examples:**
+
+Standard clean:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos clean -p xilinx_ad9081
+
+Deep clean:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos clean -p xilinx_ad9081 --deep
 
 Linux Kernel Commands
 ---------------------

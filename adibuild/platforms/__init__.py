@@ -2,7 +2,14 @@
 
 from adibuild.platforms.base import Platform
 from adibuild.platforms.microblaze import MicroBlazePlatform
+from adibuild.platforms.noos import NoOSPlatform
 from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
 
-__all__ = ["Platform", "ZynqPlatform", "ZynqMPPlatform", "MicroBlazePlatform"]
+__all__ = [
+    "Platform",
+    "ZynqPlatform",
+    "ZynqMPPlatform",
+    "MicroBlazePlatform",
+    "NoOSPlatform",
+]

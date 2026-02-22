@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "no-OS Build Configuration",
+  "description": "Configuration schema for building no-OS bare-metal firmware projects",
+  "type": "object",
+  "required": ["project", "repository", "platforms"],
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "Project type identifier",
+      "const": "noos"
+    },
+    "repository": {
+      "type": "string",
+      "description": "Git repository URL or local path for no-OS source",
+      "examples": ["https://github.com/analogdevicesinc/no-OS.git"]
+    },
+    "tag": {
+      "type": "string",
+      "description": "Git tag, branch, or commit to build",
+      "examples": ["2023_R2", "main"]
+    },
+    "build": {
+      "type": "object",
+      "properties": {
+        "parallel_jobs": {
+          "type": "integer",
+          "description": "Number of parallel make jobs",
+          "minimum": 1,
+          "default": 4
+        },
+        "output_dir": {
+          "type": "string",
+          "description": "Directory for build artifacts",
+          "default": "./build"
+        }
+      },
+      "additionalProperties": false
+    },
+    "platforms": {
+      "type": "object",
+      "description": "Named platform build configurations",
+      "additionalProperties": {
+        "$ref": "#/definitions/platform_config"
+      },
+      "minProperties": 1
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "platform_config": {
+      "type": "object",
+      "required": ["noos_platform", "noos_project"],
+      "properties": {
+        "noos_platform": {
+          "type": "string",
+          "description": "no-OS target platform",
+          "enum": ["xilinx", "stm32", "linux", "altera", "aducm3029", "maxim", "pico"]
+        },
+        "noos_project": {
+          "type": "string",
+          "description": "no-OS project name (subdirectory under projects/)",
+          "examples": ["ad9081_fmca_ebz", "ad9361"]
+        },
+        "hardware_file": {
+          "type": "string",
+          "description": "Path to hardware file (.xsa for Xilinx, .ioc for STM32)"
+        },
+        "profile": {
+          "type": "string",
+          "description": "Hardware profile to select (PROFILE=<value>)",
+          "examples": ["vcu118_ad9081_m8_l4"]
+        },
+        "iiod": {
+          "type": "boolean",
+          "description": "Enable IIO daemon (IIOD=y)",
+          "default": false
+        },
+        "make_variables": {
+          "type": "object",
+          "description": "Additional make variables to pass to the build",
+          "additionalProperties": {
+            "type": ["string", "number", "boolean"]
+          }
+        },
+        "toolchain": {
+          "type": "object",
+          "description": "Toolchain selection preferences",
+          "properties": {
+            "preferred": {
+              "type": "string",
+              "description": "Preferred toolchain type",
+              "enum": ["vivado", "bare_metal", "system", "arm"]
+            },
+            "fallback": {
+              "type": "array",
+              "description": "Fallback toolchain types in priority order",
+              "items": {
+                "type": "string",
+                "enum": ["vivado", "bare_metal", "system", "arm"]
+              }
+            },
+            "tool_version": {
+              "type": "string",
+              "description": "Preferred Vivado version (e.g., '2023.2')"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

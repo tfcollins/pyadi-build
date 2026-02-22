@@ -8,14 +8,19 @@ to build a Linux kernel for the MicroBlaze platform on VCU118 with AD9081.
 
 from pathlib import Path
 
-from adibuild import LinuxBuilder, BuildConfig
+from adibuild import BuildConfig, LinuxBuilder
 from adibuild.platforms import MicroBlazePlatform
 
 
 def main():
     """Build MicroBlaze kernel for VCU118 + AD9081."""
     # Load configuration
-    config_path = Path(__file__).parent.parent / "configs" / "linux" / "microblaze_vcu118_ad9081.yaml"
+    config_path = (
+        Path(__file__).parent.parent
+        / "configs"
+        / "linux"
+        / "microblaze_vcu118_ad9081.yaml"
+    )
     config = BuildConfig.from_yaml(config_path)
 
     # Get MicroBlaze platform configuration

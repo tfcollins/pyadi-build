@@ -1,0 +1,35 @@
+project: noos
+repository: https://github.com/analogdevicesinc/no-OS.git
+tag: 2023_R2
+
+build:
+  parallel_jobs: 8
+  output_dir: ./build
+
+platforms:
+  xilinx_ad9081:
+    noos_platform: xilinx
+    noos_project: ad9081_fmca_ebz
+    hardware_file: /path/to/system_top.xsa   # from Vivado synthesis
+    iiod: false
+    # profile: vcu118_ad9081_m8_l4           # optional hardware profile
+    toolchain:
+      preferred: vivado
+      # tool_version: "2023.2"               # optional: pin Vivado version
+
+  stm32_ad9081:
+    noos_platform: stm32
+    noos_project: ad9081_fmca_ebz
+    hardware_file: /path/to/project.ioc      # from STM32CubeMX
+    iiod: false
+    toolchain:
+      preferred: bare_metal
+      fallback: []
+
+  linux_ad9081:
+    noos_platform: linux
+    noos_project: ad9081_fmca_ebz
+    iiod: true
+    toolchain:
+      preferred: system
+      fallback: []
