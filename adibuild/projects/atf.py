@@ -69,13 +69,23 @@ class ATFBuilder(BuilderBase):
 
         jobs = jobs or self.config.get_parallel_jobs()
 
-        # Build bl31.elf for ZynqMP
-        # PLAT=zynqmp RESET_TO_BL31=1
+        # Determine PLAT from platform class
+        platform_name = self.platform.__class__.__name__
+        atf_plat = "zynqmp"
+        reset_to_bl31 = "1"
+
+        if "Versal" in platform_name:
+            atf_plat = "versal"
+            reset_to_bl31 = "0"  # Versal typically doesn't use this
+
+        # Build bl31.elf
         make_vars = {
-            "PLAT": "zynqmp",
-            "RESET_TO_BL31": "1",
+            "PLAT": atf_plat,
             "CROSS_COMPILE": self.platform.get_toolchain().cross_compile_arm64,
         }
+
+        if reset_to_bl31 == "1":
+            make_vars["RESET_TO_BL31"] = "1"
 
         # Override with any config-specified variables
         make_vars.update(self.config.get("atf.make_variables", {}))
@@ -83,7 +93,7 @@ class ATFBuilder(BuilderBase):
         extra_args = [f"{k}={v}" for k, v in make_vars.items()]
         extra_args.extend(["-C", str(self.source_dir), "bl31"])
 
-        self.logger.info(f"Building ATF for ZynqMP with {jobs} jobs...")
+        self.logger.info(f"Building ATF for {atf_plat} with {jobs} jobs...")
         self.executor.make(
             jobs=jobs, extra_args=extra_args, env=self.platform.get_make_env()
         )
@@ -91,19 +101,21 @@ class ATFBuilder(BuilderBase):
         output_dir = self.get_output_dir()
         self.make_directory(output_dir)
 
-        # bl31.elf is typically in build/zynqmp/release/bl31/bl31.elf
-        bl31_src = self.source_dir / "build" / "zynqmp" / "release" / "bl31" / "bl31.elf"
+        # bl31.elf is typically in build/<plat>/release/bl31/bl31.elf
+        bl31_src = (
+            self.source_dir / "build" / atf_plat / "release" / "bl31" / "bl31.elf"
+        )
         if not self.script_mode and not bl31_src.exists():
             # Try debug build if release not found
             bl31_src = (
-                self.source_dir / "build" / "zynqmp" / "debug" / "bl31" / "bl31.elf"
+                self.source_dir / "build" / atf_plat / "debug" / "bl31" / "bl31.elf"
             )
 
         bl31_dst = output_dir / "bl31.elf"
         self.copy_file(bl31_src, bl31_dst)
 
         # Also copy bl31.bin if it exists (U-Boot binman often needs it)
-        # It's usually in build/zynqmp/release/bl31.bin (parent of the bl31/ directory where .elf is)
+        # It's usually in build/<plat>/release/bl31.bin (parent of the bl31/ directory where .elf is)
         bl31_bin_src = bl31_src.parent.parent / "bl31.bin"
         if bl31_bin_src.exists() or self.script_mode:
             bl31_bin_dst = output_dir / "bl31.bin"

@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: ['zynq', 'zynqmp']
+        platform: ['zynq', 'zynqmp', 'boot']
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.11
@@ -58,6 +58,9 @@ jobs:
             bc \
             bison \
             flex \
+            swig \
+            libgnutls28-dev \
+            pkg-config \
             libssl-dev \
             device-tree-compiler \
             u-boot-tools \

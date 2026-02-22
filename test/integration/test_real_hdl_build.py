@@ -11,6 +11,7 @@ from adibuild.projects.hdl import HDLBuilder
 
 @pytest.mark.real_build
 @pytest.mark.slow
+@pytest.mark.requires_vivado
 class TestRealHDLBuild:
     """Real HDL build tests."""
 

@@ -80,7 +80,7 @@ class UBootBuilder(BuilderBase):
         """Validate build environment for U-Boot."""
         super().validate_environment()
         # U-Boot needs some extra tools for modern versions (especially for pylibfdt)
-        self.executor.check_tools(["swig", "bison", "flex", "pkg-config"])
+        self.executor.check_tools(["swig", "bison", "flex", "pkg-config", "bc"])
 
         # Check for gnutls (needed for tools/mkeficapsule)
         res = self.executor.execute("pkg-config --exists gnutls", stream_output=False)
