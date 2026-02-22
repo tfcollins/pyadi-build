@@ -378,6 +378,59 @@ class BuildExecutor:
                     break
         return errors
 
+    def cmake(
+        self,
+        args: list[str],
+        build_dir: Path,
+        env: dict[str, str] | None = None,
+    ) -> ExecutionResult:
+        """
+        Execute cmake command from a specific build directory.
+
+        Args:
+            args: cmake arguments (e.g., ["-DFOO=ON", ".."])
+            build_dir: Directory to run cmake from (build directory)
+            env: Optional environment variables
+
+        Returns:
+            ExecutionResult
+
+        Raises:
+            BuildError: If cmake fails
+        """
+        cmd = ["cmake"] + args
+
+        if self.script_builder:
+            self.script_builder.write_command(cmd, cwd=build_dir, env=env)
+            return ExecutionResult(
+                command=" ".join(cmd),
+                return_code=0,
+                stdout="Command written to script",
+                stderr="",
+                duration=0.0,
+            )
+
+        # Temporarily change working directory to build_dir for real execution
+        saved_cwd = self.cwd
+        self.cwd = build_dir
+        try:
+            result = self.execute(cmd, env=env)
+        finally:
+            self.cwd = saved_cwd
+
+        if result.failed:
+            errors = self._extract_errors(result.stdout)
+            error_msg = f"cmake failed with return code {result.return_code}"
+            if errors:
+                error_msg += "\n\nErrors found:\n" + "\n".join(
+                    f"  • {e}" for e in errors[:5]
+                )
+                if len(errors) > 5:
+                    error_msg += f"\n  ... and {len(errors) - 5} more errors"
+            raise BuildError(error_msg)
+
+        return result
+
     def check_tool(self, tool: str) -> bool:
         """
         Check if a tool is available.

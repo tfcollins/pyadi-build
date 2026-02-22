@@ -158,6 +158,12 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
 
             return NoOSPlatform(platform_config)
 
+        # Check if it's a libad9361 or generic userspace library config
+        if config.get_project() == "libad9361":
+            from adibuild.platforms.lib import LibPlatform
+
+            return LibPlatform(platform_config)
+
         # Check if it's an HDL config
         if platform_config.get("hdl_project") or config.get_project() == "hdl":
             return HDLPlatform(platform_config)

@@ -60,6 +60,14 @@ def pytest_collection_modifyitems(config, items):
             if "requires_noos_toolchain" in item.keywords:
                 item.add_marker(skip_noos)
 
+    # Skip tests that require cmake if it's not available
+    cmake_available = shutil.which("cmake") is not None
+    if not cmake_available:
+        skip_cmake = pytest.mark.skip(reason="cmake not found in PATH")
+        for item in items:
+            if "requires_cmake" in item.keywords:
+                item.add_marker(skip_cmake)
+
 
 @pytest.fixture
 def tmp_dir(tmp_path):
@@ -282,6 +290,34 @@ def noos_config(noos_config_dict):
         },
         "platforms": {
             "xilinx_ad9081": noos_config_dict,
+        },
+    }
+    return BuildConfig.from_dict(config_data)
+
+
+@pytest.fixture
+def libad9361_config_dict():
+    """libad9361-iio platform configuration dictionary (ARM example)."""
+    return {
+        "arch": "arm",
+        "cross_compile": "arm-linux-gnueabihf-",
+        "toolchain": {"preferred": "system", "fallback": []},
+    }
+
+
+@pytest.fixture
+def libad9361_config(libad9361_config_dict):
+    """BuildConfig with libad9361-iio ARM configuration."""
+    config_data = {
+        "project": "libad9361",
+        "repository": "https://github.com/analogdevicesinc/libad9361-iio.git",
+        "tag": "main",
+        "build": {
+            "parallel_jobs": 4,
+            "output_dir": "./build",
+        },
+        "platforms": {
+            "arm": libad9361_config_dict,
         },
     }
     return BuildConfig.from_dict(config_data)

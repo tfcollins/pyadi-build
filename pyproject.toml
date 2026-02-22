@@ -82,6 +82,7 @@ markers = [
     "slow: slow-running tests",
     "requires_vivado: tests requiring Xilinx Vivado/Vitis",
     "requires_noos_toolchain: tests requiring no-OS toolchain (arm-none-eabi-gcc or Vivado)",
+    "requires_cmake: tests requiring cmake to be installed",
 ]
 addopts = "-v --strict-markers"
 

@@ -21,6 +21,7 @@ from adibuild.cli.helpers import (
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
 from adibuild.projects.hdl import HDLBuilder
+from adibuild.projects.libad9361 import LibAD9361Builder
 from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
 from adibuild.utils.logger import setup_logging
@@ -351,6 +352,135 @@ def clean_noos(ctx, platform, tag, deep):
 
         platform_obj = get_platform_instance(config, platform)
         builder = NoOSBuilder(config, platform_obj)
+
+        builder.prepare_source()
+        builder.clean(deep=deep)
+
+        print_success("Clean completed")
+
+    except BuildError as e:
+        print_error(f"Clean failed: {e}")
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+
+
+# libad9361-iio command group
+@cli.group()
+def libad9361():
+    """libad9361-iio library build commands."""
+    pass
+
+
+@libad9361.command(name="build")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name from config (e.g. arm, arm64, native)",
+)
+@click.option("--tag", "-t", help="Git tag or branch (e.g. main, 2023_R2)")
+@click.option(
+    "--arch",
+    type=click.Choice(["arm", "arm64", "native"], case_sensitive=False),
+    help="Target architecture (overrides config)",
+)
+@click.option(
+    "--cross-compile",
+    help="Cross-compiler prefix override (e.g. arm-linux-gnueabihf-)",
+)
+@click.option(
+    "--libiio-path",
+    type=click.Path(),
+    help="Path to cross-compiled libiio (must contain include/ and lib/)",
+)
+@click.option("--clean", is_flag=True, help="Remove build directory before building")
+@click.option("--jobs", "-j", type=int, help="Number of parallel make jobs")
+@click.option(
+    "--generate-script",
+    is_flag=True,
+    help="Write a bash build script instead of building",
+)
+@click.pass_context
+def build_libad9361(
+    ctx, platform, tag, arch, cross_compile, libiio_path, clean, jobs, generate_script
+):
+    """
+    Build the libad9361-iio shared library.
+
+    Clones https://github.com/analogdevicesinc/libad9361-iio, configures
+    it with CMake, and builds a shared library for the target architecture.
+
+    Example:
+
+        adibuild --config configs/libad9361/default.yaml libad9361 build -p arm
+    """
+    try:
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+        )
+
+        platform_obj = get_platform_instance(config, platform)
+
+        # Apply CLI overrides to platform config
+        if arch:
+            platform_obj.config["arch"] = arch
+        if cross_compile:
+            platform_obj.config["cross_compile"] = cross_compile
+        if libiio_path:
+            platform_obj.config["libiio_path"] = libiio_path
+
+        builder = LibAD9361Builder(config, platform_obj, script_mode=generate_script)
+        result = builder.build(clean_before=clean, jobs=jobs)
+
+        if generate_script:
+            print_success(
+                f"Build script written to {result.get('script', 'build script')}"
+            )
+        else:
+            print_success(
+                f"libad9361-iio built successfully. "
+                f"{len(result.get('artifacts', []))} artifact(s) in "
+                f"{result.get('output_dir', '')}"
+            )
+
+    except BuildError as e:
+        print_error(f"Build failed: {e}")
+    except Exception as e:
+        print_error(f"Unexpected error: {e}")
+
+
+@libad9361.command(name="clean")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name from config",
+)
+@click.option("--tag", "-t", help="Git tag or branch")
+@click.option(
+    "--deep",
+    is_flag=True,
+    help="Remove entire build directory (default: make clean)",
+)
+@click.pass_context
+def clean_libad9361(ctx, platform, tag, deep):
+    """
+    Clean libad9361-iio build artifacts.
+
+    By default runs ``make clean`` inside the build directory.
+    Use --deep to remove the entire build directory tree.
+    """
+    try:
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+        )
+
+        platform_obj = get_platform_instance(config, platform)
+        builder = LibAD9361Builder(config, platform_obj)
 
         builder.prepare_source()
         builder.clean(deep=deep)

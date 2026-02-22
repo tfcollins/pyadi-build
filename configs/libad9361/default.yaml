@@ -1,0 +1,41 @@
+# libad9361-iio build configuration
+#
+# Builds the libad9361-iio shared library using CMake.
+# https://github.com/analogdevicesinc/libad9361-iio
+#
+# Usage:
+#   adibuild --config configs/libad9361/default.yaml libad9361 build -p arm
+#   adibuild --config configs/libad9361/default.yaml libad9361 build -p arm64
+#   adibuild --config configs/libad9361/default.yaml libad9361 build -p native
+
+project: libad9361
+repository: https://github.com/analogdevicesinc/libad9361-iio.git
+
+# Branch / tag to check out.
+# Use 'main' for the latest (requires libiio >= v1.0 API).
+# Use 'libad9361-iio-v0' for compatibility with libiio v0.x.
+tag: main
+
+build:
+  parallel_jobs: 8
+  output_dir: ./build
+
+platforms:
+  # ARM32 cross-compilation (Zynq targets)
+  arm:
+    arch: arm
+    cross_compile: arm-linux-gnueabihf-
+    # libiio_path: /path/to/cross-compiled/libiio-arm  # optional
+    # sysroot: /path/to/sysroot                        # optional
+
+  # ARM64 cross-compilation (ZynqMP targets)
+  arm64:
+    arch: arm64
+    cross_compile: aarch64-linux-gnu-
+    # libiio_path: /path/to/cross-compiled/libiio-arm64
+
+  # Native build (host machine)
+  native:
+    arch: native
+    # cmake_options:
+    #   BUILD_SHARED_LIBS: "ON"
