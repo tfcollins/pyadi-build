@@ -14,6 +14,9 @@ Modules
    noos
    libad9361
    genalyzer
+   atf
+   uboot
+   zynqmp_boot
 
 Overview
 --------
@@ -25,3 +28,6 @@ The projects package contains builders for different project types:
 - **noos** - no-OS bare-metal firmware builder
 - **libad9361** - libad9361-iio library builder
 - **genalyzer** - Genalyzer DSP analysis library builder
+- **atf** - ARM Trusted Firmware builder
+- **uboot** - U-Boot bootloader builder
+- **zynqmp_boot** - ZynqMP BOOT.BIN builder

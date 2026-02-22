@@ -164,6 +164,14 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
 
             return LibPlatform(platform_config)
 
+        # Check if it's an ATF, U-Boot or Boot build
+        if config.get_project() in ("atf", "uboot", "boot"):
+            arch = platform_config.get("arch")
+            if arch == "arm" or platform_name == "zynq":
+                return ZynqPlatform(platform_config)
+            elif arch == "arm64" or platform_name == "zynqmp":
+                return ZynqMPPlatform(platform_config)
+
         # Check if it's an HDL config
         if platform_config.get("hdl_project") or config.get_project() == "hdl":
             return HDLPlatform(platform_config)

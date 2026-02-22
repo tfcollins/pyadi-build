@@ -25,6 +25,9 @@ from adibuild.projects.hdl import HDLBuilder
 from adibuild.projects.libad9361 import LibAD9361Builder
 from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
+from adibuild.projects.atf import ATFBuilder
+from adibuild.projects.uboot import UBootBuilder
+from adibuild.projects.zynqmp_boot import ZynqMPBootBuilder
 from adibuild.utils.logger import setup_logging
 
 
@@ -1186,6 +1189,110 @@ def mcp():
         )
     except Exception as e:
         print_error(f"Failed to start MCP server: {e}")
+
+
+@cli.group()
+def boot():
+    """Bootloader and BOOT.BIN build commands."""
+    pass
+
+
+@boot.command(name="build-atf")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name (e.g. zynqmp)",
+)
+@click.option("--tag", "-t", help="Git tag or branch")
+@click.option("--clean", is_flag=True, help="Clean before building")
+@click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.pass_context
+def build_atf(ctx, platform, tag, clean, jobs):
+    """Build ARM Trusted Firmware (ATF)."""
+    try:
+        config = load_config_with_overrides(ctx.obj.get("config_path"), platform, tag)
+        platform_obj = get_platform_instance(config, platform)
+        builder = ATFBuilder(config, platform_obj)
+        result = builder.build(clean_before=clean, jobs=jobs)
+        print_success(f"ATF build completed. bl31.elf in: {result['output_dir']}")
+    except BuildError as e:
+        print_error(f"ATF build failed: {e}")
+
+
+@boot.command(name="build-uboot")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name (e.g. zynqmp, zynq)",
+)
+@click.option("--tag", "-t", help="Git tag or branch")
+@click.option("--defconfig", help="Override U-Boot defconfig")
+@click.option("--clean", is_flag=True, help="Clean before building")
+@click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.pass_context
+def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
+    """Build U-Boot bootloader."""
+    try:
+        config = load_config_with_overrides(ctx.obj.get("config_path"), platform, tag)
+        if defconfig:
+            config.set("uboot.defconfig", defconfig)
+        platform_obj = get_platform_instance(config, platform)
+        builder = UBootBuilder(config, platform_obj)
+        result = builder.build(clean_before=clean, jobs=jobs)
+        print_success(f"U-Boot build completed. Artifacts in: {result['output_dir']}")
+    except BuildError as e:
+        print_error(f"U-Boot build failed: {e}")
+
+
+@boot.command(name="build-zynqmp-boot")
+@click.option(
+    "--platform",
+    "-p",
+    required=True,
+    help="Platform name (e.g. zynqmp)",
+)
+@click.option("--tag", "-t", help="Git tag or branch")
+@click.option("--xsa", type=click.Path(exists=True), help="Path to XSA file")
+@click.option("--bit", type=click.Path(exists=True), help="Path to bitstream file")
+@click.option("--atf", type=click.Path(exists=True), help="Path to pre-built bl31.elf")
+@click.option("--uboot", type=click.Path(exists=True), help="Path to pre-built u-boot.elf")
+@click.option("--fsbl", type=click.Path(exists=True), help="Path to pre-built FSBL")
+@click.option("--pmufw", type=click.Path(exists=True), help="Path to pre-built PMUFW")
+@click.option("--clean", is_flag=True, help="Clean before building")
+@click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.option(
+    "--generate-script",
+    is_flag=True,
+    help="Generate bash script instead of executing build",
+)
+@click.pass_context
+def build_zynqmp_boot(
+    ctx, platform, tag, xsa, bit, atf, uboot, fsbl, pmufw, clean, jobs, generate_script
+):
+    """Generate BOOT.BIN for ZynqMP."""
+    try:
+        config = load_config_with_overrides(ctx.obj.get("config_path"), platform, tag)
+        if xsa:
+            config.set("boot.xsa_path", xsa)
+        if bit:
+            config.set("boot.bit_path", bit)
+        if atf:
+            config.set("boot.atf_path", atf)
+        if uboot:
+            config.set("boot.uboot_path", uboot)
+        if fsbl:
+            config.set("boot.fsbl_path", fsbl)
+        if pmufw:
+            config.set("boot.pmufw_path", pmufw)
+
+        platform_obj = get_platform_instance(config, platform)
+        builder = ZynqMPBootBuilder(config, platform_obj, script_mode=generate_script)
+        result = builder.build(clean_before=clean, jobs=jobs)
+        print_success(f"BOOT.BIN generated: {result['boot_bin']}")
+    except BuildError as e:
+        print_error(f"BOOT.BIN generation failed: {e}")
 
 
 # Main entry point

@@ -17,6 +17,7 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        CLI --> NoOS[noos]
        CLI --> LibAD9361[libad9361]
        CLI --> Genalyzer[genalyzer]
+       CLI --> Boot[boot]
        CLI --> Toolchain[toolchain]
 
        Config --> Init[init]
@@ -37,6 +38,10 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        Genalyzer --> GBuild[build]
        Genalyzer --> GClean[clean]
 
+       Boot --> BAtf[build-atf]
+       Boot --> BUboot[build-uboot]
+       Boot --> BZynqmp[build-zynqmp-boot]
+
        style CLI fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
 
 The ``adibuild`` CLI is organized into command groups:
@@ -46,6 +51,7 @@ The ``adibuild`` CLI is organized into command groups:
 - **noos** - no-OS bare-metal firmware build commands
 - **libad9361** - libad9361-iio library build commands
 - **genalyzer** - Genalyzer DSP analysis library build commands
+- **boot** - Bootloader and BOOT.BIN build commands
 - **config** - Configuration management
 - **toolchain** - Toolchain detection and information
 
@@ -675,6 +681,72 @@ Options:
 .. option:: --deep
 
    Remove the entire build directory.
+
+Boot Commands
+-------------
+
+The ``boot`` command group provides tools for building bootloaders and generating ZynqMP ``BOOT.BIN`` files.
+
+Build ATF
+~~~~~~~~~
+
+Build ARM Trusted Firmware (bl31.elf).
+
+.. code-block:: bash
+
+   adibuild boot build-atf [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name (e.g., ``zynqmp``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build.
+
+Build U-Boot
+~~~~~~~~~~~~
+
+Build U-Boot bootloader.
+
+.. code-block:: bash
+
+   adibuild boot build-uboot [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name (e.g., ``zynqmp``, ``zynq``).
+
+.. option:: --defconfig DEFCONFIG
+
+   Override default U-Boot defconfig.
+
+Build ZynqMP BOOT.BIN
+~~~~~~~~~~~~~~~~~~~~~
+
+Orchestrate the generation of a complete ``BOOT.BIN`` for ZynqMP.
+
+.. code-block:: bash
+
+   adibuild boot build-zynqmp-boot [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name.
+
+.. option:: --xsa PATH
+
+   Path to hardware description file (.xsa).
+
+.. option:: --bit PATH
+
+   Path to bitstream file (.bit).
 
 Toolchain Command
 -----------------

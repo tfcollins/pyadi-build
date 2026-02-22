@@ -149,5 +149,6 @@ Before using this guide, you should have:
    platforms
    hdl-builds
    noos-builds
-   mcp-server
+   zynqmp-boot
    build-outputs
+
