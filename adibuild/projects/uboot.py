@@ -82,6 +82,22 @@ class UBootBuilder(BuilderBase):
         # U-Boot needs some extra tools for modern versions (especially for pylibfdt)
         self.executor.check_tools(["swig", "bison", "flex", "pkg-config", "bc"])
 
+        # Check for setuptools (needed for pylibfdt and binman)
+        res = self.executor.execute('python3 -c "import setuptools"', stream_output=False)
+        if res.failed:
+            raise BuildError(
+                "Required Python package 'setuptools' not found. "
+                "Please install it using 'pip install setuptools' or 'apt install python3-setuptools'."
+            )
+
+        # Check for pkg_resources (needed by binman)
+        res = self.executor.execute('python3 -c "import pkg_resources"', stream_output=False)
+        if res.failed:
+            raise BuildError(
+                "Required Python package 'pkg_resources' not found (usually provided by setuptools < 60.0.0). "
+                "Binman requires this to run."
+            )
+
         # Check for gnutls (needed for tools/mkeficapsule)
         res = self.executor.execute("pkg-config --exists gnutls", stream_output=False)
         if res.failed:

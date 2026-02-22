@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: ['zynq', 'zynqmp', 'boot']
+        platform: ['zynq', 'zynqmp', 'boot', 'noos']
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.11
@@ -61,6 +61,7 @@ jobs:
             swig \
             libgnutls28-dev \
             pkg-config \
+            python3-setuptools \
             libssl-dev \
             device-tree-compiler \
             u-boot-tools \

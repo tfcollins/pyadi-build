@@ -53,7 +53,7 @@ def tests_real(session):
     This includes actual kernel compilation and requires toolchains.
     Use with caution as it can take significant time.
     """
-    session.install(".[dev]")
+    session.install(".[dev]", "setuptools<60.0.0")
     session.run(
         "pytest",
         "-v",
@@ -68,16 +68,18 @@ def tests_real(session):
 
 
 @nox.session(python=PYTHON_VERSIONS)
-@nox.parametrize("platform", ["zynq", "zynqmp", "microblaze", "boot"])
+@nox.parametrize("platform", ["zynq", "zynqmp", "microblaze", "boot", "noos"])
 def tests_real_platform(session, platform):
     """Run real build tests for specific platform.
 
     Args:
-        platform: Platform to test (zynq, zynqmp, microblaze, or boot)
+        platform: Platform to test (zynq, zynqmp, microblaze, boot, or noos)
     """
-    session.install(".[dev]")
+    session.install(".[dev]", "setuptools<60.0.0")
     if platform == "boot":
         test_file = "test/integration/test_real_zynqmp_boot.py"
+    elif platform == "noos":
+        test_file = "test/projects/test_noos.py"
     else:
         test_file = f"test/integration/test_real_{platform}_build.py"
 

@@ -76,6 +76,7 @@ def load_config_with_overrides(
     config_file: str | None,
     platform: str | None,
     tag: str | None,
+    project_type: str = "linux",
 ) -> BuildConfig:
     """
     Load configuration with command-line overrides.
@@ -84,6 +85,7 @@ def load_config_with_overrides(
         config_file: Optional configuration file path
         platform: Platform name (optional)
         tag: Optional tag override
+        project_type: Type of project (linux, noos, hdl, atf, uboot, boot)
 
     Returns:
         BuildConfig instance
@@ -93,36 +95,25 @@ def load_config_with_overrides(
             config = BuildConfig.from_yaml(config_file)
         else:
             # Try to load default configs
-            config_dir = Path(__file__).parent.parent.parent / "configs" / "linux"
+            config_dir = Path(__file__).parent.parent.parent / "configs" / project_type
 
             # Try platform-specific config first if platform provided
             platform_config = config_dir / f"{platform}.yaml" if platform else None
             if platform_config and platform_config.exists():
                 config = BuildConfig.from_yaml(platform_config)
             else:
-                # Try 2023_R2 config
-                default_config = config_dir / "2023_R2.yaml"
+                # Try default config for the project
+                default_config = config_dir / "default.yaml"
+                if not default_config.exists() and project_type == "linux":
+                    # Fallback for linux legacy
+                    default_config = config_dir / "2023_R2.yaml"
+
                 if default_config.exists():
                     config = BuildConfig.from_yaml(default_config)
                 else:
-                    # If platform was not provided, and default not found,
-                    # create empty config if we are in dynamic mode (platform=None)
-                    # But if we rely on default configs being present, raise error.
-                    # For Linux builds config is usually required.
-                    # For HDL builds with --project/--carrier, an empty config might suffice
-                    # if we inject platforms later.
-
-                    # Let's return empty config if no file found, to support dynamic builds without config file
-                    # provided we assume defaults for missing fields.
-                    # Or simpler: require a config file always, but fallback to empty dict
-                    # if we are just testing or in a very custom mode.
-
-                    # However, existing logic raised Error. Let's keep existing behavior for now
-                    # unless platform is None?
-
                     # If no default config found, and no user config, raise error
                     raise ConfigurationError(
-                        "No configuration file found. Please specify with --config"
+                        f"No configuration file found for {project_type}. Please specify with --config"
                     )
 
         # Apply tag override

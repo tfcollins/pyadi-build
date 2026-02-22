@@ -156,6 +156,7 @@ def build_hdl(
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="hdl",
         )
 
         # Handle dynamic platform injection
@@ -287,6 +288,7 @@ def build_noos(
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="noos",
         )
 
         # Apply CLI overrides to platform config
@@ -352,6 +354,7 @@ def clean_noos(ctx, platform, tag, deep):
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="noos",
         )
 
         platform_obj = get_platform_instance(config, platform)
@@ -423,6 +426,7 @@ def build_libad9361(
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="libad9361",
         )
 
         platform_obj = get_platform_instance(config, platform)
@@ -481,6 +485,7 @@ def clean_libad9361(ctx, platform, tag, deep):
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="libad9361",
         )
 
         platform_obj = get_platform_instance(config, platform)
@@ -554,6 +559,7 @@ def build_genalyzer(
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="genalyzer",
         )
 
         platform_obj = get_platform_instance(config, platform)
@@ -612,6 +618,7 @@ def clean_genalyzer(ctx, platform, tag, deep):
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="genalyzer",
         )
 
         platform_obj = get_platform_instance(config, platform)
@@ -763,21 +770,15 @@ def build_linux(
         selected_target = prompt_simpleimage_selection(
             presets, group_by_carrier=(carrier is None)
         )
-        simpleimage_targets = (selected_target,)  # Convert to tuple for consistency
-
-    # Derive tool version from tag if not explicitly specified
-    if not tool_version and tag:
-        tool_version = tag_to_tool_version(tag)
-        if tool_version:
-            click.echo(f"Auto-detected tool version {tool_version} from tag {tag}")
-
     try:
         # Load configuration
         config = load_config_with_overrides(
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="linux",
         )
+
 
         # Override parallel jobs if specified
         if jobs:
@@ -862,6 +863,7 @@ def configure(ctx, platform, tag, defconfig):
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="linux",
         )
 
         # Override defconfig if specified
@@ -910,6 +912,7 @@ def menuconfig(ctx, platform, tag):
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="linux",
         )
 
         # Get platform instance
@@ -957,6 +960,7 @@ def dtbs(ctx, platform, tag, dtb_files):
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="linux",
         )
 
         # Get platform instance
@@ -1005,6 +1009,7 @@ def clean(ctx, platform, tag, deep):
             ctx.obj.get("config_path"),
             platform,
             tag,
+            project_type="linux",
         )
 
         # Get platform instance
@@ -1211,7 +1216,12 @@ def boot():
 def build_atf(ctx, platform, tag, clean, jobs):
     """Build ARM Trusted Firmware (ATF)."""
     try:
-        config = load_config_with_overrides(ctx.obj.get("config_path"), platform, tag)
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+            project_type="atf",
+        )
         platform_obj = get_platform_instance(config, platform)
         builder = ATFBuilder(config, platform_obj)
         result = builder.build(clean_before=clean, jobs=jobs)
@@ -1235,7 +1245,12 @@ def build_atf(ctx, platform, tag, clean, jobs):
 def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
     """Build U-Boot bootloader."""
     try:
-        config = load_config_with_overrides(ctx.obj.get("config_path"), platform, tag)
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+            project_type="uboot",
+        )
         if defconfig:
             config.set("uboot.defconfig", defconfig)
         platform_obj = get_platform_instance(config, platform)
@@ -1300,7 +1315,12 @@ def build_boot(
 ):
     """Generate BOOT.BIN for Zynq, ZynqMP or Versal."""
     try:
-        config = load_config_with_overrides(ctx.obj.get("config_path"), platform, tag)
+        config = load_config_with_overrides(
+            ctx.obj.get("config_path"),
+            platform,
+            tag,
+            project_type="boot",
+        )
         if xsa:
             config.set("boot.xsa_path", xsa)
         if bit:
