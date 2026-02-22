@@ -67,12 +67,28 @@ class UBootBuilder(BuilderBase):
             if self.platform.__class__.__name__ == "VersalPlatform":
                 defconfig = "xilinx_versal_virt_defconfig"
             elif self.platform.arch == "arm64":
-                defconfig = "zynqmp_adi_defconfig"
+                defconfig = "xilinx_zynqmp_virt_defconfig"
             else:
                 defconfig = "zynq_adi_defconfig"
 
         self.logger.info(f"Configuring U-Boot with {defconfig}...")
         self.executor.make(defconfig, env=self.platform.get_make_env(), extra_args=["-C", str(self.source_dir)])
+
+    def validate_environment(self) -> bool:
+        """Validate build environment for U-Boot."""
+        super().validate_environment()
+        # U-Boot needs some extra tools for modern versions (especially for pylibfdt)
+        self.executor.check_tools(["swig", "bison", "flex", "pkg-config"])
+        
+        # Check for gnutls (needed for tools/mkeficapsule)
+        res = self.executor.execute("pkg-config --exists gnutls", stream_output=False)
+        if res.failed:
+            raise BuildError(
+                "Required library 'gnutls' not found (pkg-config check failed). "
+                "Please install 'libgnutls28-dev' (on Debian/Ubuntu) or equivalent."
+            )
+            
+        return True
 
     def build(self, clean_before: bool = False, jobs: int | None = None) -> dict:
         """Build U-Boot (u-boot.elf)."""

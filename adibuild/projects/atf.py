@@ -81,7 +81,7 @@ class ATFBuilder(BuilderBase):
         make_vars.update(self.config.get("atf.make_variables", {}))
 
         extra_args = [f"{k}={v}" for k, v in make_vars.items()]
-        extra_args.append("bl31")
+        extra_args.extend(["-C", str(self.source_dir), "bl31"])
 
         self.logger.info(f"Building ATF for ZynqMP with {jobs} jobs...")
         self.executor.make(jobs=jobs, extra_args=extra_args, env=self.platform.get_make_env())
