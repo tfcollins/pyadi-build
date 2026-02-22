@@ -201,20 +201,58 @@ class BootBuilder(BuilderBase):
         return pmufw_elf
 
     def _ensure_plm(self, hw_file: str | None) -> Path:
-        """Get PLM executable."""
+        """Generate PLM from PDI/XSA using XSCT if not provided."""
         custom_plm = self.config.get("boot.plm_path")
         if custom_plm:
             return Path(custom_plm)
-        # For now, Versal requires pre-built PLM if not using full Vitis flow
-        raise BuildError("PLM path not specified. Provide boot.plm_path in config.")
+
+        if not hw_file:
+            raise BuildError("Hardware file (PDI/XSA) required to generate PLM.")
+
+        self.logger.info("Generating PLM using XSCT...")
+        plm_dir = self.source_dir / "plm"
+        self.make_directory(plm_dir)
+        
+        tcl_script = plm_dir / "gen_plm.tcl"
+        with open(tcl_script, "w") as f:
+            f.write(f"hsi open_hw_design {hw_file}\n")
+            f.write("hsi generate_app -hw [hsi current_hw_design] -os standalone -proc pmc_tap -app versal_plm -compile -sw [hsi current_sw_design] -dir .\n")
+            f.write("hsi close_hw_design [hsi current_hw_design]\n")
+
+        self.executor.execute(["xsct", str(tcl_script)], cwd=plm_dir, env=self.platform.get_make_env())
+        
+        plm_elf = plm_dir / "executable.elf"
+        if not self.script_mode and not plm_elf.exists():
+            raise BuildError(f"PLM generation failed. {plm_elf} not found.")
+        
+        return plm_elf
 
     def _ensure_psmfw(self, hw_file: str | None) -> Path:
-        """Get PSMFW executable."""
+        """Generate PSMFW from PDI/XSA using XSCT if not provided."""
         custom_psmfw = self.config.get("boot.psmfw_path")
         if custom_psmfw:
             return Path(custom_psmfw)
-        # For now, Versal requires pre-built PSMFW
-        raise BuildError("PSMFW path not specified. Provide boot.psmfw_path in config.")
+
+        if not hw_file:
+            raise BuildError("Hardware file (PDI/XSA) required to generate PSMFW.")
+
+        self.logger.info("Generating PSMFW using XSCT...")
+        psmfw_dir = self.source_dir / "psmfw"
+        self.make_directory(psmfw_dir)
+        
+        tcl_script = psmfw_dir / "gen_psmfw.tcl"
+        with open(tcl_script, "w") as f:
+            f.write(f"hsi open_hw_design {hw_file}\n")
+            f.write("hsi generate_app -hw [hsi current_hw_design] -os standalone -proc psu_psm_0 -app versal_psmfw -compile -sw [hsi current_sw_design] -dir .\n")
+            f.write("hsi close_hw_design [hsi current_hw_design]\n")
+
+        self.executor.execute(["xsct", str(tcl_script)], cwd=psmfw_dir, env=self.platform.get_make_env())
+        
+        psmfw_elf = psmfw_dir / "executable.elf"
+        if not self.script_mode and not psmfw_elf.exists():
+            raise BuildError(f"PSMFW generation failed. {psmfw_elf} not found.")
+        
+        return psmfw_elf
 
     def _ensure_atf(self, jobs: int | None = None) -> Path:
         """Build ATF if bl31.elf not provided."""

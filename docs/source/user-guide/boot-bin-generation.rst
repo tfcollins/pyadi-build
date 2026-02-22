@@ -33,6 +33,14 @@ Versal
 Builders
 --------
 
+### Component Builders
+
+All boot components are built from source unless a path to a pre-built binary is provided in the configuration.
+
+- **ATF**: Cloned from `<https://github.com/analogdevicesinc/arm-trusted-firmware>` and built using ``make``.
+- **U-Boot**: Cloned from `<https://github.com/analogdevicesinc/u-boot>` and built using ``make``.
+- **FSBL/PMUFW/PLM/PSMFW**: Generated and compiled from source using Xilinx ``xsct`` and the hardware description file (.xsa or .pdi).
+
 ### Generic Boot Builder
 
 The ``build-boot`` command orchestrates the entire process for any supported platform.

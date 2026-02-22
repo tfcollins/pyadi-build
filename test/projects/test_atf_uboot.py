@@ -51,6 +51,12 @@ class TestATFBuilder:
         builder.source_dir = tmp_path / "src"
         builder.source_dir.mkdir()
         
+        # Mock toolchain
+        mock_tc = MagicMock()
+        mock_tc.cross_compile_arm64 = "aarch64-none-elf-"
+        mock_tc.env_vars = {"PATH": "/usr/bin"}
+        mocker.patch.object(platform, "get_toolchain", return_value=mock_tc)
+        
         # Mock make execution
         mock_make = mocker.patch.object(builder.executor, "make")
         
@@ -67,6 +73,7 @@ class TestATFBuilder:
         args = mock_make.call_args[1].get("extra_args")
         assert "PLAT=zynqmp" in args
         assert "bl31" in args
+        assert "CROSS_COMPILE=aarch64-none-elf-" in args
 
 
 # ---------------------------------------------------------------------------
@@ -84,6 +91,9 @@ class TestUBootBuilder:
         builder.source_dir = tmp_path / "src"
         builder.source_dir.mkdir()
         
+        # Mock toolchain environment
+        mocker.patch.object(platform, "get_make_env", return_value={"ARCH": "arm64", "CROSS_COMPILE": "aarch64-"})
+        
         # Mock make execution
         mock_make = mocker.patch.object(builder.executor, "make")
         
@@ -98,3 +108,7 @@ class TestUBootBuilder:
         # Check configure call
         conf_args = mock_make.call_args_list[0][0]
         assert "zynqmp_adi_defconfig" in conf_args
+        
+        # Check env usage
+        env = mock_make.call_args_list[0][1].get("env")
+        assert env["ARCH"] == "arm64"
