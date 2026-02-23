@@ -1,10 +1,12 @@
+from unittest.mock import MagicMock
 
 import pytest
-from unittest.mock import MagicMock, patch
-from adibuild.core.executor import BuildExecutor, BuildError
-from adibuild.projects.uboot import UBootBuilder
+
 from adibuild.core.config import BuildConfig
+from adibuild.core.executor import BuildError, BuildExecutor
 from adibuild.platforms.zynqmp import ZynqMPPlatform
+from adibuild.projects.uboot import UBootBuilder
+
 
 class TestEnvValidation:
     @pytest.fixture
@@ -22,6 +24,7 @@ class TestEnvValidation:
 
     def test_check_tools_failure(self, executor, mocker):
         """Test check_tools raises BuildError when a tool is missing."""
+
         # Mock execute to fail for 'missing_tool'
         def side_effect(cmd, **kwargs):
             res = MagicMock()
@@ -36,14 +39,17 @@ class TestEnvValidation:
         with pytest.raises(BuildError, match="Required tools not found: missing_tool"):
             executor.check_tools(["make", "missing_tool"])
 
+
 class TestUBootEnvValidation:
     @pytest.fixture
     def uboot_builder(self, mocker):
-        config = BuildConfig.from_dict({
-            "project": "uboot",
-            "build": {"output_dir": "build"},
-            "platforms": {"zynqmp": {"arch": "arm64"}}
-        })
+        config = BuildConfig.from_dict(
+            {
+                "project": "uboot",
+                "build": {"output_dir": "build"},
+                "platforms": {"zynqmp": {"arch": "arm64"}},
+            }
+        )
         platform = ZynqMPPlatform({"arch": "arm64", "kernel_target": "Image"})
         return UBootBuilder(config, platform)
 
@@ -51,20 +57,24 @@ class TestUBootEnvValidation:
         """Test validation passes with all tools."""
         # Mock executor methods
         mocker.patch.object(uboot_builder.executor, "check_tools")
-        
+
         # Mock successful python package checks
         mock_exec = mocker.patch.object(uboot_builder.executor, "execute")
         mock_exec.return_value.failed = False
 
         # Mock parent validation
-        mocker.patch("adibuild.core.builder.BuilderBase.validate_environment", return_value=True)
+        mocker.patch(
+            "adibuild.core.builder.BuilderBase.validate_environment", return_value=True
+        )
 
         assert uboot_builder.validate_environment() is True
 
     def test_validate_environment_missing_pkg_resources(self, uboot_builder, mocker):
         """Test validation fails if pkg_resources is missing."""
         mocker.patch.object(uboot_builder.executor, "check_tools")
-        mocker.patch("adibuild.core.builder.BuilderBase.validate_environment", return_value=True)
+        mocker.patch(
+            "adibuild.core.builder.BuilderBase.validate_environment", return_value=True
+        )
 
         # Mock setuptools check pass, but pkg_resources check fail
         def side_effect(cmd, **kwargs):
