@@ -43,6 +43,9 @@ class TestEnvValidation:
 class TestUBootEnvValidation:
     @pytest.fixture
     def uboot_builder(self, mocker):
+        # Patch select_toolchain globally for these tests to avoid real detection/downloads
+        mocker.patch("adibuild.platforms.base.select_toolchain")
+
         config = BuildConfig.from_dict(
             {
                 "project": "uboot",
@@ -58,11 +61,11 @@ class TestUBootEnvValidation:
         # Mock executor methods
         mocker.patch.object(uboot_builder.executor, "check_tools")
 
-        # Mock successful python package checks
+        # Mock successful python package checks and pkg-config checks
         mock_exec = mocker.patch.object(uboot_builder.executor, "execute")
         mock_exec.return_value.failed = False
 
-        # Mock parent validation
+        # Mock parent validation (which checks basic tools and toolchain)
         mocker.patch(
             "adibuild.core.builder.BuilderBase.validate_environment", return_value=True
         )
@@ -79,7 +82,9 @@ class TestUBootEnvValidation:
         # Mock setuptools check pass, but pkg_resources check fail
         def side_effect(cmd, **kwargs):
             res = MagicMock()
-            if "pkg_resources" in cmd:
+            # Handle both string and list commands just in case
+            cmd_str = " ".join(cmd) if isinstance(cmd, list) else cmd
+            if "pkg_resources" in cmd_str:
                 res.failed = True
             else:
                 res.failed = False
