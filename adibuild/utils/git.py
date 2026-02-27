@@ -126,18 +126,29 @@ class GitRepository:
         except git.exc.GitCommandError as e:
             raise RepositoryError(f"Failed to fetch from {remote}: {e}") from e
 
-    def checkout(self, ref: str, force: bool = False) -> None:
+    def checkout(
+        self, ref: str, force: bool = False, clean_if_dirty: bool = True
+    ) -> None:
         """
         Checkout specific reference (branch, tag, commit).
 
         Args:
             ref: Reference to checkout
             force: Force checkout even with uncommitted changes
+            clean_if_dirty: Clean working directory if dirty before checkout (default: True)
 
         Raises:
             RepositoryError: If checkout operation fails
         """
         if self.script_builder:
+            if clean_if_dirty:
+                # Add clean command before checkout in script mode
+                self.script_builder.write_command(
+                    f"git -C {self.local_path} clean -fd"
+                )
+                self.script_builder.write_command(
+                    f"git -C {self.local_path} reset --hard"
+                )
             cmd = f"git -C {self.local_path} checkout {ref}"
             if force:
                 cmd += " --force"
@@ -146,6 +157,15 @@ class GitRepository:
 
         if not self.repo:
             raise RepositoryError("Repository not initialized. Call clone() first.")
+
+        # Clean if dirty and clean_if_dirty is enabled
+        if clean_if_dirty and self.is_dirty():
+            self.logger.info("Repository is dirty, cleaning before checkout...")
+            try:
+                self.repo.git.reset("--hard")
+                self.clean(force=True)
+            except git.exc.GitCommandError as e:
+                raise RepositoryError(f"Failed to clean repository: {e}") from e
 
         self.logger.info(f"Checking out {ref}...")
         try:
