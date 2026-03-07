@@ -34,6 +34,8 @@ class BuilderBase(ABC):
         self.work_dir = work_dir or (Path.home() / ".adibuild" / "work")
         self.work_dir.mkdir(parents=True, exist_ok=True)
         self.script_mode = script_mode
+        # Let platform implementations bypass runtime toolchain resolution in script mode.
+        self.platform.config["_script_mode"] = script_mode
 
         self.logger = get_logger(f"adibuild.builder.{self.__class__.__name__}")
 
@@ -134,6 +136,12 @@ class BuilderBase(ABC):
         Raises:
             BuildError: If environment validation fails
         """
+        if self.script_mode:
+            self.logger.info(
+                "Script generation mode enabled; skipping runtime environment validation"
+            )
+            return True
+
         self.logger.info("Validating build environment...")
 
         # Check basic build tools

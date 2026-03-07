@@ -32,6 +32,15 @@ class ZynqPlatform(Platform):
         Returns:
             Dictionary of environment variables
         """
+        if self.config.get("_script_mode"):
+            env = {
+                "ARCH": self.arch,
+                "CROSS_COMPILE": self.cross_compile,
+            }
+            if self.kernel_target == "uImage" and self.uimage_loadaddr:
+                env["LOADADDR"] = self.uimage_loadaddr
+            return env
+
         # Get toolchain and use its cross-compile prefix
         toolchain = self.get_toolchain()
         cross_compile = toolchain.cross_compile_arm32 or self.cross_compile

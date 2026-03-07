@@ -142,6 +142,9 @@ class NoOSPlatform(Platform):
 
         Returns toolchain env_vars (includes XILINX_VITIS, XILINX_VIVADO, PATH, etc.).
         """
+        if self.config.get("_script_mode"):
+            return {}
+
         toolchain = self.get_toolchain()
         return dict(toolchain.env_vars)
 

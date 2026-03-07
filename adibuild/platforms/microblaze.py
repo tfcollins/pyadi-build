@@ -34,6 +34,12 @@ class MicroBlazePlatform(Platform):
         Returns:
             Dictionary of environment variables
         """
+        if self.config.get("_script_mode"):
+            return {
+                "ARCH": self.arch,
+                "CROSS_COMPILE": self.cross_compile,
+            }
+
         # Get toolchain and use its cross-compile prefix
         toolchain = self.get_toolchain()
         cross_compile = toolchain.cross_compile_microblaze or self.cross_compile

@@ -78,7 +78,7 @@ def test_config_flag(cli_runner, mock_config_file, mocker):
     # Mock config loading and build
     mock_load_config = mocker.patch("adibuild.cli.main.load_config_with_overrides")
     mock_get_platform = mocker.patch("adibuild.cli.main.get_platform_instance")
-    mock_builder = mocker.patch("adibuild.projects.linux.LinuxBuilder")
+    mock_builder = mocker.patch("adibuild.cli.main.LinuxBuilder")
     mocker.patch("adibuild.cli.main.display_build_summary")
 
     # Setup mock returns
