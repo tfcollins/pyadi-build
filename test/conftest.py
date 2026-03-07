@@ -25,6 +25,17 @@ def pytest_addoption(parser):
         default=False,
         help="Run real build integration tests (slow, requires toolchains)",
     )
+    parser.addoption(
+        "--real-ssh",
+        action="store_true",
+        default=False,
+        help="Run real SSH integration tests (slow, requires SSH target available)",
+    )
+    parser.addoption(
+        "--ssh-target",
+        default="hdl-dev-2",
+        help="SSH target name for real SSH integration tests (default: hdl-dev-2)",
+    )
 
 
 def pytest_collection_modifyitems(config, items):
@@ -39,6 +50,15 @@ def pytest_collection_modifyitems(config, items):
         for item in items:
             if "real_build" in item.keywords:
                 item.add_marker(skip_real_build)
+
+    # Skip real_ssh tests by default
+    if not config.getoption("--real-ssh"):
+        skip_real_ssh = pytest.mark.skip(
+            reason="--real-ssh flag not provided. Use 'pytest --real-ssh' to run real SSH integration tests"
+        )
+        for item in items:
+            if "real_ssh" in item.keywords:
+                item.add_marker(skip_real_ssh)
 
     # Skip tests that require Vivado if it's not available
     vivado_available = shutil.which("vivado") is not None
@@ -385,3 +405,47 @@ def mock_executor(mocker):
     mock_exec.check_tools.return_value = True
 
     return mock_exec
+
+
+@pytest.fixture
+def ssh_target():
+    """SSH target configuration for integration tests."""
+    from adibuild.core.executor import SSHTarget
+
+    return SSHTarget(
+        name="hdl-dev-2",
+        hostname="hdl-dev-2",
+        username="builder",
+        port=22,
+    )
+
+
+@pytest.fixture
+def hdl_config_with_ssh_target():
+    """HDL configuration with SSH target configured."""
+    config_data = {
+        "project": "hdl",
+        "repository": "https://github.com/analogdevicesinc/hdl.git",
+        "tag": "main",
+        "build": {
+            "parallel_jobs": 4,
+            "output_dir": "./build",
+            "selected_target": "hdl-dev-2",
+        },
+        "ssh_targets": {
+            "hdl-dev-2": {
+                "hostname": "hdl-dev-2",
+                "username": "builder",
+                "port": 22,
+                "work_dir": "~/.adibuild/work",
+            }
+        },
+        "platforms": {
+            "zed_fmcomms2": {
+                "hdl_project": "fmcomms2",
+                "carrier": "zed",
+                "arch": "arm",
+            }
+        },
+    }
+    return BuildConfig.from_dict(config_data)
