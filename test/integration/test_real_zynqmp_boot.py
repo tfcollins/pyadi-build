@@ -14,7 +14,6 @@ from adibuild.projects.uboot import UBootBuilder
 @pytest.mark.real_build
 @pytest.mark.slow
 class TestRealZynqMPBoot:
-
     def test_real_atf_build(self, real_toolchain_arm64, check_network):
         """Test real clone and build of ATF bl31.elf."""
         config_data = {

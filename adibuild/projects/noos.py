@@ -32,7 +32,11 @@ class NoOSBuilder(BuilderBase):
             remote_target: SSH target name for remote execution
         """
         super().__init__(
-            config, platform, work_dir, script_mode=script_mode, remote_target=remote_target
+            config,
+            platform,
+            work_dir,
+            script_mode=script_mode,
+            remote_target=remote_target,
         )
         self.source_dir: Path | None = None
 

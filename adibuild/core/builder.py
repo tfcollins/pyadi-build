@@ -4,7 +4,13 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from adibuild.core.config import BuildConfig
-from adibuild.core.executor import BuildExecutor, ExecutorBase, ScriptBuilder, SSHExecutor, SSHTarget
+from adibuild.core.executor import (
+    BuildExecutor,
+    ExecutorBase,
+    ScriptBuilder,
+    SSHExecutor,
+    SSHTarget,
+)
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
 from adibuild.utils.logger import get_logger
@@ -47,7 +53,9 @@ class BuilderBase(ABC):
             # Use SSH executor for remote builds
             target_config = config.get_ssh_target(selected_target)
             if not target_config:
-                raise ValueError(f"SSH target '{selected_target}' not found in configuration")
+                raise ValueError(
+                    f"SSH target '{selected_target}' not found in configuration"
+                )
 
             ssh_target = SSHTarget(
                 name=selected_target,

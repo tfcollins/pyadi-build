@@ -621,7 +621,6 @@ def parse_kuiper_release(
 
 
 if __name__ == "__main__":
-
     release_metadata = {}
     for release in ["2022_R2", "2023_R2", "2023_R2_P1"]:
         kuiper_dl_driver = KuiperDLDriver(

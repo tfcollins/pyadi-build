@@ -153,8 +153,9 @@ class TestGenalyzerBuilder:
         mocker.patch.object(
             builder,
             "prepare_source",
-            side_effect=lambda: setattr(builder, "source_dir", fake_source)
-            or fake_source,
+            side_effect=lambda: (
+                setattr(builder, "source_dir", fake_source) or fake_source
+            ),
         )
         mock_cmake = mocker.patch.object(builder.executor, "cmake")
         mock_make = mocker.patch.object(builder.executor, "make")
@@ -238,8 +239,9 @@ class TestGenalyzerBuilder:
         mocker.patch.object(
             builder,
             "prepare_source",
-            side_effect=lambda: setattr(builder, "source_dir", fake_source)
-            or fake_source,
+            side_effect=lambda: (
+                setattr(builder, "source_dir", fake_source) or fake_source
+            ),
         )
         mocker.patch.object(builder.executor, "make")
 
@@ -360,8 +362,9 @@ class TestGenalyzerBuilder:
         mocker.patch.object(
             builder,
             "prepare_source",
-            side_effect=lambda: setattr(builder, "source_dir", fake_source)
-            or fake_source,
+            side_effect=lambda: (
+                setattr(builder, "source_dir", fake_source) or fake_source
+            ),
         )
         result = builder.build(jobs=4)
 

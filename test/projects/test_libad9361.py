@@ -316,8 +316,9 @@ class TestLibAD9361Builder:
         mocker.patch.object(
             builder,
             "prepare_source",
-            side_effect=lambda: setattr(builder, "source_dir", fake_source)
-            or fake_source,
+            side_effect=lambda: (
+                setattr(builder, "source_dir", fake_source) or fake_source
+            ),
         )
         mock_cmake = mocker.patch.object(builder.executor, "cmake")
         mock_make = mocker.patch.object(builder.executor, "make")
@@ -388,8 +389,9 @@ class TestLibAD9361Builder:
         mocker.patch.object(
             builder,
             "prepare_source",
-            side_effect=lambda: setattr(builder, "source_dir", fake_source)
-            or fake_source,
+            side_effect=lambda: (
+                setattr(builder, "source_dir", fake_source) or fake_source
+            ),
         )
         mocker.patch.object(builder.executor, "make")
 
@@ -477,8 +479,9 @@ class TestLibAD9361Builder:
         mocker.patch.object(
             builder,
             "prepare_source",
-            side_effect=lambda: setattr(builder, "source_dir", fake_source)
-            or fake_source,
+            side_effect=lambda: (
+                setattr(builder, "source_dir", fake_source) or fake_source
+            ),
         )
         # In script mode, cmake/make write to script — no real execution
         result = builder.build(jobs=4)
