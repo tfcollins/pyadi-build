@@ -173,3 +173,5 @@ cython_debug/
 # Dev
 build
 logs
+# Local assistant metadata
+.claude/
