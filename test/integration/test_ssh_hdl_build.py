@@ -4,7 +4,6 @@ import pytest
 
 from adibuild.core.executor import SSHExecutor
 
-
 pytestmark = pytest.mark.real_ssh
 
 
@@ -15,7 +14,6 @@ class TestSSHHDLBuild:
     def hdl_dev_2_config(self, request):
         """Load SSH target config from pytest options."""
         from adibuild.core.config import BuildConfig
-        from adibuild.core.executor import SSHTarget
 
         target_name = request.config.getoption("--ssh-target")
 
@@ -101,10 +99,11 @@ class TestSSHHDLBuild:
 
     def test_create_remote_directory(self, request):
         """Test creating directory on remote system."""
-        target_name = request.config.getoption("--ssh-target")
+        import time
 
         from adibuild.core.executor import SSHTarget
-        import time
+
+        target_name = request.config.getoption("--ssh-target")
 
         target = SSHTarget(
             name=target_name,
@@ -116,7 +115,9 @@ class TestSSHHDLBuild:
 
         # Create a unique test directory
         test_dir = f"/tmp/adibuild_test_{int(time.time())}"
-        result = executor.execute(f"mkdir -p {test_dir} && test -d {test_dir} && echo 'OK'")
+        result = executor.execute(
+            f"mkdir -p {test_dir} && test -d {test_dir} && echo 'OK'"
+        )
 
         assert result.success, f"Failed to create directory on {target_name}"
         assert "OK" in result.stdout

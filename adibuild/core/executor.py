@@ -764,23 +764,23 @@ class SSHExecutor(ExecutorBase):
             Rich Text object with styling
         """
         # Same patterns as BuildExecutor
-        ERROR_PATTERNS = [
+        error_patterns = [
             re.compile(r"error:", re.IGNORECASE),
             re.compile(r"fatal:", re.IGNORECASE),
             re.compile(r"undefined reference", re.IGNORECASE),
             re.compile(r"cannot find", re.IGNORECASE),
         ]
 
-        WARNING_PATTERNS = [
+        warning_patterns = [
             re.compile(r"warning:", re.IGNORECASE),
             re.compile(r"deprecated", re.IGNORECASE),
         ]
 
-        for pattern in ERROR_PATTERNS:
+        for pattern in error_patterns:
             if pattern.search(line):
                 return Text(line, style="bold red")
 
-        for pattern in WARNING_PATTERNS:
+        for pattern in warning_patterns:
             if pattern.search(line):
                 return Text(line, style="yellow")
 
@@ -826,8 +826,7 @@ class SSHExecutor(ExecutorBase):
 
         if missing:
             raise BuildError(
-                f"Required tools not found on {self.target.name}: "
-                f"{', '.join(missing)}"
+                f"Required tools not found on {self.target.name}: {', '.join(missing)}"
             )
 
         return True

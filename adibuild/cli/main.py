@@ -1478,14 +1478,14 @@ def ssh_list(ctx, config):
             config_path = Path.home() / ".adibuild" / "config.yaml"
 
         if not Path(config_path).exists():
-            print("No SSH targets configured (create a config file first)")
+            click.echo("No SSH targets configured (create a config file first)")
             return
 
         cfg = BuildConfig.from_yaml(config_path)
         targets = cfg.get_ssh_targets()
 
         if not targets:
-            print("No SSH targets configured")
+            click.echo("No SSH targets configured")
             return
 
         click.echo("\nSSH Targets:")

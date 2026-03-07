@@ -1,7 +1,5 @@
 """Tests for SSH target management CLI commands."""
 
-import pytest
-
 from adibuild.cli.main import cli
 from adibuild.core.config import BuildConfig
 
