@@ -18,6 +18,7 @@ class HDLBuilder(BuilderBase):
         platform: Platform,
         work_dir: Path | None = None,
         script_mode: bool = False,
+        remote_target: str | None = None,
     ):
         """
         Initialize HDLBuilder.
@@ -27,8 +28,11 @@ class HDLBuilder(BuilderBase):
             platform: Target platform configuration (must contain 'hdl_project' and 'carrier')
             work_dir: Working directory
             script_mode: If True, generate bash script instead of executing
+            remote_target: SSH target name for remote execution
         """
-        super().__init__(config, platform, work_dir, script_mode=script_mode)
+        super().__init__(
+            config, platform, work_dir, script_mode=script_mode, remote_target=remote_target
+        )
         self.source_dir: Path | None = None
 
     def prepare_source(self) -> Path:
