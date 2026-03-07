@@ -33,9 +33,13 @@
           "type": "string",
           "description": "Directory for build artifacts",
           "default": "./build"
+        },
+        "selected_target": {
+          "type": ["string", "null"],
+          "description": "Selected SSH target for remote builds (null for local builds)",
+          "default": null
         }
-      },
-      "additionalProperties": false
+      }
     },
     "platforms": {
       "type": "object",
@@ -44,9 +48,45 @@
         "$ref": "#/definitions/platform_config"
       },
       "minProperties": 1
+    },
+    "ssh_targets": {
+      "type": "object",
+      "description": "SSH target configurations for remote builds",
+      "patternProperties": {
+        "^[a-z0-9_-]+$": {
+          "type": "object",
+          "required": ["hostname", "username"],
+          "properties": {
+            "hostname": {
+              "type": "string",
+              "description": "SSH hostname or IP address"
+            },
+            "username": {
+              "type": "string",
+              "description": "SSH username"
+            },
+            "port": {
+              "type": "integer",
+              "description": "SSH port",
+              "minimum": 1,
+              "maximum": 65535,
+              "default": 22
+            },
+            "key_file": {
+              "type": ["string", "null"],
+              "description": "Path to SSH private key file"
+            },
+            "work_dir": {
+              "type": "string",
+              "description": "Remote working directory",
+              "default": "~/.adibuild/work"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
     }
   },
-  "additionalProperties": false,
   "definitions": {
     "platform_config": {
       "type": "object",

@@ -109,6 +109,10 @@ def hdl():
     "tool_version",
     help="Override Vivado version (e.g., 2023.2). Auto-detected from tag if not specified.",
 )
+@click.option(
+    "--remote-target",
+    help="SSH target for remote build execution",
+)
 @click.pass_context
 def build_hdl(
     ctx,
@@ -123,6 +127,7 @@ def build_hdl(
     ignore_version_check,
     generate_script,
     tool_version,
+    remote_target,
 ):
     """
     Build HDL project for specified platform.
@@ -194,7 +199,9 @@ def build_hdl(
         platform_obj = get_platform_instance(config, platform)
 
         # Create builder
-        builder = HDLBuilder(config, platform_obj, script_mode=generate_script)
+        builder = HDLBuilder(
+            config, platform_obj, script_mode=generate_script, remote_target=remote_target
+        )
 
         # Execute build
         result = builder.build(
@@ -252,6 +259,10 @@ def noos():
     "tool_version",
     help="Override Vivado version (e.g., 2023.2). Auto-detected from tag if not specified.",
 )
+@click.option(
+    "--remote-target",
+    help="SSH target for remote build execution",
+)
 @click.pass_context
 def build_noos(
     ctx,
@@ -264,6 +275,7 @@ def build_noos(
     jobs,
     generate_script,
     tool_version,
+    remote_target,
 ):
     """
     Build no-OS bare-metal firmware for specified platform.
@@ -316,7 +328,9 @@ def build_noos(
         platform_obj = get_platform_instance(config, platform)
 
         # Create builder
-        builder = NoOSBuilder(config, platform_obj, script_mode=generate_script)
+        builder = NoOSBuilder(
+            config, platform_obj, script_mode=generate_script, remote_target=remote_target
+        )
 
         # Execute build
         result = builder.build(clean_before=clean)
@@ -1362,6 +1376,273 @@ def build_boot(
 def build_zynqmp_boot_alias(ctx, **kwargs):
     """Alias for build-boot."""
     ctx.invoke(build_boot, **kwargs)
+
+
+# SSH target management
+@cli.group()
+def ssh():
+    """Manage SSH targets for remote builds."""
+    pass
+
+
+@ssh.command(name="add")
+@click.argument("name")
+@click.argument("hostname")
+@click.argument("username")
+@click.option("--port", type=int, default=22, help="SSH port (default 22)")
+@click.option("--key-file", type=click.Path(exists=True), help="Path to SSH private key")
+@click.option("--work-dir", help="Remote working directory (default ~/.adibuild/work)")
+@click.option(
+    "--config",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file to update",
+)
+@click.pass_context
+def ssh_add(ctx, name, hostname, username, port, key_file, work_dir, config):
+    """Add SSH target for remote builds."""
+    try:
+        config_path = config or ctx.obj.get("config_path")
+        if not config_path:
+            config_path = Path.home() / ".adibuild" / "config.yaml"
+
+        # Load or create config
+        if Path(config_path).exists():
+            cfg = BuildConfig.from_yaml(config_path)
+        else:
+            cfg = BuildConfig.from_dict({})
+
+        # Add SSH target
+        cfg.add_ssh_target(
+            name=name,
+            hostname=hostname,
+            username=username,
+            port=port,
+            key_file=key_file,
+            work_dir=work_dir,
+        )
+
+        # Save config
+        cfg.to_yaml(config_path)
+        print_success(f"SSH target '{name}' added to {config_path}")
+
+    except Exception as e:
+        print_error(f"Failed to add SSH target: {e}")
+
+
+@ssh.command(name="remove")
+@click.argument("name")
+@click.option(
+    "--config",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file to update",
+)
+@click.pass_context
+def ssh_remove(ctx, name, config):
+    """Remove SSH target."""
+    try:
+        config_path = config or ctx.obj.get("config_path")
+        if not config_path:
+            config_path = Path.home() / ".adibuild" / "config.yaml"
+
+        if not Path(config_path).exists():
+            print_error(f"Configuration file not found: {config_path}")
+            return
+
+        cfg = BuildConfig.from_yaml(config_path)
+
+        if cfg.remove_ssh_target(name):
+            cfg.to_yaml(config_path)
+            print_success(f"SSH target '{name}' removed from {config_path}")
+        else:
+            print_error(f"SSH target '{name}' not found")
+
+    except Exception as e:
+        print_error(f"Failed to remove SSH target: {e}")
+
+
+@ssh.command(name="list")
+@click.option(
+    "--config",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file to read",
+)
+@click.pass_context
+def ssh_list(ctx, config):
+    """List available SSH targets."""
+    try:
+        config_path = config or ctx.obj.get("config_path")
+        if not config_path:
+            config_path = Path.home() / ".adibuild" / "config.yaml"
+
+        if not Path(config_path).exists():
+            click.echo("No SSH targets configured (create a config file first)")
+            return
+
+        cfg = BuildConfig.from_yaml(config_path)
+        targets = cfg.get_ssh_targets()
+
+        if not targets:
+            click.echo("No SSH targets configured")
+            return
+
+        click.echo("\nSSH Targets:")
+        click.echo("-" * 70)
+
+        for name, target_cfg in targets.items():
+            hostname = target_cfg.get("hostname", "N/A")
+            username = target_cfg.get("username", "N/A")
+            port = target_cfg.get("port", 22)
+            key_file = target_cfg.get("key_file", "default")
+            click.echo(f"  {name}:")
+            click.echo(f"    Hostname: {hostname}:{port}")
+            click.echo(f"    Username: {username}")
+            click.echo(f"    Key File: {key_file}")
+
+        click.echo("-" * 70)
+
+    except Exception as e:
+        print_error(f"Failed to list SSH targets: {e}")
+
+
+@ssh.command(name="show")
+@click.argument("name")
+@click.option(
+    "--config",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file to read",
+)
+@click.pass_context
+def ssh_show(ctx, name, config):
+    """Show SSH target details."""
+    try:
+        config_path = config or ctx.obj.get("config_path")
+        if not config_path:
+            config_path = Path.home() / ".adibuild" / "config.yaml"
+
+        if not Path(config_path).exists():
+            print_error(f"Configuration file not found: {config_path}")
+            return
+
+        cfg = BuildConfig.from_yaml(config_path)
+        target = cfg.get_ssh_target(name)
+
+        if not target:
+            print_error(f"SSH target '{name}' not found")
+            return
+
+        click.echo(f"\nSSH Target: {name}")
+        click.echo("-" * 70)
+        click.echo(f"Hostname:  {target.get('hostname')}")
+        click.echo(f"Username:  {target.get('username')}")
+        click.echo(f"Port:      {target.get('port', 22)}")
+        click.echo(f"Key File:  {target.get('key_file', 'default')}")
+        click.echo(f"Work Dir:  {target.get('work_dir', '~/.adibuild/work')}")
+        click.echo("-" * 70)
+
+    except Exception as e:
+        print_error(f"Failed to show SSH target: {e}")
+
+
+@ssh.command(name="test")
+@click.argument("name")
+@click.option(
+    "--config",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file to use",
+)
+@click.pass_context
+def ssh_test(ctx, name, config):
+    """Test SSH connection to target."""
+    try:
+        from adibuild.core.executor import SSHExecutor, SSHTarget
+
+        config_path = config or ctx.obj.get("config_path")
+        if not config_path:
+            config_path = Path.home() / ".adibuild" / "config.yaml"
+
+        if not Path(config_path).exists():
+            print_error(f"Configuration file not found: {config_path}")
+            return
+
+        cfg = BuildConfig.from_yaml(config_path)
+        target_cfg = cfg.get_ssh_target(name)
+
+        if not target_cfg:
+            print_error(f"SSH target '{name}' not found")
+            return
+
+        # Create SSH target and executor
+        ssh_target = SSHTarget(
+            name=name,
+            hostname=target_cfg.get("hostname"),
+            username=target_cfg.get("username"),
+            port=target_cfg.get("port", 22),
+            key_file=target_cfg.get("key_file"),
+            work_dir=target_cfg.get("work_dir"),
+        )
+
+        executor = SSHExecutor(ssh_target)
+
+        # Test connection with simple command
+        click.echo(f"Testing connection to {name}...")
+        result = executor.execute("echo 'SSH connection successful' && uname -a")
+
+        if result.success:
+            print_success(f"SSH connection test passed for '{name}'")
+            click.echo(result.stdout)
+        else:
+            print_error(f"SSH connection test failed for '{name}'")
+            click.echo(result.stdout)
+
+    except Exception as e:
+        print_error(f"Failed to test SSH connection: {e}")
+
+
+@ssh.command(name="select")
+@click.argument("name", required=False)
+@click.option(
+    "--config",
+    "-c",
+    type=click.Path(exists=True),
+    help="Configuration file to update",
+)
+@click.pass_context
+def ssh_select(ctx, name, config):
+    """Select SSH target for builds (or clear selection with no name)."""
+    try:
+        config_path = config or ctx.obj.get("config_path")
+        if not config_path:
+            config_path = Path.home() / ".adibuild" / "config.yaml"
+
+        # Load or create config
+        if Path(config_path).exists():
+            cfg = BuildConfig.from_yaml(config_path)
+        else:
+            cfg = BuildConfig.from_dict({})
+
+        if name:
+            # Verify target exists
+            if not cfg.get_ssh_target(name):
+                print_error(f"SSH target '{name}' not found")
+                return
+
+            cfg.set_selected_target(name)
+            print_success(f"Selected SSH target '{name}' for builds")
+        else:
+            # Clear selection
+            cfg.set_selected_target(None)
+            print_success("Cleared SSH target selection (using local builds)")
+
+        # Save config
+        cfg.to_yaml(config_path)
+
+    except Exception as e:
+        print_error(f"Failed to select SSH target: {e}")
 
 
 # Main entry point

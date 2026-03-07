@@ -341,3 +341,94 @@ class BuildConfig:
     def __repr__(self) -> str:
         """String representation."""
         return f"BuildConfig({self._data})"
+
+    def get_ssh_targets(self) -> dict[str, dict]:
+        """
+        Get SSH target configurations.
+
+        Returns:
+            Dictionary of SSH target configurations
+        """
+        return self.get("ssh_targets", {})
+
+    def get_ssh_target(self, target_name: str) -> dict | None:
+        """
+        Get specific SSH target configuration.
+
+        Args:
+            target_name: Target name
+
+        Returns:
+            Target configuration or None if not found
+        """
+        targets = self.get_ssh_targets()
+        return targets.get(target_name)
+
+    def add_ssh_target(
+        self,
+        name: str,
+        hostname: str,
+        username: str,
+        port: int = 22,
+        key_file: str | None = None,
+        work_dir: str | None = None,
+    ) -> None:
+        """
+        Add SSH target to configuration.
+
+        Args:
+            name: Target name
+            hostname: SSH hostname
+            username: SSH username
+            port: SSH port
+            key_file: Path to SSH key file
+            work_dir: Remote working directory
+        """
+        if "ssh_targets" not in self._data:
+            self._data["ssh_targets"] = {}
+
+        self._data["ssh_targets"][name] = {
+            "hostname": hostname,
+            "username": username,
+            "port": port,
+        }
+
+        if key_file:
+            self._data["ssh_targets"][name]["key_file"] = key_file
+
+        if work_dir:
+            self._data["ssh_targets"][name]["work_dir"] = work_dir
+
+    def remove_ssh_target(self, target_name: str) -> bool:
+        """
+        Remove SSH target from configuration.
+
+        Args:
+            target_name: Target name to remove
+
+        Returns:
+            True if target was removed, False if not found
+        """
+        targets = self.get_ssh_targets()
+        if target_name in targets:
+            del self._data["ssh_targets"][target_name]
+            return True
+        return False
+
+    def set_selected_target(self, target_name: str | None) -> None:
+        """
+        Set the selected SSH target for builds.
+
+        Args:
+            target_name: Target name or None for local builds
+        """
+        self.set("build.selected_target", target_name)
+
+    def get_selected_target(self) -> str | None:
+        """
+        Get the selected SSH target for builds.
+
+        Returns:
+            Target name or None for local builds
+        """
+        return self.get("build.selected_target")

@@ -80,7 +80,6 @@ def parse_fabric_designs(release):
 
 
 if __name__ == "__main__":
-
     # Example usage
     all_projects = {}
     for release in ["2022_R2", "2023_R2", "2023_R2_P1"]:

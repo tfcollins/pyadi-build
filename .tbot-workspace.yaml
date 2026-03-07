@@ -1,0 +1,10 @@
+name: pyadi-build-20260306-213359-da7976
+path: /home/tcollins/dev/tbotdev/ai-dev-workspace/pyadi-build-20260306-213359-da7976
+target: claude-code
+skill_sets: []
+individual_skills: {}
+subagent_sets: []
+individual_subagents: {}
+auto_sync: true
+compact_mode: false
+max_tier: extended

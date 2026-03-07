@@ -681,9 +681,100 @@ Custom Toolchain Path
        toolchain:
          preferred: vivado
 
+SSH Remote Build Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Enable remote builds on SSH targets with the following configuration:
+
+.. code-block:: yaml
+
+   build:
+     parallel_jobs: 8
+     selected_target: hdl-dev-2  # Optional: select SSH target for all builds
+
+   ssh_targets:
+     hdl-dev-2:
+       hostname: hdl-dev-2
+       username: builder
+       port: 22
+       key_file: ~/.ssh/id_rsa  # Optional: path to SSH private key
+       work_dir: ~/.adibuild/work  # Optional: remote working directory
+
+.. describe:: ssh_targets
+
+   :Type: dictionary (mapping target names to configurations)
+   :Required: No
+
+   SSH target definitions for remote builds.
+
+.. describe:: selected_target
+
+   :Type: string (target name) or null
+   :Default: null (local builds)
+
+   Selected SSH target for builds. When set, all builds run on this target.
+   Can be overridden per-build with ``--remote-target`` CLI option.
+
+**SSH Target Fields:**
+
+.. describe:: hostname
+
+   :Type: string (hostname or IP address)
+   :Required: Yes
+
+   SSH hostname to connect to.
+
+.. describe:: username
+
+   :Type: string
+   :Required: Yes
+
+   SSH username for authentication.
+
+.. describe:: port
+
+   :Type: integer
+   :Default: 22
+
+   SSH port number.
+
+.. describe:: key_file
+
+   :Type: string (file path) or null
+   :Default: null (use SSH agent/default keys)
+
+   Path to SSH private key file for authentication.
+
+.. describe:: work_dir
+
+   :Type: string (remote path)
+   :Default: ~/.adibuild/work
+
+   Remote working directory for builds.
+
+**Example with Multiple Targets:**
+
+.. code-block:: yaml
+
+   ssh_targets:
+     hdl-dev-2:
+       hostname: hdl-dev-2.local
+       username: builder
+       key_file: ~/.ssh/hdl_key
+
+     linux-build-1:
+       hostname: linux.example.com
+       username: builduser
+       port: 2222
+       key_file: /home/user/.ssh/custom_key
+
+   build:
+     selected_target: hdl-dev-2  # Default target
+
 Next Steps
 ----------
 
 - See :doc:`cli-usage` for using configurations with the CLI
 - Learn about :doc:`toolchain-management` for toolchain details
 - Check :doc:`platforms` for platform-specific configuration
+- See :doc:`hdl-builds` for SSH usage with HDL builds

@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 import time
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -489,6 +490,343 @@ class BuildExecutor:
             raise BuildError(
                 f"Required tools not found: {', '.join(missing)}. "
                 "Please install these tools before continuing."
+            )
+
+        return True
+
+
+class ExecutorBase(ABC):
+    """Abstract base class for command executors (local or remote)."""
+
+    @abstractmethod
+    def execute(
+        self,
+        command: str | list[str],
+        env: dict[str, str] | None = None,
+        stream_output: bool = True,
+        capture_output: bool = True,
+    ) -> ExecutionResult:
+        """
+        Execute command.
+
+        Args:
+            command: Command to execute
+            env: Optional environment variables
+            stream_output: Stream output in real-time
+            capture_output: Capture output to result
+
+        Returns:
+            ExecutionResult
+        """
+        pass
+
+    @abstractmethod
+    def check_tool(self, tool: str) -> bool:
+        """Check if a tool is available."""
+        pass
+
+    @abstractmethod
+    def check_tools(self, tools: list[str]) -> bool:
+        """Check if multiple tools are available."""
+        pass
+
+
+class SSHTarget:
+    """SSH target configuration."""
+
+    def __init__(
+        self,
+        name: str,
+        hostname: str,
+        username: str,
+        port: int = 22,
+        key_file: str | None = None,
+        work_dir: str | None = None,
+    ):
+        """
+        Initialize SSH target.
+
+        Args:
+            name: Target name (identifier)
+            hostname: SSH host
+            username: SSH username
+            port: SSH port (default 22)
+            key_file: Path to SSH key file
+            work_dir: Remote working directory (default ~/.adibuild/work)
+        """
+        self.name = name
+        self.hostname = hostname
+        self.username = username
+        self.port = port
+        self.key_file = key_file
+        self.work_dir = work_dir or "~/.adibuild/work"
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "name": self.name,
+            "hostname": self.hostname,
+            "username": self.username,
+            "port": self.port,
+            "key_file": self.key_file,
+            "work_dir": self.work_dir,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "SSHTarget":
+        """Create from dictionary."""
+        return cls(**data)
+
+
+class SSHExecutor(ExecutorBase):
+    """Executes commands on remote SSH targets."""
+
+    def __init__(
+        self,
+        target: SSHTarget,
+        log_file: Path | None = None,
+    ):
+        """
+        Initialize SSHExecutor.
+
+        Args:
+            target: SSH target configuration
+            log_file: Optional file to log command output
+        """
+        self.target = target
+        self.log_file = log_file
+        self.logger = get_logger(f"adibuild.executor.ssh.{target.name}")
+        self.console = Console(stderr=True)
+
+        if self.log_file:
+            self.log_file.parent.mkdir(parents=True, exist_ok=True)
+
+    def _build_ssh_command(self, remote_cmd: str) -> list[str]:
+        """
+        Build SSH command to execute remote command.
+
+        Args:
+            remote_cmd: Remote command to execute
+
+        Returns:
+            SSH command as list
+        """
+        cmd = ["ssh"]
+
+        # Add port
+        if self.target.port != 22:
+            cmd.extend(["-p", str(self.target.port)])
+
+        # Add key file
+        if self.target.key_file:
+            cmd.extend(["-i", self.target.key_file])
+
+        # Add host and command
+        host = f"{self.target.username}@{self.target.hostname}"
+        cmd.append(host)
+        cmd.append(remote_cmd)
+
+        return cmd
+
+    def execute(
+        self,
+        command: str | list[str],
+        env: dict[str, str] | None = None,
+        stream_output: bool = True,
+        capture_output: bool = True,
+    ) -> ExecutionResult:
+        """
+        Execute command on remote SSH target.
+
+        Args:
+            command: Command to execute
+            env: Optional environment variables (set on remote)
+            stream_output: Stream output in real-time
+            capture_output: Capture output to result
+
+        Returns:
+            ExecutionResult
+        """
+        # Prepare command
+        if isinstance(command, list):
+            cmd_str = " ".join(command)
+        else:
+            cmd_str = command
+
+        # Add environment variables to command if provided
+        if env:
+            env_str = " ".join(f"{k}='{v}'" for k, v in env.items())
+            cmd_str = f"{env_str} {cmd_str}"
+
+        self.logger.info(f"Executing on {self.target.name}: {cmd_str}")
+
+        # Build SSH command
+        ssh_cmd = self._build_ssh_command(cmd_str)
+
+        # Prepare output capture
+        stdout_lines = []
+        stderr_lines = []
+
+        # Open log file if specified
+        log_handle = None
+        if self.log_file:
+            log_handle = open(self.log_file, "a")
+            log_handle.write(f"\n{'=' * 80}\n")
+            log_handle.write(f"Remote Target: {self.target.name}\n")
+            log_handle.write(f"Command: {cmd_str}\n")
+            log_handle.write(f"Time: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+            log_handle.write(f"{'=' * 80}\n\n")
+
+        start_time = time.time()
+
+        try:
+            # Execute SSH command
+            process = subprocess.Popen(
+                ssh_cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+            )
+
+            # Stream and capture output
+            if stream_output:
+                for line in process.stdout:
+                    line = line.rstrip()
+                    if capture_output:
+                        stdout_lines.append(line)
+
+                    styled_line = self._style_output_line(line)
+                    self.console.print(styled_line, highlight=False)
+
+                    if log_handle:
+                        log_handle.write(line + "\n")
+                        log_handle.flush()
+            else:
+                stdout = process.stdout.read()
+                if capture_output:
+                    stdout_lines = stdout.splitlines()
+                if log_handle:
+                    log_handle.write(stdout)
+
+            # Wait for process to complete
+            return_code = process.wait()
+
+            duration = time.time() - start_time
+
+            # Create result
+            result = ExecutionResult(
+                command=cmd_str,
+                return_code=return_code,
+                stdout="\n".join(stdout_lines) if capture_output else "",
+                stderr="\n".join(stderr_lines) if capture_output else "",
+                duration=duration,
+            )
+
+            if result.success:
+                self.logger.info(
+                    f"Remote command completed successfully in {duration:.1f}s"
+                )
+            else:
+                self.logger.error(
+                    f"Remote command failed with return code {return_code} "
+                    f"after {duration:.1f}s"
+                )
+
+            if log_handle:
+                log_handle.write(f"\nReturn code: {return_code}\n")
+                log_handle.write(f"Duration: {duration:.1f}s\n")
+
+            return result
+
+        except subprocess.SubprocessError as e:
+            raise BuildError(f"Failed to execute remote command: {e}") from e
+
+        except KeyboardInterrupt:
+            self.logger.warning("Remote command interrupted by user")
+            if process:
+                process.terminate()
+                process.wait(timeout=5)
+            raise
+
+        finally:
+            if log_handle:
+                log_handle.close()
+
+    def _style_output_line(self, line: str) -> Text:
+        """
+        Style output line with colors.
+
+        Args:
+            line: Output line
+
+        Returns:
+            Rich Text object with styling
+        """
+        # Same patterns as BuildExecutor
+        error_patterns = [
+            re.compile(r"error:", re.IGNORECASE),
+            re.compile(r"fatal:", re.IGNORECASE),
+            re.compile(r"undefined reference", re.IGNORECASE),
+            re.compile(r"cannot find", re.IGNORECASE),
+        ]
+
+        warning_patterns = [
+            re.compile(r"warning:", re.IGNORECASE),
+            re.compile(r"deprecated", re.IGNORECASE),
+        ]
+
+        for pattern in error_patterns:
+            if pattern.search(line):
+                return Text(line, style="bold red")
+
+        for pattern in warning_patterns:
+            if pattern.search(line):
+                return Text(line, style="yellow")
+
+        return Text(line)
+
+    def check_tool(self, tool: str) -> bool:
+        """
+        Check if tool is available on remote.
+
+        Args:
+            tool: Tool name
+
+        Returns:
+            True if tool is available
+        """
+        result = self.execute(
+            f"which {tool}",
+            stream_output=False,
+            capture_output=True,
+        )
+
+        if result.failed:
+            raise BuildError(f"Required tool '{tool}' not found on {self.target.name}")
+
+        return True
+
+    def check_tools(self, tools: list[str]) -> bool:
+        """
+        Check if multiple tools are available on remote.
+
+        Args:
+            tools: List of tool names
+
+        Returns:
+            True if all tools are available
+        """
+        missing = []
+        for tool in tools:
+            try:
+                self.check_tool(tool)
+            except BuildError:
+                missing.append(tool)
+
+        if missing:
+            raise BuildError(
+                f"Required tools not found on {self.target.name}: {', '.join(missing)}"
             )
 
         return True

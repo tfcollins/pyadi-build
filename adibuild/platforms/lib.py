@@ -156,6 +156,4 @@ class LibPlatform(Platform):
         return True
 
     def __repr__(self) -> str:
-        return (
-            f"LibPlatform(arch={self.arch!r}, " f"cross_compile={self.cross_compile!r})"
-        )
+        return f"LibPlatform(arch={self.arch!r}, cross_compile={self.cross_compile!r})"

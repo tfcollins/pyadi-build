@@ -4,7 +4,13 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 from adibuild.core.config import BuildConfig
-from adibuild.core.executor import BuildExecutor, ScriptBuilder
+from adibuild.core.executor import (
+    BuildExecutor,
+    ExecutorBase,
+    ScriptBuilder,
+    SSHExecutor,
+    SSHTarget,
+)
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
 from adibuild.utils.logger import get_logger
@@ -19,6 +25,7 @@ class BuilderBase(ABC):
         platform: Platform,
         work_dir: Path | None = None,
         script_mode: bool = False,
+        remote_target: str | None = None,
     ):
         """
         Initialize BuilderBase.
@@ -28,6 +35,7 @@ class BuilderBase(ABC):
             platform: Target platform
             work_dir: Working directory (defaults to ~/.adibuild/work)
             script_mode: If True, generate bash script instead of executing
+            remote_target: SSH target name for remote execution (overrides config setting)
         """
         self.config = config
         self.platform = platform
@@ -37,19 +45,45 @@ class BuilderBase(ABC):
 
         self.logger = get_logger(f"adibuild.builder.{self.__class__.__name__}")
 
-        # Initialize script builder if in script mode
-        script_builder = None
-        if self.script_mode:
-            script_path = (
-                self.work_dir
-                / f"build_{self.config.get_project()}_{self.platform.arch}.sh"
-            )
-            script_builder = ScriptBuilder(script_path)
-            self.logger.info(f"Generating build script at {script_path}")
+        # Determine which executor to use
+        selected_target = remote_target or config.get_selected_target()
+        self.executor: ExecutorBase
 
-        # Initialize executor with log file and optional script builder
-        log_file = self.work_dir / f"build-{self.platform.arch}.log"
-        self.executor = BuildExecutor(log_file=log_file, script_builder=script_builder)
+        if selected_target and not self.script_mode:
+            # Use SSH executor for remote builds
+            target_config = config.get_ssh_target(selected_target)
+            if not target_config:
+                raise ValueError(
+                    f"SSH target '{selected_target}' not found in configuration"
+                )
+
+            ssh_target = SSHTarget(
+                name=selected_target,
+                hostname=target_config.get("hostname"),
+                username=target_config.get("username"),
+                port=target_config.get("port", 22),
+                key_file=target_config.get("key_file"),
+                work_dir=target_config.get("work_dir"),
+            )
+
+            log_file = self.work_dir / f"build-{self.platform.arch}-remote.log"
+            self.executor = SSHExecutor(target=ssh_target, log_file=log_file)
+            self.logger.info(f"Using remote executor for target '{selected_target}'")
+        else:
+            # Use local executor (either explicitly or in script mode)
+            script_builder = None
+            if self.script_mode:
+                script_path = (
+                    self.work_dir
+                    / f"build_{self.config.get_project()}_{self.platform.arch}.sh"
+                )
+                script_builder = ScriptBuilder(script_path)
+                self.logger.info(f"Generating build script at {script_path}")
+
+            log_file = self.work_dir / f"build-{self.platform.arch}.log"
+            self.executor = BuildExecutor(
+                log_file=log_file, script_builder=script_builder
+            )
 
         self._toolchain: ToolchainInfo | None = None
 
