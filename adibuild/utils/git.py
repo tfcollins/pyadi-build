@@ -143,9 +143,7 @@ class GitRepository:
         if self.script_builder:
             if clean_if_dirty:
                 # Add clean command before checkout in script mode
-                self.script_builder.write_command(
-                    f"git -C {self.local_path} clean -fd"
-                )
+                self.script_builder.write_command(f"git -C {self.local_path} clean -fd")
                 self.script_builder.write_command(
                     f"git -C {self.local_path} reset --hard"
                 )
