@@ -1092,6 +1092,115 @@ Add to ``~/.zshrc`` for permanent activation.
 
 Add to ``~/.config/fish/config.fish`` for permanent activation.
 
+SSH Remote Builds
+-----------------
+
+Build on remote SSH targets with full toolchain and environment. This is useful for leveraging
+specialized build servers with specific tools installed (e.g., Vivado for HDL builds).
+
+Managing SSH Targets
+~~~~~~~~~~~~~~~~~~~~
+
+**Add an SSH target:**
+
+.. code-block:: bash
+
+   adibuild ssh add hdl-dev-2 hdl-dev-2.local builder --port 22 --key-file ~/.ssh/build_key
+
+**List configured targets:**
+
+.. code-block:: bash
+
+   adibuild ssh list
+
+**Show details for a target:**
+
+.. code-block:: bash
+
+   adibuild ssh show hdl-dev-2
+
+**Test SSH connection:**
+
+.. code-block:: bash
+
+   adibuild ssh test hdl-dev-2
+
+**Remove a target:**
+
+.. code-block:: bash
+
+   adibuild ssh remove hdl-dev-2
+
+**Select target for builds:**
+
+.. code-block:: bash
+
+   # Select target - all future builds use this target
+   adibuild ssh select hdl-dev-2
+
+   # Clear selection - switch back to local builds
+   adibuild ssh select
+
+Building on Remote SSH Targets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Using selected target (from configuration or selection):**
+
+.. code-block:: bash
+
+   adibuild hdl build -p zed_fmcomms2
+
+**Override target for single build:**
+
+.. code-block:: bash
+
+   adibuild hdl build -p zed_fmcomms2 --remote-target hdl-dev-2
+
+**Build no-OS on remote:**
+
+.. code-block:: bash
+
+   adibuild noos build -p xilinx_ad9081 --remote-target hdl-dev-2
+
+Configuration for Remote Builds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Add SSH targets to your configuration file:
+
+.. code-block:: yaml
+
+   # In your config.yaml
+   ssh_targets:
+     hdl-dev-2:
+       hostname: hdl-dev-2
+       username: builder
+       key_file: ~/.ssh/id_rsa
+
+   build:
+     selected_target: hdl-dev-2  # Optional: use this target by default
+
+Example Workflow
+~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # 1. Add a remote build server
+   adibuild ssh add hdl-server hdl.example.com builduser --key-file ~/.ssh/hdl_key
+
+   # 2. Verify connectivity
+   adibuild ssh test hdl-server
+
+   # 3. Select it as default
+   adibuild ssh select hdl-server
+
+   # 4. Run HDL builds remotely
+   adibuild hdl build -p zed_fmcomms2 -t main
+
+   # 5. Check build output
+   ls ~/.adibuild/work/
+
+For more information on SSH configuration, see :doc:`configuration-guide`.
+
 Tips and Tricks
 ---------------
 

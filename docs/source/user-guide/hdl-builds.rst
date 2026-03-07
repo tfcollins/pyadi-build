@@ -179,3 +179,87 @@ Example output structure:
    hdl-hdl_2023_r2-zed_fmcomms2/
    ├── system_top.bit
    └── system_top.xsa
+
+Remote SSH Builds
+-----------------
+
+For HDL builds, you can leverage remote SSH targets that have Vivado installed. This is especially useful
+if you don't have Vivado locally or want to distribute builds across multiple machines.
+
+Setup
+~~~~~
+
+**1. Add an SSH target with Vivado installed:**
+
+.. code-block:: bash
+
+   adibuild ssh add hdl-dev-2 hdl-dev-2 builder --key-file ~/.ssh/id_rsa
+
+**2. Verify Vivado is available on the target:**
+
+.. code-block:: bash
+
+   adibuild ssh test hdl-dev-2
+
+**3. Select the target for HDL builds:**
+
+.. code-block:: bash
+
+   adibuild ssh select hdl-dev-2
+
+Building on Remote
+~~~~~~~~~~~~~~~~~~
+
+Once configured, run HDL builds normally - they'll execute remotely:
+
+.. code-block:: bash
+
+   # Uses selected target (hdl-dev-2)
+   adibuild hdl build -p zed_fmcomms2
+
+   # Or override target for this build only
+   adibuild hdl build -p zed_fmcomms2 --remote-target hdl-dev-2
+
+Configuration
+~~~~~~~~~~~~~
+
+Add SSH targets to your config file:
+
+.. code-block:: yaml
+
+   ssh_targets:
+     hdl-dev-2:
+       hostname: hdl-dev-2
+       username: builder
+       key_file: ~/.ssh/id_rsa
+       work_dir: ~/.adibuild/work
+
+   build:
+     selected_target: hdl-dev-2
+
+   platforms:
+     zed_fmcomms2:
+       hdl_project: fmcomms2
+       carrier: zed
+       arch: arm
+
+Example Workflow with Real Integration Tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To verify Vivado compatibility on a target like ``hdl-dev-2``, run:
+
+.. code-block:: bash
+
+   # Run SSH integration tests against hdl-dev-2
+   pytest --real-ssh --ssh-target hdl-dev-2 test/integration/test_ssh_hdl_build.py -v
+
+These tests verify:
+
+- SSH connectivity to the target
+- Vivado availability
+- Required build tools (make, git, bash)
+- Remote directory creation
+- Environment variable passing
+- HDL source access
+
+For more SSH configuration details, see :doc:`cli-usage` and :doc:`configuration-guide`.

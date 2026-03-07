@@ -5,6 +5,9 @@ Python module to generate and run build commands for Analog Devices, Inc. (ADI) 
 ## Features
 
 - **Linux Kernel Builder**: Build ADI Linux kernels for Zynq, ZynqMP, and MicroBlaze platforms
+- **HDL Builder**: Build HDL projects with Xilinx Vivado (local or remote)
+- **no-OS Builder**: Build bare-metal firmware for embedded systems
+- **SSH Remote Builds**: Execute builds on remote SSH targets with specific toolchains
 - **Automatic Toolchain Management**: Auto-detect or download cross-compilation toolchains
 - **Configuration Management**: YAML-based configuration with schema validation
 - **Multiple Platform Support**: Zynq (ARM32), ZynqMP (ARM64), and MicroBlaze (soft-core) platforms
@@ -118,6 +121,31 @@ adibuild config show
 
 # Validate configuration file
 adibuild config validate my_config.yaml
+```
+
+#### SSH Remote Builds
+
+```bash
+# Add an SSH target for remote builds
+adibuild ssh add hdl-dev-2 hdl-dev-2.local builder --key-file ~/.ssh/id_rsa
+
+# Test SSH connection
+adibuild ssh test hdl-dev-2
+
+# List configured SSH targets
+adibuild ssh list
+
+# Select SSH target for builds
+adibuild ssh select hdl-dev-2
+
+# Build HDL on remote SSH target
+adibuild hdl build -p zed_fmcomms2
+
+# Or override target per-build
+adibuild hdl build -p zed_fmcomms2 --remote-target hdl-dev-2
+
+# Clear SSH target selection (use local builds)
+adibuild ssh select
 ```
 
 ### Python API
