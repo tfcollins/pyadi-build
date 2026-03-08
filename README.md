@@ -5,6 +5,9 @@ Python module to generate and run build commands for Analog Devices, Inc. (ADI) 
 ## Features
 
 - **Linux Kernel Builder**: Build ADI Linux kernels for Zynq, ZynqMP, and MicroBlaze platforms
+- **Vivado Installer**: Download and install supported Vivado Linux releases directly from AMD
+- **Reusable Vivado Docker Images**: Build versioned Docker images with Vivado preinstalled
+- **Docker Build Runner**: Run supported HDL, no-OS, ATF, U-Boot, and BOOT.BIN builds inside reusable Vivado containers
 - **Automatic Toolchain Management**: Auto-detect or download cross-compilation toolchains
 - **Configuration Management**: YAML-based configuration with schema validation
 - **Multiple Platform Support**: Zynq (ARM32), ZynqMP (ARM64), and MicroBlaze (soft-core) platforms
@@ -16,6 +19,12 @@ Python module to generate and run build commands for Analog Devices, Inc. (ADI) 
 
 ```bash
 pip install pyadi-build
+```
+
+For authenticated Vivado downloads through browser fallback:
+
+```bash
+pip install "pyadi-build[vivado-browser]"
 ```
 
 For development:
@@ -56,6 +65,28 @@ adibuild config show
 
 ```bash
 adibuild toolchain
+```
+
+### Install Vivado
+
+```bash
+export AMD_USERNAME="user@example.com"
+export AMD_PASSWORD="..."
+adibuild vivado install --version 2023.2 --non-interactive
+```
+
+### Build a Reusable Vivado Docker Image
+
+```bash
+export AMD_USERNAME="user@example.com"
+export AMD_PASSWORD="..."
+adibuild vivado image build --version 2023.2
+```
+
+### Run an HDL Build in Docker
+
+```bash
+adibuild hdl build -p zed_fmcomms2 --runner docker --tool-version 2023.2
 ```
 
 ## Usage
@@ -103,8 +134,35 @@ adibuild linux clean -p zynq
 # Detect available toolchains
 adibuild toolchain
 
+# List supported/installable Vivado releases
+adibuild vivado list
+
+# Install Vivado
+adibuild vivado install --version 2025.1 --non-interactive
+
+# Build a reusable Docker image with Vivado preinstalled
+adibuild vivado image build --version 2023.2
+
+# List reusable Vivado Docker images
+adibuild vivado image list
+
 # Show toolchain for specific platform
 adibuild toolchain -p zynqmp
+```
+
+#### Docker Build Runner
+
+```bash
+# HDL in Docker
+adibuild hdl build -p zed_fmcomms2 --runner docker --tool-version 2023.2
+
+# no-OS Xilinx in Docker
+adibuild noos build -p xilinx_ad9081 --runner docker --tool-version 2023.2
+
+# Boot components in Docker
+adibuild boot build-atf -p zynqmp --runner docker --tool-version 2023.2
+adibuild boot build-uboot -p zynqmp --runner docker --tool-version 2023.2
+adibuild boot build-boot -p zynqmp --xsa system_top.xsa --runner docker --tool-version 2023.2
 ```
 
 #### Configuration Management
@@ -158,6 +216,10 @@ build:
   parallel_jobs: 8
   clean_before: false
   output_dir: ./build
+  runner: docker
+  docker:
+    image: adibuild/vivado:2023.2
+    tool_version: 2023.2
 
 platforms:
   zynqmp:
@@ -213,6 +275,16 @@ Typical installation paths:
 - `/tools/Xilinx/Vitis/`
 
 Or set `XILINX_VIVADO` or `XILINX_VITIS` environment variables.
+
+pyadi-build can also install supported Linux Vivado releases directly:
+
+```bash
+export AMD_USERNAME="user@example.com"
+export AMD_PASSWORD="..."
+adibuild vivado install --version 2023.2 --non-interactive
+```
+
+Supported install targets currently include `2023.2` and `2025.1`.
 
 ### 2. ARM GNU Toolchain (Auto-download)
 

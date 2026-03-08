@@ -106,6 +106,10 @@ Configures build behavior.
      parallel_jobs: 8
      clean_before: false
      output_dir: ./build
+     runner: local
+     docker:
+       image: adibuild/vivado:2023.2
+       tool_version: 2023.2
 
 **Fields:**
 
@@ -151,6 +155,28 @@ Configures build behavior.
 
       # User home directory
       output_dir: ~/builds
+
+.. describe:: runner
+
+   :Type: string
+   :Default: ``local``
+   :Values: ``local``, ``docker``
+
+   Selects the execution backend for supported build commands.
+
+.. describe:: docker.image
+
+   :Type: string
+   :Required: No
+
+   Reusable Docker image tag used when ``build.runner`` is ``docker``.
+
+.. describe:: docker.tool_version
+
+   :Type: string
+   :Required: No
+
+   Vivado tool version used to resolve the default Docker image tag when no explicit image is configured.
 
 Platform Section
 ----------------

@@ -43,6 +43,15 @@ for using pyadi-build as both a CLI tool and Python library.
 
       Managing cross-compilation toolchains
 
+   .. grid-item-card:: Docker Builds
+      :link: docker-builds
+      :link-type: doc
+      :text-align: center
+
+      :octicon:`container;2em`
+
+      Reusable Vivado images and Docker-backed build execution
+
 .. grid:: 2
    :gutter: 3
 
@@ -106,6 +115,9 @@ Topics Covered
 **Toolchains**
    Understanding the three toolchain types and how they're managed
 
+**Docker Builds**
+   Using reusable Vivado images and the Docker-backed build runner
+
 **Platforms**
    Platform-specific details for Zynq, ZynqMP, and MicroBlaze
 
@@ -146,9 +158,9 @@ Before using this guide, you should have:
    python-api-usage
    configuration-guide
    toolchain-management
+   docker-builds
    platforms
    hdl-builds
    noos-builds
    boot-bin-generation
    build-outputs
-

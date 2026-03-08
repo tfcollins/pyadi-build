@@ -327,6 +327,38 @@ Getting Platform Toolchain
    print(f"Cross-compile: {toolchain['cross_compile']}")
    print(f"Version: {toolchain.get('version', 'unknown')}")
 
+Vivado Installer and Docker Images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Vivado installer and reusable Docker image helpers are also available from Python:
+
+.. code-block:: python
+
+   from pathlib import Path
+
+   from adibuild.core.docker import VivadoDockerImageManager
+   from adibuild.core.vivado import (
+       VivadoCredentials,
+       VivadoInstallRequest,
+       VivadoInstaller,
+   )
+
+   creds = VivadoCredentials(username="user@example.com", password="secret")
+
+   installer = VivadoInstaller()
+   result = installer.install(
+       VivadoInstallRequest(
+           version="2023.2",
+           install_dir=Path("/opt/Xilinx"),
+           credentials=creds,
+       )
+   )
+   print(result.toolchain.path)
+
+   image_manager = VivadoDockerImageManager()
+   image = image_manager.build_image("2023.2", credentials=creds)
+   print(image["tag"])
+
 Git Operations
 --------------
 

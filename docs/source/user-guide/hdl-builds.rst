@@ -164,6 +164,17 @@ You can generate a standalone bash script to run the build later or on a machine
 
 This creates a script in your work directory (e.g., `~/.adibuild/work/build_hdl_unknown.sh`).
 
+Docker Runner
+~~~~~~~~~~~~~
+
+HDL builds can run inside a reusable Vivado Docker image instead of using a host-installed Vivado tree:
+
+.. code-block:: bash
+
+   adibuild hdl build -p zed_fmcomms2 --runner docker --tool-version 2023.2
+
+See :doc:`docker-builds` for image creation and configuration details.
+
 Output Artifacts
 ----------------
 

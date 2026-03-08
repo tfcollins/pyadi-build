@@ -19,6 +19,7 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        CLI --> Genalyzer[genalyzer]
        CLI --> Boot[boot]
        CLI --> Toolchain[toolchain]
+       CLI --> Vivado[vivado]
 
        Config --> Init[init]
        Config --> Validate[validate]
@@ -42,6 +43,11 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        Boot --> BUboot[build-uboot]
        Boot --> BBoot[build-boot]
 
+       Vivado --> VList[list]
+       Vivado --> VDetect[detect]
+       Vivado --> VInstall[install]
+       Vivado --> VImage[image]
+
        style CLI fill:#005c9a,stroke:#333,stroke-width:2px,color:#fff
 
 The ``adibuild`` CLI is organized into command groups:
@@ -54,6 +60,7 @@ The ``adibuild`` CLI is organized into command groups:
 - **boot** - Bootloader and BOOT.BIN build commands (Zynq, ZynqMP, Versal)
 - **config** - Configuration management
 - **toolchain** - Toolchain detection and information
+- **vivado** - Vivado install, detection, and reusable image management
 
 Global Options
 --------------
@@ -149,6 +156,18 @@ Options:
 
    Generate a bash script instead of executing the build.
 
+.. option:: --tool-version VERSION, -tv VERSION
+
+   Override Vivado version used for host validation or Docker image selection.
+
+.. option:: --runner {local,docker}
+
+   Select the execution backend. ``docker`` uses a reusable Vivado image.
+
+.. option:: --docker-image IMAGE
+
+   Reusable Docker image tag to use with ``--runner docker``.
+
 **Examples:**
 
 Using config file:
@@ -168,6 +187,12 @@ Force build with version mismatch:
 .. code-block:: bash
 
    adibuild hdl build -p zed_fmcomms2 --ignore-version-check
+
+Run an HDL build inside a reusable Docker image:
+
+.. code-block:: bash
+
+   adibuild hdl build -p zed_fmcomms2 --runner docker --tool-version 2023.2
 
 .. _noos-cli:
 
@@ -224,6 +249,14 @@ Options:
    Override Vivado version (e.g., ``2023.2``). Auto-detected from
    the release tag if not specified.
 
+.. option:: --runner {local,docker}
+
+   Select the execution backend. ``docker`` is currently intended for Xilinx no-OS builds.
+
+.. option:: --docker-image IMAGE
+
+   Reusable Docker image tag to use with ``--runner docker``.
+
 **Examples:**
 
 Build with a config file:
@@ -250,6 +283,12 @@ Generate a portable build script:
 .. code-block:: bash
 
    adibuild --config noos.yaml noos build -p stm32_ad9081 --generate-script
+
+Run a Xilinx no-OS build in Docker:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos build -p xilinx_ad9081 --runner docker --tool-version 2023.2
 
 Clean Command
 ~~~~~~~~~~~~~
@@ -706,6 +745,18 @@ Options:
 
    Git tag or branch to build.
 
+.. option:: --tool-version VERSION, -tv VERSION
+
+   Override Vivado version used to select the reusable Docker image.
+
+.. option:: --runner {local,docker}
+
+   Select the execution backend.
+
+.. option:: --docker-image IMAGE
+
+   Reusable Docker image tag to use with ``--runner docker``.
+
 Build U-Boot
 ~~~~~~~~~~~~
 
@@ -728,6 +779,18 @@ Options:
 .. option:: --defconfig DEFCONFIG
 
    Override default U-Boot defconfig.
+
+.. option:: --tool-version VERSION, -tv VERSION
+
+   Override Vivado version used to select the reusable Docker image.
+
+.. option:: --runner {local,docker}
+
+   Select the execution backend.
+
+.. option:: --docker-image IMAGE
+
+   Reusable Docker image tag to use with ``--runner docker``.
 
 Build BOOT.BIN
 ~~~~~~~~~~~~~~
@@ -784,6 +847,18 @@ Options:
 
    Path to pre-built PMUFW for ZynqMP. If not provided, it will be built from source using XSCT.
 
+.. option:: --tool-version VERSION, -tv VERSION
+
+   Override Vivado version used to select the reusable Docker image.
+
+.. option:: --runner {local,docker}
+
+   Select the execution backend.
+
+.. option:: --docker-image IMAGE
+
+   Reusable Docker image tag to use with ``--runner docker``.
+
 **Examples:**
 
 ZynqMP from source:
@@ -797,6 +872,39 @@ Versal with pre-built ATF:
 .. code-block:: bash
 
    adibuild boot build-boot -p versal --pdi system.pdi --atf build/atf/bl31.elf
+
+Run boot generation in Docker:
+
+.. code-block:: bash
+
+   adibuild boot build-boot -p zynqmp --xsa system_top.xsa --runner docker --tool-version 2023.2
+
+Vivado Commands
+---------------
+
+The ``vivado`` command group handles supported Linux installer downloads, installation status, and reusable image management.
+
+List supported versions and local install status:
+
+.. code-block:: bash
+
+   adibuild vivado list
+
+Install a supported release:
+
+.. code-block:: bash
+
+   export AMD_USERNAME="user@example.com"
+   export AMD_PASSWORD="..."
+   adibuild vivado install --version 2023.2 --non-interactive
+
+Manage reusable Docker images:
+
+.. code-block:: bash
+
+   adibuild vivado image build --version 2023.2
+   adibuild vivado image list
+   adibuild vivado image inspect --tag adibuild/vivado:2023.2
 
 Toolchain Command
 -----------------

@@ -502,6 +502,28 @@ Notes:
 - Credentials are read from ``AMD_USERNAME`` and ``AMD_PASSWORD`` or prompted interactively.
 - Authenticated browser fallback requires installing the optional ``vivado-browser`` extra.
 
+Reusable Vivado Docker Images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can also build reusable Docker images with Vivado preinstalled.
+
+Build an image for a supported release:
+
+.. code-block:: bash
+
+   export AMD_USERNAME="user@example.com"
+   export AMD_PASSWORD="..."
+   adibuild vivado image build --version 2023.2
+
+List and inspect reusable images:
+
+.. code-block:: bash
+
+   adibuild vivado image list
+   adibuild vivado image inspect --tag adibuild/vivado:2023.2
+
+These images are intended for the Docker-backed build runner described in :doc:`docker-builds`.
+
 Best Practices
 --------------
 

@@ -240,6 +240,17 @@ The generated script (``~/.adibuild/work/build_noos_bare_metal.sh``) captures al
 git, toolchain, make, and artifact steps so it can be run independently on any
 machine with the toolchain installed.
 
+Docker Runner
+~~~~~~~~~~~~~
+
+Xilinx no-OS builds can run inside a reusable Vivado Docker image:
+
+.. code-block:: bash
+
+   adibuild --config noos.yaml noos build -p xilinx_ad9081 --runner docker --tool-version 2023.2
+
+See :doc:`docker-builds` for image creation and configuration details.
+
 Clean Command
 ~~~~~~~~~~~~~
 

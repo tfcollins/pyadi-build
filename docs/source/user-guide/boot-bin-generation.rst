@@ -61,6 +61,19 @@ The ``build-boot`` command orchestrates the entire process for any supported pla
    # For Versal
    adibuild boot build-boot -p versal --pdi system_top.pdi --plm plm.elf --psmfw psmfw.elf
 
+Docker Runner
+-------------
+
+ATF, U-Boot, and BOOT.BIN flows can run inside a reusable Vivado Docker image:
+
+.. code-block:: bash
+
+   adibuild boot build-atf -p zynqmp --runner docker --tool-version 2023.2
+   adibuild boot build-uboot -p zynqmp --runner docker --tool-version 2023.2
+   adibuild boot build-boot -p zynqmp --xsa system_top.xsa --runner docker --tool-version 2023.2
+
+See :doc:`docker-builds` for image creation and configuration details.
+
 Required Tools
 --------------
 
