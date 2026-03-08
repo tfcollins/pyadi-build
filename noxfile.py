@@ -8,6 +8,37 @@ PYTHON_VERSIONS = ["3.10", "3.11", "3.12"]
 # Default sessions
 nox.options.sessions = ["tests", "lint"]
 
+ACT_DEFAULT_IMAGE = "catthehacker/ubuntu:full-latest"
+
+
+def _act_platform_args() -> list[str]:
+    """Return default platform mappings for local act runs."""
+    return [
+        "-P",
+        f"ubuntu-latest={ACT_DEFAULT_IMAGE}",
+        "-P",
+        f"self-hosted={ACT_DEFAULT_IMAGE}",
+        "-P",
+        f"linux={ACT_DEFAULT_IMAGE}",
+        "-P",
+        f"x64={ACT_DEFAULT_IMAGE}",
+        "--container-architecture",
+        "linux/amd64",
+    ]
+
+
+def _run_act(session: nox.Session, workflow: str, event: str) -> None:
+    """Run a GitHub Actions workflow locally through act."""
+    session.run(
+        "act",
+        event,
+        "-W",
+        workflow,
+        *_act_platform_args(),
+        *session.posargs,
+        external=True,
+    )
+
 
 @nox.session(python=PYTHON_VERSIONS)
 def tests(session):
@@ -203,3 +234,21 @@ def clean(session):
                 path.unlink()
 
     session.log("Cleanup complete")
+
+
+@nox.session
+def act_ci(session):
+    """Run the standard GitHub Actions test workflow locally via act."""
+    _run_act(session, ".github/workflows/test.yml", "pull_request")
+
+
+@nox.session
+def act_docs(session):
+    """Run the documentation workflow locally via act."""
+    _run_act(session, ".github/workflows/docs.yml", "push")
+
+
+@nox.session
+def act_selfhosted(session):
+    """Run the self-hosted full test workflow locally via act."""
+    _run_act(session, ".github/workflows/selfhosted-tests.yml", "workflow_dispatch")
