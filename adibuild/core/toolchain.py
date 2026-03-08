@@ -233,6 +233,31 @@ class VivadoToolchain(Toolchain):
         else:
             raise ToolchainError(f"Unsupported architecture: {arch}")
 
+    def install(
+        self,
+        version: str,
+        install_dir: Path | None = None,
+        cache_dir: Path | None = None,
+        installer_path: Path | None = None,
+        config_path: Path | None = None,
+        credentials=None,
+    ) -> ToolchainInfo:
+        """Install Vivado explicitly via the Vivado installer module."""
+        from adibuild.core.vivado import VivadoInstaller, VivadoInstallRequest
+
+        installer = VivadoInstaller(cache_dir=cache_dir)
+        result = installer.install(
+            VivadoInstallRequest(
+                version=version,
+                install_dir=install_dir or Path("/opt/Xilinx"),
+                cache_dir=cache_dir,
+                installer_path=installer_path,
+                config_path=config_path,
+                credentials=credentials,
+            )
+        )
+        return result.toolchain
+
 
 class ArmToolchain(Toolchain):
     """ARM GNU toolchain with auto-download support."""

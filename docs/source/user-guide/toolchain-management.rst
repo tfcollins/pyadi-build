@@ -464,6 +464,44 @@ Or set in global config (``~/.adibuild/config.yaml``):
 
    cache_dir: /custom/cache/dir
 
+Vivado Installer
+~~~~~~~~~~~~~~~~
+
+pyadi-build can now provision supported Vivado Linux web installers explicitly.
+
+Supported versions currently include:
+
+- ``2023.2``
+- ``2025.1``
+
+List supported releases and current install status:
+
+.. code-block:: bash
+
+   adibuild vivado list
+
+Download the official AMD installer into the local cache:
+
+.. code-block:: bash
+
+   export AMD_USERNAME="user@example.com"
+   export AMD_PASSWORD="..."
+   adibuild vivado install --version 2023.2 --download-only --non-interactive
+
+Install Vivado into ``/opt/Xilinx`` using the Linux web installer flow:
+
+.. code-block:: bash
+
+   export AMD_USERNAME="user@example.com"
+   export AMD_PASSWORD="..."
+   adibuild vivado install --version 2025.1 --non-interactive
+
+Notes:
+
+- v1 supports Linux installs only.
+- Credentials are read from ``AMD_USERNAME`` and ``AMD_PASSWORD`` or prompted interactively.
+- Authenticated browser fallback requires installing the optional ``vivado-browser`` extra.
+
 Best Practices
 --------------
 

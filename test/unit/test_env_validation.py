@@ -94,3 +94,27 @@ class TestUBootEnvValidation:
 
         with pytest.raises(BuildError, match="pkg_resources"):
             uboot_builder.validate_environment()
+
+    def test_validate_environment_uses_python3_for_docker(self, uboot_builder, mocker):
+        """Docker validation should use the container python command."""
+        uboot_builder.runner = "docker"
+        mocker.patch.object(uboot_builder.executor, "check_tools")
+        mocker.patch(
+            "adibuild.core.builder.BuilderBase.validate_environment", return_value=True
+        )
+
+        executed = []
+
+        def side_effect(cmd, **kwargs):
+            executed.append(cmd)
+            res = MagicMock()
+            res.failed = False
+            return res
+
+        mocker.patch.object(uboot_builder.executor, "execute", side_effect=side_effect)
+
+        assert uboot_builder.validate_environment() is True
+        assert any(
+            isinstance(cmd, str) and cmd.startswith('python3 -c "import setuptools"')
+            for cmd in executed
+        )

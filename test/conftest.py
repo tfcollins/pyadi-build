@@ -1,6 +1,7 @@
 """Pytest configuration and fixtures."""
 
 import sys
+from unittest import mock
 from unittest.mock import MagicMock
 
 # Mock git module if not present, to allow test collection
@@ -15,6 +16,48 @@ import pytest
 
 from adibuild.core.config import BuildConfig
 from adibuild.core.toolchain import ToolchainInfo
+
+
+@pytest.fixture
+def mocker():
+    """Lightweight fallback for pytest-mock's fixture."""
+
+    class _PatchProxy:
+        def __init__(self, owner):
+            self._owner = owner
+
+        def __call__(self, target, *args, **kwargs):
+            return self._owner._start_patch(mock.patch(target, *args, **kwargs))
+
+        def object(self, target, attribute, *args, **kwargs):
+            return self._owner._start_patch(
+                mock.patch.object(target, attribute, *args, **kwargs)
+            )
+
+    class _Mocker:
+        MagicMock = mock.MagicMock
+        Mock = mock.Mock
+        call = mock.call
+
+        def __init__(self):
+            self._patches = []
+            self.patch = _PatchProxy(self)
+
+        def _start_patch(self, patcher):
+            patched = patcher.start()
+            self._patches.append(patcher)
+            return patched
+
+        def stopall(self):
+            for patcher in reversed(self._patches):
+                patcher.stop()
+            self._patches.clear()
+
+    helper = _Mocker()
+    try:
+        yield helper
+    finally:
+        helper.stopall()
 
 
 def pytest_addoption(parser):

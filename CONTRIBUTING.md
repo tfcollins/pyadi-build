@@ -71,6 +71,32 @@ nox -s tests_real_platform-microblaze
 
 **Skip real build tests by default**: Integration tests are skipped unless `--real-build` flag is used
 
+#### Docker Vivado Install Test
+
+This repository also includes an opt-in Docker-backed Vivado installation test.
+
+```bash
+export AMD_USERNAME="user@example.com"
+export AMD_PASSWORD="..."
+
+# Optional: choose the release to install (defaults to 2023.2)
+export ADIBUILD_VIVADO_DOCKER_VERSION=2023.2
+
+# Optional: reuse a persistent cache and keep Docker artifacts for debugging
+export ADIBUILD_VIVADO_DOCKER_CACHE_DIR="$HOME/.cache/pyadi-build-vivado"
+export ADIBUILD_KEEP_VIVADO_DOCKER_ARTIFACTS=1
+
+nox -s tests_real_vivado_docker
+```
+
+**Docker Vivado test requirements**:
+- Docker daemon access
+- AMD credentials in `AMD_USERNAME` and `AMD_PASSWORD`
+- Network connectivity to AMD and PyPI
+- Substantial free disk space (the test enforces a high threshold)
+
+This test is intentionally not part of the default GitHub Actions workflow.
+
 ### Code Style
 
 We use `black` for code formatting and `ruff` for linting.

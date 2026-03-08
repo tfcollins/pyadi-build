@@ -1,5 +1,6 @@
 """Command-line interface for adibuild."""
 
+import json
 import logging
 from pathlib import Path
 
@@ -29,6 +30,54 @@ from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
 from adibuild.projects.uboot import UBootBuilder
 from adibuild.utils.logger import setup_logging
+
+
+def _load_vivado_credentials(non_interactive: bool):
+    """Load AMD credentials from env vars or interactive prompt."""
+    from adibuild.core.vivado import VivadoCredentials
+
+    creds = VivadoCredentials.from_env()
+    if creds or non_interactive:
+        return creds
+
+    username = click.prompt("AMD account username", type=str)
+    password = click.prompt("AMD account password", type=str, hide_input=True)
+    if not username or not password:
+        return None
+    return VivadoCredentials(username=username, password=password)
+
+
+def _resolve_docker_runner(
+    config: BuildConfig,
+    platform_config: dict | None,
+    runner: str | None,
+    docker_image: str | None,
+    tool_version: str | None,
+    tag: str | None,
+) -> tuple[str, str | None, str | None]:
+    """Resolve runner/image/tool-version settings from CLI and config."""
+    from adibuild.core.docker import default_vivado_image_tag
+
+    resolved_runner = runner or config.get("build.runner", "local")
+    resolved_image = docker_image or config.get("build.docker.image")
+    resolved_tool_version = (
+        tool_version
+        or (platform_config or {}).get("tool_version")
+        or config.get("build.docker.tool_version")
+    )
+
+    if not resolved_tool_version:
+        resolved_tool_version = tag_to_tool_version(tag or config.get_tag())
+
+    if resolved_runner == "docker":
+        if not resolved_tool_version:
+            raise click.ClickException(
+                "Docker runner requires a Vivado tool version. "
+                "Use --tool-version, set build.docker.tool_version, or use a release tag like 2023_R2."
+            )
+        resolved_image = resolved_image or default_vivado_image_tag(resolved_tool_version)
+
+    return resolved_runner, resolved_image, resolved_tool_version
 
 
 # Global options
@@ -109,6 +158,12 @@ def hdl():
     "tool_version",
     help="Override Vivado version (e.g., 2023.2). Auto-detected from tag if not specified.",
 )
+@click.option(
+    "--runner",
+    type=click.Choice(["local", "docker"]),
+    help="Execution backend for the build",
+)
+@click.option("--docker-image", help="Reusable Docker image tag for --runner docker")
 @click.pass_context
 def build_hdl(
     ctx,
@@ -123,6 +178,8 @@ def build_hdl(
     ignore_version_check,
     generate_script,
     tool_version,
+    runner,
+    docker_image,
 ):
     """
     Build HDL project for specified platform.
@@ -187,6 +244,16 @@ def build_hdl(
         if output:
             config.set("build.output_dir", output)
 
+        platform_config = config.get_platform(platform)
+        resolved_runner, resolved_image, resolved_tool_version = _resolve_docker_runner(
+            config,
+            platform_config,
+            runner,
+            docker_image,
+            tool_version,
+            tag,
+        )
+
         # Get platform instance
         # Note: HDL platforms might just use generic Platform class
         # or we might need specific ones if toolchain logic differs.
@@ -194,7 +261,14 @@ def build_hdl(
         platform_obj = get_platform_instance(config, platform)
 
         # Create builder
-        builder = HDLBuilder(config, platform_obj, script_mode=generate_script)
+        builder = HDLBuilder(
+            config,
+            platform_obj,
+            script_mode=generate_script,
+            runner=resolved_runner,
+            docker_image=resolved_image,
+            docker_tool_version=resolved_tool_version,
+        )
 
         # Execute build
         result = builder.build(
@@ -252,6 +326,12 @@ def noos():
     "tool_version",
     help="Override Vivado version (e.g., 2023.2). Auto-detected from tag if not specified.",
 )
+@click.option(
+    "--runner",
+    type=click.Choice(["local", "docker"]),
+    help="Execution backend for the build",
+)
+@click.option("--docker-image", help="Reusable Docker image tag for --runner docker")
 @click.pass_context
 def build_noos(
     ctx,
@@ -264,6 +344,8 @@ def build_noos(
     jobs,
     generate_script,
     tool_version,
+    runner,
+    docker_image,
 ):
     """
     Build no-OS bare-metal firmware for specified platform.
@@ -312,11 +394,27 @@ def build_noos(
         if jobs:
             config.set("build.parallel_jobs", jobs)
 
+        resolved_runner, resolved_image, resolved_tool_version = _resolve_docker_runner(
+            config,
+            platform_config,
+            runner,
+            docker_image,
+            tool_version,
+            tag,
+        )
+
         # Get platform instance
         platform_obj = get_platform_instance(config, platform)
 
         # Create builder
-        builder = NoOSBuilder(config, platform_obj, script_mode=generate_script)
+        builder = NoOSBuilder(
+            config,
+            platform_obj,
+            script_mode=generate_script,
+            runner=resolved_runner,
+            docker_image=resolved_image,
+            docker_tool_version=resolved_tool_version,
+        )
 
         # Execute build
         result = builder.build(clean_before=clean)
@@ -1071,7 +1169,10 @@ def toolchain(ctx, platform):
             display_toolchain_info(vivado_info)
             click.echo()
         else:
-            click.echo("✗ Vivado/Vitis toolchain not found\n")
+            click.echo(
+                "✗ Vivado/Vitis toolchain not found "
+                "(install with 'adibuild vivado install --version <version>')\n"
+            )
 
         # Check ARM GNU
         arm = ArmToolchain()
@@ -1112,6 +1213,285 @@ def toolchain(ctx, platform):
 
     except Exception as e:
         print_error(f"Toolchain detection failed: {e}")
+
+
+@cli.group()
+def vivado():
+    """Vivado download, installation, and detection commands."""
+    pass
+
+
+@vivado.command("list")
+@click.option(
+    "--install-dir",
+    type=click.Path(),
+    help="Optional Vivado installation root (defaults to standard search paths)",
+)
+def vivado_list(install_dir):
+    """List supported Vivado releases and local installation status."""
+    from adibuild.core.vivado import VivadoInstaller
+
+    installer = VivadoInstaller()
+    root = Path(install_dir) if install_dir else None
+
+    click.echo("Supported Vivado releases:\n")
+    for release in installer.list_supported_releases():
+        info = installer.status(release.version, root)
+        status = "installed" if info else "not installed"
+        path = str(info.path) if info else "-"
+        click.echo(f"{release.version:<8} {status:<13} {path}")
+
+
+@vivado.command("detect")
+@click.option("--version", help="Vivado version to detect (e.g. 2023.2)")
+@click.option(
+    "--install-dir",
+    type=click.Path(),
+    help="Optional Vivado installation root (e.g. /opt/Xilinx)",
+)
+def vivado_detect(version, install_dir):
+    """Detect an installed Vivado release."""
+    from adibuild.core.vivado import VivadoInstaller
+
+    installer = VivadoInstaller()
+    info = installer.status(
+        version=version, install_dir=Path(install_dir) if install_dir else None
+    )
+    if info:
+        display_toolchain_info(info)
+        return
+
+    target = version or "supported versions"
+    print_error(f"No installed Vivado toolchain detected for {target}")
+
+
+@vivado.command("status")
+@click.option("--version", help="Vivado version to detect (e.g. 2023.2)")
+@click.option(
+    "--install-dir",
+    type=click.Path(),
+    help="Optional Vivado installation root (e.g. /opt/Xilinx)",
+)
+def vivado_status(version, install_dir):
+    """Alias for 'vivado detect'."""
+    ctx = click.get_current_context()
+    ctx.invoke(vivado_detect, version=version, install_dir=install_dir)
+
+
+@vivado.group("image")
+def vivado_image():
+    """Reusable Docker image management for Vivado-based builds."""
+    pass
+
+
+@vivado_image.command("build")
+@click.option("--version", required=True, help="Vivado version to install into the image")
+@click.option("--tag", help="Docker image tag (defaults to adibuild/vivado:<version>)")
+@click.option(
+    "--cache-dir",
+    type=click.Path(),
+    help="Override the Vivado cache directory used for staging",
+)
+@click.option(
+    "--installer-path",
+    type=click.Path(exists=True),
+    help="Use a pre-downloaded self-extracting installer instead of downloading one",
+)
+@click.option(
+    "--config-path",
+    type=click.Path(exists=True),
+    help="Optional xsetup batch config file",
+)
+@click.option(
+    "--base-image",
+    default="ubuntu:22.04",
+    show_default=True,
+    help="Base image used to build the reusable Vivado image",
+)
+@click.option(
+    "--non-interactive",
+    is_flag=True,
+    help="Do not prompt for AMD credentials; rely on environment variables",
+)
+def vivado_image_build(
+    version,
+    tag,
+    cache_dir,
+    installer_path,
+    config_path,
+    base_image,
+    non_interactive,
+):
+    """Build a reusable Docker image with Vivado preinstalled."""
+    from adibuild.core.docker import VivadoDockerImageManager
+
+    credentials = _load_vivado_credentials(non_interactive=non_interactive)
+    manager = VivadoDockerImageManager(cache_dir=Path(cache_dir) if cache_dir else None)
+    try:
+        result = manager.build_image(
+            version,
+            tag=tag,
+            credentials=credentials,
+            installer_path=Path(installer_path) if installer_path else None,
+            config_path=Path(config_path) if config_path else None,
+            base_image=base_image,
+        )
+    except Exception as exc:
+        print_error(f"Vivado image build failed: {exc}")
+
+    print_success(
+        f"Built reusable Vivado image {result['tag']} for Vivado {result['version']}"
+    )
+
+
+@vivado_image.command("list")
+def vivado_image_list():
+    """List reusable Vivado Docker images."""
+    from adibuild.core.docker import VivadoDockerImageManager
+
+    manager = VivadoDockerImageManager()
+    try:
+        images = manager.list_images()
+    except Exception as exc:
+        print_error(f"Failed to list Vivado images: {exc}")
+
+    if not images:
+        click.echo("No reusable Vivado images found.")
+        return
+
+    for image in images:
+        click.echo(
+            f"{image.get('Repository')}:{image.get('Tag')}  "
+            f"{image.get('ID')}  {image.get('CreatedSince')}"
+        )
+
+
+@vivado_image.command("inspect")
+@click.option("--tag", required=True, help="Docker image tag to inspect")
+def vivado_image_inspect(tag):
+    """Inspect a reusable Vivado Docker image."""
+    from adibuild.core.docker import VivadoDockerImageManager
+
+    manager = VivadoDockerImageManager()
+    try:
+        image = manager.inspect_image(tag)
+    except Exception as exc:
+        print_error(f"Failed to inspect Vivado image: {exc}")
+
+    click.echo(json.dumps(image, indent=2, sort_keys=True))
+
+
+@vivado.command("install")
+@click.option("--version", required=True, help="Vivado version to install")
+@click.option(
+    "--install-dir",
+    type=click.Path(),
+    default="/opt/Xilinx",
+    show_default=True,
+    help="Vivado installation root",
+)
+@click.option(
+    "--cache-dir",
+    type=click.Path(),
+    help="Override the cache directory used for installers and extracted clients",
+)
+@click.option(
+    "--extract-dir",
+    type=click.Path(),
+    help="Override the extracted web installer client directory",
+)
+@click.option(
+    "--installer-path",
+    type=click.Path(exists=True),
+    help="Use a pre-downloaded self-extracting installer instead of downloading one",
+)
+@click.option(
+    "--config-path",
+    type=click.Path(exists=True),
+    help="Optional xsetup batch config file",
+)
+@click.option(
+    "--edition",
+    help="Vivado edition to install when no config file is provided",
+)
+@click.option(
+    "--download-only",
+    is_flag=True,
+    help="Download and cache the official installer binary, then stop",
+)
+@click.option(
+    "--non-interactive",
+    is_flag=True,
+    help="Do not prompt for AMD credentials; rely on environment variables",
+)
+@click.option(
+    "--no-webtalk",
+    is_flag=True,
+    help="Do not accept WebTalk terms automatically",
+)
+def vivado_install(
+    version,
+    install_dir,
+    cache_dir,
+    extract_dir,
+    installer_path,
+    config_path,
+    edition,
+    download_only,
+    non_interactive,
+    no_webtalk,
+):
+    """Download and install Vivado on Linux."""
+    from adibuild.core.vivado import VivadoInstaller, VivadoInstallRequest
+
+    cache_path = Path(cache_dir) if cache_dir else None
+    installer = VivadoInstaller(cache_dir=cache_path)
+    credentials = _load_vivado_credentials(non_interactive=non_interactive)
+    click.echo(
+        f"Vivado install request: version={version}, install_dir={install_dir}, "
+        f"mode={'download-only' if download_only else 'install'}"
+    )
+    if cache_path:
+        click.echo(f"Using Vivado cache directory: {cache_path}")
+    if installer_path:
+        click.echo(f"Using pre-downloaded installer: {installer_path}")
+    if config_path:
+        click.echo(f"Using xsetup config file: {config_path}")
+    click.echo(
+        "Credential source: "
+        + ("environment/prompt provided" if credentials else "config-file-only flow")
+    )
+
+    try:
+        if download_only:
+            click.echo("Starting Vivado installer download...")
+            path = installer.download_installer(
+                version=version,
+                cache_dir=cache_path / "installers" if cache_path else None,
+                credentials=credentials,
+            )
+            print_success(f"Downloaded Vivado {version} installer to {path}")
+            return
+
+        click.echo("Starting Vivado installation workflow...")
+        result = installer.install(
+            VivadoInstallRequest(
+                version=version,
+                install_dir=Path(install_dir),
+                cache_dir=cache_path,
+                extract_dir=Path(extract_dir) if extract_dir else None,
+                installer_path=Path(installer_path) if installer_path else None,
+                config_path=Path(config_path) if config_path else None,
+                edition=edition,
+                agree_webtalk_terms=not no_webtalk,
+                credentials=credentials,
+            )
+        )
+        print_success(
+            f"Installed Vivado {result.release.version} to {result.toolchain.path}"
+        )
+    except Exception as e:
+        print_error(f"Vivado installation failed: {e}")
 
 
 # Configuration commands
@@ -1219,8 +1599,20 @@ def boot():
 @click.option("--tag", "-t", help="Git tag or branch")
 @click.option("--clean", is_flag=True, help="Clean before building")
 @click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.option(
+    "--tool-version",
+    "-tv",
+    "tool_version",
+    help="Override Vivado version used to select the reusable Docker image.",
+)
+@click.option(
+    "--runner",
+    type=click.Choice(["local", "docker"]),
+    help="Execution backend for the build",
+)
+@click.option("--docker-image", help="Reusable Docker image tag for --runner docker")
 @click.pass_context
-def build_atf(ctx, platform, tag, clean, jobs):
+def build_atf(ctx, platform, tag, clean, jobs, tool_version, runner, docker_image):
     """Build ARM Trusted Firmware (ATF)."""
     try:
         config = load_config_with_overrides(
@@ -1229,8 +1621,23 @@ def build_atf(ctx, platform, tag, clean, jobs):
             tag,
             project_type="atf",
         )
+        platform_config = config.get_platform(platform)
+        resolved_runner, resolved_image, resolved_tool_version = _resolve_docker_runner(
+            config,
+            platform_config,
+            runner,
+            docker_image,
+            tool_version,
+            tag,
+        )
         platform_obj = get_platform_instance(config, platform)
-        builder = ATFBuilder(config, platform_obj)
+        builder = ATFBuilder(
+            config,
+            platform_obj,
+            runner=resolved_runner,
+            docker_image=resolved_image,
+            docker_tool_version=resolved_tool_version,
+        )
         result = builder.build(clean_before=clean, jobs=jobs)
         print_success(f"ATF build completed. bl31.elf in: {result['output_dir']}")
     except BuildError as e:
@@ -1248,8 +1655,30 @@ def build_atf(ctx, platform, tag, clean, jobs):
 @click.option("--defconfig", help="Override U-Boot defconfig")
 @click.option("--clean", is_flag=True, help="Clean before building")
 @click.option("--jobs", "-j", type=int, help="Number of parallel jobs")
+@click.option(
+    "--tool-version",
+    "-tv",
+    "tool_version",
+    help="Override Vivado version used to select the reusable Docker image.",
+)
+@click.option(
+    "--runner",
+    type=click.Choice(["local", "docker"]),
+    help="Execution backend for the build",
+)
+@click.option("--docker-image", help="Reusable Docker image tag for --runner docker")
 @click.pass_context
-def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
+def build_uboot(
+    ctx,
+    platform,
+    tag,
+    defconfig,
+    clean,
+    jobs,
+    tool_version,
+    runner,
+    docker_image,
+):
     """Build U-Boot bootloader."""
     try:
         config = load_config_with_overrides(
@@ -1260,8 +1689,23 @@ def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
         )
         if defconfig:
             config.set("uboot.defconfig", defconfig)
+        platform_config = config.get_platform(platform)
+        resolved_runner, resolved_image, resolved_tool_version = _resolve_docker_runner(
+            config,
+            platform_config,
+            runner,
+            docker_image,
+            tool_version,
+            tag,
+        )
         platform_obj = get_platform_instance(config, platform)
-        builder = UBootBuilder(config, platform_obj)
+        builder = UBootBuilder(
+            config,
+            platform_obj,
+            runner=resolved_runner,
+            docker_image=resolved_image,
+            docker_tool_version=resolved_tool_version,
+        )
         result = builder.build(clean_before=clean, jobs=jobs)
         print_success(f"U-Boot build completed. Artifacts in: {result['output_dir']}")
     except BuildError as e:
@@ -1301,6 +1745,18 @@ def build_uboot(ctx, platform, tag, defconfig, clean, jobs):
     is_flag=True,
     help="Generate bash script instead of executing build",
 )
+@click.option(
+    "--tool-version",
+    "-tv",
+    "tool_version",
+    help="Override Vivado version used to select the reusable Docker image.",
+)
+@click.option(
+    "--runner",
+    type=click.Choice(["local", "docker"]),
+    help="Execution backend for the build",
+)
+@click.option("--docker-image", help="Reusable Docker image tag for --runner docker")
 @click.pass_context
 def build_boot(
     ctx,
@@ -1319,6 +1775,9 @@ def build_boot(
     clean,
     jobs,
     generate_script,
+    tool_version,
+    runner,
+    docker_image,
 ):
     """Generate BOOT.BIN for Zynq, ZynqMP or Versal."""
     try:
@@ -1349,8 +1808,24 @@ def build_boot(
         if psmfw:
             config.set("boot.psmfw_path", psmfw)
 
+        platform_config = config.get_platform(platform)
+        resolved_runner, resolved_image, resolved_tool_version = _resolve_docker_runner(
+            config,
+            platform_config,
+            runner,
+            docker_image,
+            tool_version,
+            tag,
+        )
         platform_obj = get_platform_instance(config, platform)
-        builder = BootBuilder(config, platform_obj, script_mode=generate_script)
+        builder = BootBuilder(
+            config,
+            platform_obj,
+            script_mode=generate_script,
+            runner=resolved_runner,
+            docker_image=resolved_image,
+            docker_tool_version=resolved_tool_version,
+        )
         result = builder.build(clean_before=clean, jobs=jobs)
         print_success(f"BOOT.BIN generated: {result['boot_bin']}")
     except BuildError as e:

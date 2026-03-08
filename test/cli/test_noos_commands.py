@@ -198,6 +198,39 @@ platforms:
         content = script_file.read_text()
         assert "PROFILE=vcu118_ad9081_m8_l4" in content
 
+    def test_noos_build_docker_script_generation(
+        self, cli_runner, noos_config_file, mocker, tmp_path
+    ):
+        mocker.patch("pathlib.Path.home", return_value=tmp_path)
+
+        mock_repo_cls = mocker.patch("adibuild.projects.noos.GitRepository")
+        mock_repo = mock_repo_cls.return_value
+        mock_repo.get_commit_sha.return_value = "abc123def456"
+
+        result = cli_runner.invoke(
+            cli,
+            [
+                "--config",
+                str(noos_config_file),
+                "noos",
+                "build",
+                "-p",
+                "xilinx_ad9081",
+                "--generate-script",
+                "--runner",
+                "docker",
+                "--docker-image",
+                "custom/vivado:2023.2",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+
+        script_file = tmp_path / ".adibuild" / "work" / "build_noos_bare_metal.sh"
+        content = script_file.read_text()
+        assert "docker run --rm" in content
+        assert "custom/vivado:2023.2" in content
+
     def test_noos_build_hardware_file_override(
         self, cli_runner, noos_config_file, mocker, tmp_path
     ):

@@ -1,10 +1,15 @@
 """Abstract base class for project builders."""
 
+import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
 
 from adibuild.core.config import BuildConfig
-from adibuild.core.executor import BuildExecutor, ScriptBuilder
+from adibuild.core.docker import (
+    build_docker_execution_config,
+    default_vivado_image_tag,
+)
+from adibuild.core.executor import BuildError, BuildExecutor, ScriptBuilder
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.base import Platform
 from adibuild.utils.logger import get_logger
@@ -19,6 +24,9 @@ class BuilderBase(ABC):
         platform: Platform,
         work_dir: Path | None = None,
         script_mode: bool = False,
+        runner: str = "local",
+        docker_image: str | None = None,
+        docker_tool_version: str | None = None,
     ):
         """
         Initialize BuilderBase.
@@ -34,8 +42,25 @@ class BuilderBase(ABC):
         self.work_dir = work_dir or (Path.home() / ".adibuild" / "work")
         self.work_dir.mkdir(parents=True, exist_ok=True)
         self.script_mode = script_mode
+        self.runner = runner
+        self.docker_tool_version = docker_tool_version or platform.config.get(
+            "tool_version"
+        )
+        self.docker_image = docker_image
+        if self.runner == "docker":
+            if not self.docker_tool_version:
+                raise ValueError(
+                    "Docker runner requires a Vivado tool version to select an image"
+                )
+            self.docker_image = self.docker_image or default_vivado_image_tag(
+                self.docker_tool_version
+            )
+
         # Let platform implementations bypass runtime toolchain resolution in script mode.
         self.platform.config["_script_mode"] = script_mode
+        self.platform.config["_runner"] = runner
+        self.platform.config["_docker_tool_version"] = self.docker_tool_version
+        self.platform.config["_docker_image"] = self.docker_image
 
         self.logger = get_logger(f"adibuild.builder.{self.__class__.__name__}")
 
@@ -51,7 +76,24 @@ class BuilderBase(ABC):
 
         # Initialize executor with log file and optional script builder
         log_file = self.work_dir / f"build-{self.platform.arch}.log"
-        self.executor = BuildExecutor(log_file=log_file, script_builder=script_builder)
+        docker_config = None
+        if self.runner == "docker":
+            docker_config = build_docker_execution_config(
+                self.config._data,
+                image=self.docker_image,
+                tool_version=self.docker_tool_version,
+                work_dir=self.work_dir,
+            )
+            self.logger.info(
+                "Using Docker build runner with image %s for Vivado %s",
+                self.docker_image,
+                self.docker_tool_version,
+            )
+        self.executor = BuildExecutor(
+            log_file=log_file,
+            script_builder=script_builder,
+            docker_config=docker_config,
+        )
 
         self._toolchain: ToolchainInfo | None = None
 
@@ -145,7 +187,13 @@ class BuilderBase(ABC):
         self.logger.info("Validating build environment...")
 
         # Check basic build tools
-        self.executor.check_tools(["make", "gcc", "git"])
+        if self.runner == "docker":
+            if not shutil.which("docker"):
+                raise BuildError(
+                    "Docker runner requested but the 'docker' CLI is not available"
+                )
+        else:
+            self.executor.check_tools(["make", "gcc", "git"])
 
         # Validate platform and toolchain
         self.platform.validate_toolchain()

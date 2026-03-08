@@ -25,8 +25,19 @@ class BootBuilder(BuilderBase):
         platform: Platform,
         work_dir: Path | None = None,
         script_mode: bool = False,
+        runner: str = "local",
+        docker_image: str | None = None,
+        docker_tool_version: str | None = None,
     ):
-        super().__init__(config, platform, work_dir, script_mode=script_mode)
+        super().__init__(
+            config,
+            platform,
+            work_dir,
+            script_mode=script_mode,
+            runner=runner,
+            docker_image=docker_image,
+            docker_tool_version=docker_tool_version,
+        )
         self.source_dir = self.work_dir / "boot"
         self.source_dir.mkdir(parents=True, exist_ok=True)
 
@@ -295,6 +306,9 @@ class BootBuilder(BuilderBase):
             self.platform,
             work_dir=self.work_dir / "atf_build",
             script_mode=self.script_mode,
+            runner=self.runner,
+            docker_image=self.docker_image,
+            docker_tool_version=self.docker_tool_version,
         )
         result = atf_builder.build(jobs=jobs)
         return Path(result["artifacts"]["bl31"])
@@ -322,6 +336,9 @@ class BootBuilder(BuilderBase):
             self.platform,
             work_dir=self.work_dir / "uboot_build",
             script_mode=self.script_mode,
+            runner=self.runner,
+            docker_image=self.docker_image,
+            docker_tool_version=self.docker_tool_version,
         )
         result = uboot_builder.build(jobs=jobs, env_overrides=env_overrides)
 

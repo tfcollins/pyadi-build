@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from adibuild.core.docker import container_vivado_toolchain
 from adibuild.core.toolchain import ToolchainInfo, select_toolchain
 from adibuild.platforms.base import Platform, PlatformError
 
@@ -83,6 +84,26 @@ class NoOSPlatform(Platform):
         instead of arch-based dispatch.
         """
         if self._toolchain:
+            return self._toolchain
+
+        if self.config.get("_runner") == "docker":
+            if self.noos_platform != "xilinx":
+                raise PlatformError(
+                    "Docker runner is currently supported only for Xilinx no-OS builds"
+                )
+            docker_tool_version = (
+                tool_version
+                or self.config.get("_docker_tool_version")
+                or self.config.get("tool_version")
+            )
+            if not docker_tool_version:
+                raise PlatformError(
+                    "Docker runner requires a Vivado tool version for Xilinx no-OS builds"
+                )
+            self.logger.info(
+                f"Using containerized Vivado toolchain v{docker_tool_version}"
+            )
+            self._toolchain = container_vivado_toolchain(docker_tool_version)
             return self._toolchain
 
         noos_plat = self.noos_platform

@@ -24,6 +24,7 @@ class BuildLogger:
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
         self.logger.handlers = []  # Clear existing handlers
+        self.logger.propagate = False
 
         # Rich console for colored output
         self.console = Console(stderr=True)
@@ -82,6 +83,7 @@ class BuildLogger:
 
 # Global logger instance
 _global_logger: BuildLogger | None = None
+_named_loggers: dict[str, BuildLogger] = {}
 
 
 def setup_logging(
@@ -102,6 +104,7 @@ def setup_logging(
     """
     global _global_logger
     _global_logger = BuildLogger(name, log_file, level)
+    _named_loggers[name] = _global_logger
     return _global_logger
 
 
@@ -117,8 +120,17 @@ def get_logger(name: str | None = None) -> BuildLogger:
     """
     global _global_logger
     if name and name != "adibuild":
-        # Create new logger for specific component
-        return BuildLogger(name)
+        existing = _named_loggers.get(name)
+        if existing is not None:
+            return existing
+
+        level = logging.INFO
+        if _global_logger is not None:
+            level = _global_logger.logger.level
+
+        logger = BuildLogger(name, level=level)
+        _named_loggers[name] = logger
+        return logger
     if _global_logger is None:
         _global_logger = setup_logging()
     return _global_logger

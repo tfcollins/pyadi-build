@@ -38,6 +38,10 @@ mcp = [
     "fastmcp>=2.0.0",
 ]
 
+vivado-browser = [
+    "playwright>=1.48",
+]
+
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
@@ -82,6 +86,7 @@ markers = [
     "toolchain: tests requiring actual toolchains",
     "integration: integration tests combining multiple components",
     "slow: slow-running tests",
+    "docker_vivado: real Docker-based Vivado installation tests",
     "requires_vivado: tests requiring Xilinx Vivado/Vitis",
     "requires_noos_toolchain: tests requiring no-OS toolchain (arm-none-eabi-gcc or Vivado)",
     "requires_cmake: tests requiring cmake to be installed",

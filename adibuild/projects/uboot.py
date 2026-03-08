@@ -29,8 +29,19 @@ class UBootBuilder(BuilderBase):
         platform: Platform,
         work_dir: Path | None = None,
         script_mode: bool = False,
+        runner: str = "local",
+        docker_image: str | None = None,
+        docker_tool_version: str | None = None,
     ):
-        super().__init__(config, platform, work_dir, script_mode=script_mode)
+        super().__init__(
+            config,
+            platform,
+            work_dir,
+            script_mode=script_mode,
+            runner=runner,
+            docker_image=docker_image,
+            docker_tool_version=docker_tool_version,
+        )
         self.source_dir: Path | None = None
 
     def prepare_source(self) -> Path:
@@ -83,10 +94,14 @@ class UBootBuilder(BuilderBase):
         self.executor.check_tools(["swig", "bison", "flex", "pkg-config", "bc"])
 
         # Check for setuptools (needed for pylibfdt and binman)
-        import sys
+        python_cmd = "python3" if self.runner == "docker" else None
+        if not python_cmd:
+            import sys
+
+            python_cmd = sys.executable
 
         res = self.executor.execute(
-            f'{sys.executable} -c "import setuptools"', stream_output=False
+            f'{python_cmd} -c "import setuptools"', stream_output=False
         )
         if res.failed:
             raise BuildError(
@@ -96,7 +111,7 @@ class UBootBuilder(BuilderBase):
 
         # Check for pkg_resources (needed by binman)
         res = self.executor.execute(
-            f'{sys.executable} -c "import pkg_resources"', stream_output=False
+            f'{python_cmd} -c "import pkg_resources"', stream_output=False
         )
         if res.failed:
             raise BuildError(
@@ -106,7 +121,7 @@ class UBootBuilder(BuilderBase):
 
         # Check for pyelftools (needed by binman)
         res = self.executor.execute(
-            f'{sys.executable} -c "import elftools"', stream_output=False
+            f'{python_cmd} -c "import elftools"', stream_output=False
         )
         if res.failed:
             raise BuildError(

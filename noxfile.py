@@ -58,11 +58,32 @@ def tests_real(session):
         "pytest",
         "-v",
         "-m",
-        "real_build",
+        "real_build and not docker_vivado",
         "--real-build",
         "--tb=short",
         "--maxfail=1",
         "test/integration/",
+        *session.posargs,
+    )
+
+
+@nox.session(python=["3.11"])
+def tests_real_vivado_docker(session):
+    """
+    Run the opt-in Docker-backed Vivado installation test.
+
+    Requires Docker, AMD credentials, substantial disk space, and network access.
+    """
+    session.install(".[dev]", "setuptools<70.0.0", "pyelftools")
+    session.run(
+        "pytest",
+        "-v",
+        "-s",
+        "test/integration/test_real_vivado_docker_install.py",
+        "-m",
+        "docker_vivado",
+        "--real-build",
+        "--tb=short",
         *session.posargs,
     )
 

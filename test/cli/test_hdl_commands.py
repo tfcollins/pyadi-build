@@ -136,6 +136,47 @@ tag: hdl_2023_r2
     assert "projects/fmcomms2/zed" in content
 
 
+def test_hdl_build_docker_script_generation(cli_runner, tmp_path, mocker):
+    mocker.patch("pathlib.Path.home", return_value=tmp_path)
+
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("""
+project: hdl
+repository: https://github.com/analogdevicesinc/hdl.git
+tag: 2023_R2
+build:
+  runner: docker
+platforms:
+  zed_fmcomms2:
+    arch: arm
+    hdl_project: fmcomms2
+    carrier: zed
+    tool_version: 2023.2
+""")
+
+    result = cli_runner.invoke(
+        cli,
+        [
+            "--config",
+            str(config_file),
+            "hdl",
+            "build",
+            "-p",
+            "zed_fmcomms2",
+            "--generate-script",
+            "--docker-image",
+            "custom/vivado:2023.2",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+
+    script_file = tmp_path / ".adibuild" / "work" / "build_hdl_arm.sh"
+    content = script_file.read_text()
+    assert "docker run --rm" in content
+    assert "custom/vivado:2023.2" in content
+
+
 def test_hdl_build_missing_args(cli_runner, tmp_path):
     """Test hdl build fails if no arguments provided."""
 

@@ -183,6 +183,41 @@ class TestBootBuilder:
             for call in mock_execute.call_args_list
         )
 
+    def test_build_from_source_propagates_docker_runner(self, tmp_path, mocker):
+        config, platform = _make_config("zynqmp", "arm64")
+        config.set("build.output_dir", str(tmp_path / "build"))
+        config.set("boot.xsa_path", "/tmp/test.xsa")
+
+        builder = BootBuilder(
+            config,
+            platform,
+            work_dir=tmp_path / "work",
+            runner="docker",
+            docker_image="custom/vivado:2023.2",
+            docker_tool_version="2023.2",
+        )
+
+        mock_atf_cls = mocker.patch("adibuild.projects.boot.ATFBuilder")
+        mock_uboot_cls = mocker.patch("adibuild.projects.boot.UBootBuilder")
+        mocker.patch.object(builder, "_ensure_fsbl", return_value=Path("/tmp/fsbl.elf"))
+        mocker.patch.object(builder, "_ensure_pmufw", return_value=Path("/tmp/pmufw.elf"))
+        mocker.patch.object(builder, "_generate_bif", return_value=tmp_path / "boot.bif")
+        mocker.patch.object(builder.executor, "execute")
+        (tmp_path / "boot.bif").write_text("the_ROM_image:\n{}\n")
+
+        mock_atf_cls.return_value.build.return_value = {
+            "artifacts": {"bl31": "/tmp/bl31.elf"}
+        }
+        mock_uboot_cls.return_value.build.return_value = {
+            "artifacts": {"u-boot.elf": "/tmp/u-boot.elf"}
+        }
+
+        builder.build()
+
+        assert mock_atf_cls.call_args.kwargs["runner"] == "docker"
+        assert mock_atf_cls.call_args.kwargs["docker_image"] == "custom/vivado:2023.2"
+        assert mock_uboot_cls.call_args.kwargs["docker_tool_version"] == "2023.2"
+
     def test_versal_build_from_source(self, tmp_path, mocker):
         """Verify Versal PLM/PSMFW generation from source."""
         config, platform = _make_config("versal", "arm64")

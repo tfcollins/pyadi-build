@@ -30,8 +30,19 @@ class ATFBuilder(BuilderBase):
         platform: Platform,
         work_dir: Path | None = None,
         script_mode: bool = False,
+        runner: str = "local",
+        docker_image: str | None = None,
+        docker_tool_version: str | None = None,
     ):
-        super().__init__(config, platform, work_dir, script_mode=script_mode)
+        super().__init__(
+            config,
+            platform,
+            work_dir,
+            script_mode=script_mode,
+            runner=runner,
+            docker_image=docker_image,
+            docker_tool_version=docker_tool_version,
+        )
         self.source_dir: Path | None = None
 
     def prepare_source(self) -> Path:

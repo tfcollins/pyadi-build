@@ -2,6 +2,7 @@
 
 import os
 import re
+import shlex
 import subprocess
 import time
 from dataclasses import dataclass
@@ -10,6 +11,7 @@ from pathlib import Path
 from rich.console import Console
 from rich.text import Text
 
+from adibuild.core.docker import DockerExecutionConfig
 from adibuild.utils.logger import get_logger
 
 
@@ -89,7 +91,7 @@ class ScriptBuilder:
 
             # Write command
             if isinstance(command, list):
-                cmd_str = " ".join(command)
+                cmd_str = shlex.join(command)
             else:
                 cmd_str = command
 
@@ -125,6 +127,7 @@ class BuildExecutor:
         cwd: Path | None = None,
         log_file: Path | None = None,
         script_builder: ScriptBuilder | None = None,
+        docker_config: DockerExecutionConfig | None = None,
     ):
         """
         Initialize BuildExecutor.
@@ -137,6 +140,7 @@ class BuildExecutor:
         self.cwd = cwd or Path.cwd()
         self.log_file = log_file
         self.script_builder = script_builder
+        self.docker_config = docker_config
         self.logger = get_logger("adibuild.executor")
         self.console = Console(stderr=True)
 
@@ -146,6 +150,7 @@ class BuildExecutor:
     def execute(
         self,
         command: str | list[str],
+        cwd: Path | None = None,
         env: dict[str, str] | None = None,
         stream_output: bool = True,
         capture_output: bool = True,
@@ -166,18 +171,38 @@ class BuildExecutor:
             BuildError: If command execution fails
         """
         # Prepare command
+        effective_cwd = cwd or self.cwd
         if isinstance(command, list):
-            cmd_str = " ".join(command)
-            cmd_list = command
+            inner_cmd_str = shlex.join(command)
         else:
-            cmd_str = command
+            inner_cmd_str = command
+
+        if self.docker_config:
+            cmd_list = self.docker_config.build_command(
+                command, env=env, cwd=effective_cwd
+            )
+            cmd_str = shlex.join(cmd_list)
+            exec_env = os.environ.copy()
+        elif isinstance(command, list):
+            cmd_str = inner_cmd_str
+            cmd_list = command
+            exec_env = os.environ.copy()
+            if env:
+                exec_env.update(env)
+        else:
+            cmd_str = inner_cmd_str
             cmd_list = ["bash", "-c", command]
+            exec_env = os.environ.copy()
+            if env:
+                exec_env.update(env)
 
         self.logger.info(f"Executing: {cmd_str}")
 
         # If in script generation mode, write to script and return success
         if self.script_builder:
-            self.script_builder.write_command(command, self.cwd, env)
+            script_command = cmd_list if self.docker_config else command
+            script_env = None if self.docker_config else env
+            self.script_builder.write_command(script_command, effective_cwd, script_env)
             return ExecutionResult(
                 command=cmd_str,
                 return_code=0,
@@ -185,12 +210,6 @@ class BuildExecutor:
                 stderr="",
                 duration=0.0,
             )
-
-        # Prepare environment
-        exec_env = os.environ.copy()
-
-        if env:
-            exec_env.update(env)
 
         # Prepare output capture
         stdout_lines = []
@@ -211,7 +230,7 @@ class BuildExecutor:
             # Execute command
             process = subprocess.Popen(
                 cmd_list,
-                cwd=self.cwd,
+                cwd=effective_cwd,
                 env=exec_env,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,  # Merge stderr into stdout
@@ -412,9 +431,8 @@ class BuildExecutor:
 
         # Temporarily change working directory to build_dir for real execution
         saved_cwd = self.cwd
-        self.cwd = build_dir
         try:
-            result = self.execute(cmd, env=env)
+            result = self.execute(cmd, cwd=build_dir, env=env)
         finally:
             self.cwd = saved_cwd
 

@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from adibuild.core.docker import container_vivado_toolchain
 from adibuild.core.toolchain import ToolchainInfo, select_toolchain
 from adibuild.utils.logger import get_logger
 
@@ -143,6 +144,22 @@ class Platform(ABC):
             ToolchainInfo for selected toolchain
         """
         if self._toolchain:
+            return self._toolchain
+
+        if self.config.get("_runner") == "docker":
+            docker_tool_version = (
+                tool_version
+                or self.config.get("_docker_tool_version")
+                or self.config.get("tool_version")
+            )
+            if not docker_tool_version:
+                raise PlatformError(
+                    "Docker runner requires a Vivado tool version in platform config"
+                )
+            self.logger.info(
+                f"Using containerized Vivado toolchain v{docker_tool_version}"
+            )
+            self._toolchain = container_vivado_toolchain(docker_tool_version)
             return self._toolchain
 
         # Get toolchain preferences from config
