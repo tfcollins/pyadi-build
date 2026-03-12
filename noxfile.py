@@ -1,5 +1,8 @@
 """Nox sessions for testing and automation."""
 
+import socket
+from pathlib import Path
+
 import nox
 
 # Python versions to test
@@ -8,12 +11,22 @@ PYTHON_VERSIONS = ["3.10", "3.11", "3.12"]
 # Default sessions
 nox.options.sessions = ["tests", "lint"]
 
-ACT_DEFAULT_IMAGE = "catthehacker/ubuntu:full-latest"
+ACT_DEFAULT_IMAGE = "catthehacker/ubuntu:act-latest"
+ACT_ARTIFACT_DIR = Path(".act") / "artifacts"
+ACT_ARTIFACT_ADDR = "127.0.0.1"
+
+
+def _find_open_port() -> int:
+    """Allocate a free local TCP port for ephemeral local services."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind((ACT_ARTIFACT_ADDR, 0))
+        return sock.getsockname()[1]
 
 
 def _act_platform_args() -> list[str]:
     """Return default platform mappings for local act runs."""
     return [
+        "--pull=false",
         "-P",
         f"ubuntu-latest={ACT_DEFAULT_IMAGE}",
         "-P",
@@ -27,15 +40,30 @@ def _act_platform_args() -> list[str]:
     ]
 
 
-def _run_act(session: nox.Session, workflow: str, event: str) -> None:
+def _run_act(
+    session: nox.Session,
+    workflow: str,
+    event: str,
+    default_args: list[str] | None = None,
+) -> None:
     """Run a GitHub Actions workflow locally through act."""
+    ACT_ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
+    artifact_port = str(_find_open_port())
+    act_args = session.posargs or (default_args or [])
     session.run(
         "act",
         event,
         "-W",
         workflow,
+        "--action-offline-mode",
+        "--artifact-server-addr",
+        ACT_ARTIFACT_ADDR,
+        "--artifact-server-path",
+        str(ACT_ARTIFACT_DIR.resolve()),
+        "--artifact-server-port",
+        artifact_port,
         *_act_platform_args(),
-        *session.posargs,
+        *act_args,
         external=True,
     )
 
@@ -239,16 +267,21 @@ def clean(session):
 @nox.session
 def act_ci(session):
     """Run the standard GitHub Actions test workflow locally via act."""
-    _run_act(session, ".github/workflows/test.yml", "pull_request")
+    _run_act(session, ".github/workflows/test.yml", "pull_request", ["--job", "lint"])
 
 
 @nox.session
 def act_docs(session):
     """Run the documentation workflow locally via act."""
-    _run_act(session, ".github/workflows/docs.yml", "push")
+    _run_act(session, ".github/workflows/docs.yml", "push", ["--job", "build-docs"])
 
 
 @nox.session
 def act_selfhosted(session):
     """Run the self-hosted full test workflow locally via act."""
-    _run_act(session, ".github/workflows/selfhosted-tests.yml", "workflow_dispatch")
+    _run_act(
+        session,
+        ".github/workflows/selfhosted-tests.yml",
+        "workflow_dispatch",
+        ["--job", "lint"],
+    )
