@@ -5,6 +5,7 @@ Python module to generate and run build commands for Analog Devices, Inc. (ADI) 
 ## Features
 
 - **Linux Kernel Builder**: Build ADI Linux kernels for Zynq, ZynqMP, and MicroBlaze platforms
+- **HDL Project Builder**: Build HDL projects with automatic Vivado version checking and **content-based build caching**.
 - **Userspace Library and Application Builder**: Build ADI libraries and applications (libad9361, libtinyiiod, iio-emu, iio-oscilloscope, genalyzer)
 - **Vivado Installer**: Download and install supported Vivado Linux releases directly from AMD
 - **Reusable Vivado Docker Images**: Build versioned Docker images with Vivado preinstalled
@@ -194,6 +195,9 @@ adibuild hdl build -p zed_fmcomms2 --runner docker --tool-version 2023.2
 
 # HDL with reports
 adibuild hdl build -p zed_fmcomms2 --power-report --utilization-report
+
+# HDL without caching (force rebuild)
+adibuild hdl build -p zed_fmcomms2 --no-cache
 
 # no-OS Xilinx in Docker
 adibuild noos build -p xilinx_ad9081 --runner docker --tool-version 2023.2

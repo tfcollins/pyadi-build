@@ -64,6 +64,7 @@ Builds an HDL project for a specific project/carrier combination.
 - ``clean`` (boolean, optional): Whether to clean before building (default: ``False``)
 - ``power_report`` (boolean, optional): Enable power utilization reports
 - ``utilization_report`` (boolean, optional): Enable resource utilization reports
+- ``no_cache`` (boolean, optional): Disable build caching
 
 build_lib_project
 ~~~~~~~~~~~~~~~~~

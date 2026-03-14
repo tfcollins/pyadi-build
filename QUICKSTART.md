@@ -329,6 +329,7 @@ python examples/custom_config.py
 | `adibuild libad9361 build -p <platform>` | Build libad9361 |
 | `adibuild iio-emu build -p <platform>` | Build iio-emu |
 | `adibuild osc build -p <platform>` | Build iio-oscilloscope |
+| `adibuild hdl build -p <platform> --no-cache` | Force HDL rebuild |
 | `adibuild linux menuconfig -p <platform>` | Configure kernel |
 | `adibuild linux clean -p <platform>` | Clean build |
 | `adibuild -vv` | Verbose mode |
