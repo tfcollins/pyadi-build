@@ -172,6 +172,9 @@ def hdl():
 )
 @click.option("--docker-image", help="Reusable Docker image tag for --runner docker")
 @click.option("--power-report", is_flag=True, help="Enable power utilization reports")
+@click.option(
+    "--utilization-report", is_flag=True, help="Enable resource utilization reports"
+)
 @click.pass_context
 def build_hdl(
     ctx,
@@ -189,6 +192,7 @@ def build_hdl(
     runner,
     docker_image,
     power_report,
+    utilization_report,
 ):
     """
     Build HDL project for specified platform.
@@ -284,6 +288,7 @@ def build_hdl(
             clean_before=clean,
             ignore_version_check=ignore_version_check,
             power_report=power_report,
+            utilization_report=utilization_report,
         )
 
         # Display summary (reuse or create new)

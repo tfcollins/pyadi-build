@@ -175,6 +175,10 @@ Options:
 
    Enable power utilization reports. Sets `ADI_GENERATE_XPA=1`.
 
+.. option:: --utilization-report
+
+   Enable resource utilization reports. Sets `ADI_GENERATE_UTILIZATION=1`.
+
 .. option:: --tool-version VERSION, -tv VERSION
 
    Override Vivado version used for host validation or Docker image selection.

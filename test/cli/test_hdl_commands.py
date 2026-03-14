@@ -226,3 +226,42 @@ platforms:
     content = script_file.read_text()
 
     assert "export ADI_GENERATE_XPA='1'" in content
+
+
+def test_hdl_build_utilization_report(cli_runner, tmp_path, mocker):
+    """Test hdl build with --utilization-report flag."""
+    mocker.patch("pathlib.Path.home", return_value=tmp_path)
+
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("""
+project: hdl
+repository: https://github.com/analogdevicesinc/hdl.git
+tag: hdl_2023_r2
+platforms:
+  zed_fmcomms2:
+    arch: arm
+    hdl_project: fmcomms2
+    carrier: zed
+""")
+
+    result = cli_runner.invoke(
+        cli,
+        [
+            "--config",
+            str(config_file),
+            "hdl",
+            "build",
+            "-p",
+            "zed_fmcomms2",
+            "--generate-script",
+            "--utilization-report",
+        ],
+    )
+
+    assert result.exit_code == 0
+
+    work_dir = tmp_path / ".adibuild" / "work"
+    script_file = work_dir / "build_hdl_arm.sh"
+    content = script_file.read_text()
+
+    assert "export ADI_GENERATE_UTILIZATION='1'" in content

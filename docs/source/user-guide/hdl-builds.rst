@@ -133,6 +133,10 @@ Options
 
    Enable power utilization reports. Sets `ADI_GENERATE_XPA=1`.
 
+.. option:: --utilization-report
+
+   Enable resource utilization reports. Sets `ADI_GENERATE_UTILIZATION=1`.
+
 Advanced Features
 -----------------
 

@@ -96,6 +96,7 @@ class HDLBuilder(BuilderBase):
         clean_before: bool = False,
         ignore_version_check: bool = False,
         power_report: bool = False,
+        utilization_report: bool = False,
     ) -> dict[str, Any]:
         """
         Execute HDL build.
@@ -104,6 +105,7 @@ class HDLBuilder(BuilderBase):
             clean_before: Run make clean before building
             ignore_version_check: Ignore Vivado version mismatch
             power_report: Enable power utilization reports
+            utilization_report: Enable resource utilization reports
         """
         # Get HDL project details from platform config
         # We expect the platform config to look like:
@@ -190,6 +192,9 @@ class HDLBuilder(BuilderBase):
 
         if power_report:
             env["ADI_GENERATE_XPA"] = "1"
+
+        if utilization_report:
+            env["ADI_GENERATE_UTILIZATION"] = "1"
 
         # Helper to format make args
         make_args = ["-C", str(project_dir)]
