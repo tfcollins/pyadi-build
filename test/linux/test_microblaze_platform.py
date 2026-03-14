@@ -200,10 +200,18 @@ def test_microblaze_default_kernel_image_path():
 
 def test_microblaze_kernel_target_warning(microblaze_config_dict, caplog):
     """Test warning for non-simpleImage kernel target."""
+    import logging
+
     config = microblaze_config_dict.copy()
     config["kernel_target"] = "zImage"  # Not a simpleImage target
 
-    MicroBlazePlatform(config)
+    # Manually add caplog handler to this logger since propagation is disabled
+    logger = logging.getLogger("adibuild.platform.MicroBlazePlatform")
+    logger.addHandler(caplog.handler)
+    try:
+        MicroBlazePlatform(config)
+    finally:
+        logger.removeHandler(caplog.handler)
 
     # Check that warning was logged
     assert any("Unusual kernel target" in record.message for record in caplog.records)

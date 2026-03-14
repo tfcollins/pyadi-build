@@ -9,9 +9,9 @@ def test_generate_script_zynqmp(cli_runner, tmp_path, mocker):
     # Mock home directory to use tmp_path
     mocker.patch("pathlib.Path.home", return_value=tmp_path)
 
-    # Run the build command with --generate-script
+    # Run the build command with --generate-script and -v for logging
     result = cli_runner.invoke(
-        cli, ["linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--generate-script"]
+        cli, ["-v", "linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--generate-script"]
     )
 
     assert result.exit_code == 0, f"Command failed: {result.output}"

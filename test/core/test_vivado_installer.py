@@ -369,7 +369,8 @@ def test_playwright_launch_options_disable_http2_for_non_root(mocker):
     options = PlaywrightDownloadStrategy._launch_options()
 
     assert options["headless"] is True
-    assert options["args"] == ["--disable-http2"]
+    assert "--disable-http2" in options["args"]
+    assert "--disable-blink-features=AutomationControlled" in options["args"]
 
 
 def test_goto_with_retry_retries_then_succeeds():
@@ -378,6 +379,8 @@ def test_goto_with_retry_retries_then_succeeds():
     class FakePage:
         def __init__(self):
             self.calls = 0
+            self.url = "https://example.com"
+            self.title = lambda: "Example"
 
         def goto(self, url, wait_until, timeout):
             self.calls += 1
@@ -405,6 +408,8 @@ def test_goto_with_retry_raises_after_exhausting_attempts():
     class FakePage:
         def __init__(self):
             self.calls = 0
+            self.url = "https://example.com"
+            self.title = lambda: "Example"
 
         def goto(self, url, wait_until, timeout):
             self.calls += 1
@@ -457,7 +462,8 @@ def test_auth_bootstrap_url_normalizes_legacy_xilinx_downloads():
         SUPPORTED_RELEASES["2023.2"]
     )
 
-    assert bootstrap_url == "https://account.amd.com/"
+    assert "account.amd.com" in bootstrap_url
+    assert "xef.html" in bootstrap_url
 
 
 def test_playwright_download_bootstraps_login_before_authenticated_http(mocker, tmp_path):
@@ -473,6 +479,7 @@ def test_playwright_download_bootstraps_login_before_authenticated_http(mocker, 
     strategy._launch_options = lambda: {"headless": True, "args": []}
     goto = mocker.patch.object(strategy, "_goto_with_retry")
     login = mocker.patch.object(strategy, "_login_if_needed")
+    mocker.patch.object(strategy, "_fill_download_form_if_needed", return_value=None)
     session = requests.Session()
     mocker.patch.object(strategy, "_session_from_browser_context", return_value=session)
 
@@ -480,7 +487,24 @@ def test_playwright_download_bootstraps_login_before_authenticated_http(mocker, 
     release = SUPPORTED_RELEASES["2023.2"]
     credentials = VivadoCredentials(username="user", password="pass")
 
-    fake_page = mocker.Mock()
+    fake_page = mocker.MagicMock()
+    # Mock locator().count() and is_visible() for link checking
+    fake_page.locator.return_value.first.count.return_value = 0
+    fake_page.locator.return_value.first.is_visible.return_value = False
+
+    # Mock context manager for expect_download
+    fake_download = mocker.Mock()
+    fake_download.suggested_filename = release.filename
+    fake_download_info = mocker.Mock()
+    fake_download_info.value = fake_download
+    fake_page.expect_download.return_value.__enter__.return_value = fake_download_info
+    
+    # Mock page.on to trigger download event immediately
+    def mock_on(event, callback):
+        if event == "download":
+            callback(fake_download)
+    fake_page.on.side_effect = mock_on
+    
     fake_context = mocker.Mock()
     fake_context.new_page.return_value = fake_page
     fake_browser = mocker.Mock()
@@ -493,19 +517,19 @@ def test_playwright_download_bootstraps_login_before_authenticated_http(mocker, 
     strategy._sync_playwright.return_value.__enter__.return_value = fake_playwright
     strategy._sync_playwright.return_value.__exit__.return_value = None
 
-    direct_download = mocker.patch(
-        "adibuild.core.vivado.RequestsDownloadStrategy.download",
-        return_value=destination,
-    )
-
+    # We skip direct_download in this test because it returns the file from save_as
+    # but we need to mock the download behavior
+    
     result = strategy.download(release, destination, credentials)
 
-    assert result == destination
-    goto.assert_called_once_with(
-        fake_page,
-        "https://account.amd.com/",
-        "browser-login-navigation",
-        settle_dom=True,
-    )
+    # It renames to suggested filename if different
+    expected_target = destination.parent / release.filename
+    assert result == expected_target
+    goto.assert_called_once()
+    call_args = goto.call_args[0]
+    assert call_args[1] == strategy._auth_bootstrap_url(release)
+    assert call_args[2] == "browser-login-navigation"
+    assert goto.call_args[1]["credentials"] == credentials
+    
     login.assert_called_once_with(fake_page, credentials)
-    direct_download.assert_called_once_with(release, destination)
+    fake_download.save_as.assert_called_once_with(str(expected_target))

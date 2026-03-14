@@ -14,12 +14,17 @@ RUN apt-get update && apt-get install -y \
     libxi6 \
     libxrender1 \
     libxtst6 \
+    libgbm1 \
+    libasound2 \
+    xvfb \
     procps \
     python3 \
     python3-pip \
     python3-venv \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
+
+ENV DISPLAY=:99
 
 RUN python3 -m pip install --upgrade pip setuptools wheel \
     && python3 -m pip install "playwright>=1.48" \

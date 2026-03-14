@@ -103,7 +103,13 @@ if [ -n "${VIVADO_INSTALLER_PATH:-}" ]; then
   echo "[container] Using mounted installer: $VIVADO_INSTALLER_PATH"
   INSTALL_CMD+=(--installer-path "$VIVADO_INSTALLER_PATH")
 fi
-"${INSTALL_CMD[@]}"
+
+if [ "${ADIBUILD_BROWSER_HEADLESS:-1}" = "0" ] || [ "${ADIBUILD_BROWSER_HEADLESS:-1}" = "false" ]; then
+  echo "[container] Headless mode disabled; using xvfb-run"
+  xvfb-run --server-args="-screen 0 1920x1080x24" "${INSTALL_CMD[@]}"
+else
+  "${INSTALL_CMD[@]}"
+fi
 echo "[container] Verifying settings64.sh exists"
 test -f "/opt/Xilinx/Vivado/$VIVADO_INSTALL_VERSION/settings64.sh"
 echo "[container] Checking vivado -version output"
@@ -128,6 +134,8 @@ echo "[container] Docker Vivado install workflow completed"
             f"VIVADO_VERSION={docker_vivado_test_version}",
             "-e",
             f"VIVADO_INSTALL_VERSION={docker_vivado_test_install_version}",
+            "-e",
+            f"ADIBUILD_BROWSER_HEADLESS={os.environ.get('ADIBUILD_BROWSER_HEADLESS', '1')}",
             "-v",
             f"{repo_root}:/src:ro",
             "-v",

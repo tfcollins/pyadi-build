@@ -431,8 +431,9 @@ class BuildExecutor:
 
         # Temporarily change working directory to build_dir for real execution
         saved_cwd = self.cwd
+        self.cwd = build_dir
         try:
-            result = self.execute(cmd, cwd=build_dir, env=env)
+            result = self.execute(cmd, env=env)
         finally:
             self.cwd = saved_cwd
 
