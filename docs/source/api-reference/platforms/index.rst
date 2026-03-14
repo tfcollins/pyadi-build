@@ -15,6 +15,7 @@ Modules
    microblaze
    hdl
    noos
+   lib
 
 Overview
 --------
@@ -27,6 +28,7 @@ The platforms package contains platform-specific implementations:
 - **microblaze** - MicroBlaze (soft-core) platform
 - **hdl** - Generic platform wrapper for HDL projects
 - **noos** - no-OS bare-metal firmware platform
+- **lib** - Userspace library platform (CMake-based)
 
 Quick Example
 -------------

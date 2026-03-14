@@ -13,6 +13,9 @@ Modules
    hdl
    noos
    libad9361
+   libtinyiiod
+   iio_emu
+   iio_oscilloscope
    genalyzer
    atf
    uboot
@@ -27,6 +30,9 @@ The projects package contains builders for different project types:
 - **hdl** - HDL project builder
 - **noos** - no-OS bare-metal firmware builder
 - **libad9361** - libad9361-iio library builder
+- **libtinyiiod** - libtinyiiod library builder
+- **iio_emu** - iio-emu server application builder
+- **iio_oscilloscope** - iio-oscilloscope GUI application builder
 - **genalyzer** - Genalyzer DSP analysis library builder
 - **atf** - ARM Trusted Firmware builder
 - **uboot** - U-Boot bootloader builder

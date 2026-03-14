@@ -5,6 +5,7 @@ Python module to generate and run build commands for Analog Devices, Inc. (ADI) 
 ## Features
 
 - **Linux Kernel Builder**: Build ADI Linux kernels for Zynq, ZynqMP, and MicroBlaze platforms
+- **Userspace Library and Application Builder**: Build ADI libraries and applications (libad9361, libtinyiiod, iio-emu, iio-oscilloscope, genalyzer)
 - **Vivado Installer**: Download and install supported Vivado Linux releases directly from AMD
 - **Reusable Vivado Docker Images**: Build versioned Docker images with Vivado preinstalled
 - **Docker Build Runner**: Run supported HDL, no-OS, ATF, U-Boot, and BOOT.BIN builds inside reusable Vivado containers
@@ -59,6 +60,19 @@ adibuild linux build -p zynqmp -t 2023_R2
 
 ```bash
 adibuild linux build -p microblaze -t 2023_R2
+```
+
+### Build Userspace Projects
+
+```bash
+# libad9361
+adibuild libad9361 build -p arm
+
+# iio-emu
+adibuild iio-emu build -p native
+
+# iio-oscilloscope
+adibuild osc build -p native
 ```
 
 ### List Available Platforms
@@ -116,6 +130,22 @@ adibuild linux build -p zynq -t 2023_R2 -j 16
 
 # Use custom configuration file
 adibuild linux build -p zynqmp -t 2023_R2 --config my_config.yaml
+```
+
+#### Userspace Projects
+
+```bash
+# Build libad9361 for ARM
+adibuild libad9361 build -p arm
+
+# Build libtinyiiod for host
+adibuild libtinyiiod build -p native
+
+# Build iio-emu for host (requires libiio and libtinyiiod)
+adibuild iio-emu build -p native --libiio-path /usr/local --tinyiiod-path /usr/local
+
+# Build iio-oscilloscope (osc) for host
+adibuild osc build -p native
 ```
 
 #### Configuration Commands

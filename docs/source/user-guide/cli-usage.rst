@@ -16,6 +16,9 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
        CLI --> HDL[hdl]
        CLI --> NoOS[noos]
        CLI --> LibAD9361[libad9361]
+       CLI --> LibTinyIIOD[libtinyiiod]
+       CLI --> IIOEmu[iio-emu]
+       CLI --> IIOOsc[osc]
        CLI --> Genalyzer[genalyzer]
        CLI --> Boot[boot]
        CLI --> Toolchain[toolchain]
@@ -35,6 +38,15 @@ The ``adibuild`` CLI is organized into command groups for managing configuration
 
        LibAD9361 --> LibBuild[build]
        LibAD9361 --> LibClean[clean]
+
+       LibTinyIIOD --> LTBuild[build]
+       LibTinyIIOD --> LTClean[clean]
+
+       IIOEmu --> IEBuild[build]
+       IIOEmu --> IEClean[clean]
+
+       IIOOsc --> IOBuild[build]
+       IIOOsc --> IOClean[clean]
 
        Genalyzer --> GBuild[build]
        Genalyzer --> GClean[clean]
@@ -56,6 +68,9 @@ The ``adibuild`` CLI is organized into command groups:
 - **hdl** - HDL project build commands
 - **noos** - no-OS bare-metal firmware build commands
 - **libad9361** - libad9361-iio library build commands
+- **libtinyiiod** - libtinyiiod library build commands
+- **iio-emu** - iio-emu server application build commands
+- **osc** - iio-oscilloscope GUI application build commands
 - **genalyzer** - Genalyzer DSP analysis library build commands
 - **boot** - Bootloader and BOOT.BIN build commands (Zynq, ZynqMP, Versal)
 - **config** - Configuration management
@@ -625,6 +640,205 @@ Remove libad9361-iio build artifacts.
 .. code-block:: bash
 
    adibuild libad9361 clean [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config.
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch.
+
+.. option:: --deep
+
+   Remove the entire build directory.
+
+libtinyiiod Commands
+--------------------
+
+Build Command
+~~~~~~~~~~~~~
+
+Build the libtinyiiod library for the specified platform.
+
+.. code-block:: bash
+
+   adibuild libtinyiiod build [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config (e.g., ``arm``, ``arm64``, ``native``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build (e.g., ``main``).
+
+.. option:: --arch ARCH
+
+   Target architecture (overrides config).
+
+.. option:: --clean
+
+   Remove build directory before building.
+
+.. option:: --jobs N, -j N
+
+   Number of parallel make jobs.
+
+.. option:: --generate-script
+
+   Generate a bash build script instead of executing the build.
+
+Clean Command
+~~~~~~~~~~~~~
+
+Remove libtinyiiod build artifacts.
+
+.. code-block:: bash
+
+   adibuild libtinyiiod clean [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config.
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch.
+
+.. option:: --deep
+
+   Remove the entire build directory.
+
+iio-emu Commands
+----------------
+
+Build Command
+~~~~~~~~~~~~~
+
+Build the iio-emu server application.
+
+.. code-block:: bash
+
+   adibuild iio-emu build [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config (e.g., ``arm``, ``arm64``, ``native``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build (e.g., ``main``).
+
+.. option:: --arch ARCH
+
+   Target architecture (overrides config).
+
+.. option:: --tinyiiod-path PATH
+
+   Path to cross-compiled libtinyiiod installation (must contain ``include/`` and ``lib/``).
+
+.. option:: --libiio-path PATH
+
+   Path to cross-compiled libiio installation (must contain ``include/`` and ``lib/``).
+
+.. option:: --clean
+
+   Remove build directory before building.
+
+.. option:: --jobs N, -j N
+
+   Number of parallel make jobs.
+
+.. option:: --generate-script
+
+   Generate a bash build script instead of executing the build.
+
+Clean Command
+~~~~~~~~~~~~~
+
+Remove iio-emu build artifacts.
+
+.. code-block:: bash
+
+   adibuild iio-emu clean [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config.
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch.
+
+.. option:: --deep
+
+   Remove the entire build directory.
+
+iio-oscilloscope Commands
+-------------------------
+
+Build Command
+~~~~~~~~~~~~~
+
+Build the iio-oscilloscope GUI application.
+
+.. code-block:: bash
+
+   adibuild osc build [OPTIONS]
+
+Options:
+
+.. option:: --platform PLATFORM, -p PLATFORM
+
+   **Required.** Platform name from config (e.g., ``arm``, ``arm64``, ``native``).
+
+.. option:: --tag TAG, -t TAG
+
+   Git tag or branch to build (e.g., ``main``).
+
+.. option:: --arch ARCH
+
+   Target architecture (overrides config).
+
+.. option:: --libad9361-path PATH
+
+   Path to cross-compiled libad9361 installation (must contain ``include/`` and ``lib/``).
+
+.. option:: --libiio-path PATH
+
+   Path to cross-compiled libiio installation (must contain ``include/`` and ``lib/``).
+
+.. option:: --clean
+
+   Remove build directory before building.
+
+.. option:: --jobs N, -j N
+
+   Number of parallel make jobs.
+
+.. option:: --generate-script
+
+   Generate a bash build script instead of executing the build.
+
+Clean Command
+~~~~~~~~~~~~~
+
+Remove iio-oscilloscope build artifacts.
+
+.. code-block:: bash
+
+   adibuild osc clean [OPTIONS]
 
 Options:
 

@@ -11,6 +11,7 @@ pyadi-build currently supports:
 - **Zynq** - Xilinx Zynq-7000 SoC (ARM Cortex-A9, 32-bit)
 - **ZynqMP** - Xilinx Zynq UltraScale+ MPSoC (ARM Cortex-A53, 64-bit)
 - **MicroBlaze** - Xilinx Virtex FPGAs (MicroBlaze soft-core processor)
+- **Userspace Library** - Native and cross-compiled builds for libraries (CMake-based)
 
 Zynq Platform
 -------------
@@ -414,53 +415,99 @@ Vivado/Vitis installation is mandatory.
 MicroBlaze support is designed for ADI reference designs available at:
 https://analogdevicesinc.github.io/documentation/linux/kernel/microblaze.html
 
+Userspace Library Platform
+--------------------------
+
+Overview
+~~~~~~~~
+
+The userspace library platform (``LibPlatform``) targets native and cross-compiled builds for libraries and applications using CMake.
+
+- **Supported Architectures**: ``arm``, ``arm64``, ``native``
+- **Build System**: CMake
+- **Cross-compilation**: Configured via CMake variables (e.g., ``CMAKE_C_COMPILER``)
+
+Configuration
+~~~~~~~~~~~~~
+
+**Default Configuration (e.g., ``configs/libad9361/default.yaml``):**
+
+.. code-block:: yaml
+
+   platforms:
+     arm:
+       arch: arm
+       cross_compile: arm-linux-gnueabihf-
+     arm64:
+       arch: arm64
+       cross_compile: aarch64-linux-gnu-
+     native:
+       arch: native
+
+**Additional Options:**
+
+- ``libiio_path``: Path to cross-compiled libiio installation.
+- ``tinyiiod_path``: Path to cross-compiled libtinyiiod installation.
+- ``libad9361_path``: Path to cross-compiled libad9361 installation.
+- ``sysroot``: Path to the target sysroot.
+- ``cmake_options``: Dictionary of extra CMake ``-D`` options.
+
+Building a Library
+~~~~~~~~~~~~~~~~~~
+
+**CLI:**
+
+.. code-block:: bash
+
+   adibuild libad9361 build -p arm
+
+**Python API:**
+
+.. code-block:: python
+
+   from adibuild.projects.libad9361 import LibAD9361Builder
+   from adibuild.platforms.lib import LibPlatform
+   from adibuild import BuildConfig
+
+   config = BuildConfig.from_yaml('configs/libad9361/default.yaml')
+   platform_config = config.get_platform('arm')
+   platform = LibPlatform(platform_config)
+
+   builder = LibAD9361Builder(config, platform)
+   result = builder.build()
+
 Platform Comparison
 -------------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 27 27 26
+   :widths: 20 20 20 20 20
 
    * - Feature
      - Zynq
      - ZynqMP
      - MicroBlaze
+     - Lib
    * - Architecture
-     - ARM Cortex-A9 (32-bit)
-     - ARM Cortex-A53 (64-bit)
-     - MicroBlaze soft-core (32-bit)
+     - ARM Cortex-A9
+     - ARM Cortex-A53
+     - MicroBlaze
+     - arm/arm64/native
    * - GCC Target
      - ``arm-linux-gnueabihf``
      - ``aarch64-linux-gnu``
      - ``microblazeel-xilinx-linux-gnu``
-   * - Kernel Image
-     - ``uImage`` (~4 MB)
-     - ``Image`` (~19 MB)
-     - ``simpleImage.<dts>`` (~4 MB)
-   * - Defconfig
-     - ``zynq_xcomm_adv7511_defconfig``
-     - ``adi_zynqmp_defconfig``
-     - ``adi_mb_defconfig``
-   * - DTB Path
-     - ``arch/arm/boot/dts``
-     - ``arch/arm64/boot/dts/xilinx``
-     - ``arch/microblaze/boot/dts``
-   * - Separate DTBs
-     - Yes
-     - Yes
-     - No (embedded)
-   * - Build Time
-     - ~10-15 min
-     - ~15-20 min
-     - ~12-18 min
-   * - Common Boards
-     - ZC702, ZC706, ZedBoard
-     - ZCU102, ZCU106
-     - VCU118, KC705, KCU105
-   * - Toolchain
-     - Vivado/ARM GNU/System
-     - Vivado/ARM GNU/System
-     - Vivado only
+     - Varies
+   * - Build System
+     - Kbuild/Make
+     - Kbuild/Make
+     - Kbuild/Make
+     - CMake
+   * - Output
+     - Kernel/DTBs
+     - Kernel/DTBs
+     - Kernel
+     - Libraries/Apps
 
 Platform-Specific Features
 ---------------------------

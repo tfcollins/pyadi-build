@@ -60,24 +60,32 @@ This shows:
 - Their configurations
 - Device tree blobs (DTBs) and simpleImage targets
 
-### 3. Build Your First Kernel
+### 3. Build Your First Project
 
-#### For ZynqMP (ARM64):
+#### Linux Kernels:
 
 ```bash
+# ZynqMP (ARM64)
 adibuild linux build -p zynqmp -t 2023_R2
-```
 
-#### For Zynq (ARM32):
-
-```bash
+# Zynq (ARM32)
 adibuild linux build -p zynq -t 2023_R2
+
+# MicroBlaze (Soft-core)
+adibuild linux build -p microblaze -t 2023_R2
 ```
 
-#### For MicroBlaze (Soft-core):
+#### Userspace Libraries and Applications:
 
 ```bash
-adibuild linux build -p microblaze -t 2023_R2
+# libad9361 library
+adibuild libad9361 build -p arm
+
+# iio-emu server
+adibuild iio-emu build -p native
+
+# iio-oscilloscope GUI
+adibuild osc build -p native
 ```
 
 Note: MicroBlaze requires Xilinx Vivado/Vitis. Source it before building:
@@ -318,6 +326,9 @@ python examples/custom_config.py
 | `adibuild toolchain` | Check toolchains |
 | `adibuild config show` | List platforms |
 | `adibuild linux build -p <platform> -t <tag>` | Build kernel |
+| `adibuild libad9361 build -p <platform>` | Build libad9361 |
+| `adibuild iio-emu build -p <platform>` | Build iio-emu |
+| `adibuild osc build -p <platform>` | Build iio-oscilloscope |
 | `adibuild linux menuconfig -p <platform>` | Configure kernel |
 | `adibuild linux clean -p <platform>` | Clean build |
 | `adibuild -vv` | Verbose mode |

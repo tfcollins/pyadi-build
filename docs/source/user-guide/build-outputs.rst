@@ -32,6 +32,28 @@ After a successful build, artifacts are organized in this structure:
    build/linux-2023_R2-arm/       # Zynq build
    build/linux-main-arm64/        # ZynqMP from main branch
 
+Userspace Library and Application Outputs
+-----------------------------------------
+
+Builders for libraries (like ``libad9361``, ``libtinyiiod``) and applications (like ``iio-emu``, ``osc``) produce artifacts in a similar structure:
+
+.. code-block:: text
+
+   build/
+   └── {project}-{tag}-{arch}/
+       ├── lib{project}.so*      # Shared libraries (for library projects)
+       ├── {project}             # Executables (for application projects)
+       ├── include/              # Public headers (optional)
+       └── metadata.json         # Build metadata
+
+**Examples:**
+
+.. code-block:: text
+
+   build/libad9361-main-arm64/    # libad9361 build for ARM64
+   build/iio-emu-main-native/     # iio-emu build for host
+   build/osc-main-arm/            # iio-oscilloscope build for ARM
+
 Kernel Image
 ------------
 
