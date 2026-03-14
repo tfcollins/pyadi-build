@@ -18,7 +18,7 @@
     - [x] Implement the logic in `adibuild/core/docker.py` or a new module to manage ephemeral download containers.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Specialized Docker Browser Environment' (Protocol in workflow.md)
 
-## Phase 3: Integration and Core Logic Refinement
+## Phase 3: Integration and Core Logic Refinement [checkpoint: b3015fd]
 - [x] Task: Refactor `adibuild/core/vivado.py` for Modular Strategies [08d0c00]
     - [x] Write failing tests for the new strategy selection logic.
     - [x] Implement the `VivadoDownloadStrategy` interface and concrete implementations for Docker, Stealth, and Session.
@@ -26,7 +26,7 @@
 - [x] Task: Implement Robust Error Handling and Retries [08d0c00]
     - [x] Write tests for various failure modes (timeout, blocking, invalid credentials).
     - [x] Implement retry logic with exponential backoff and strategy fallback.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Integration and Core Logic Refinement' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Integration and Core Logic Refinement' (Protocol in workflow.md)
 
 ## Phase 4: Final Verification and Documentation
 - [ ] Task: Comprehensive Integration Testing
