@@ -1,12 +1,12 @@
 # Implementation Plan - Fix Vivado Download Feature
 
 ## Phase 1: Exploration and Prototyping
-- [ ] Task: Research and Prototype Stealth Automation
-    - [ ] Create a standalone test script to verify `playwright-stealth` against `account.amd.com`.
-    - [ ] Create a standalone test script to verify `undetected-chromedriver` against `account.amd.com`.
-- [ ] Task: Prototype Session Extraction
-    - [ ] Implement a script that logs in via Playwright and exports cookies/session to a `requests.Session`.
-    - [ ] Verify that the exported session can perform a file download.
+- [x] Task: Research and Prototype Stealth Automation [ac4ebf3]
+    - [x] Create a standalone test script to verify `playwright-stealth` against `account.amd.com`.
+    - [x] Create a standalone test script to verify `undetected-chromedriver` against `account.amd.com`.
+- [x] Task: Prototype Session Extraction [ac4ebf3]
+    - [x] Implement a script that logs in via Playwright and exports cookies/session to a `requests.Session`.
+    - [x] Verify that the exported session can perform a file download.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Exploration and Prototyping' (Protocol in workflow.md)
 
 ## Phase 2: Specialized Docker Browser Environment
