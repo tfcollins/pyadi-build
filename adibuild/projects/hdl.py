@@ -1,5 +1,8 @@
+import hashlib
+import json
 import os
 import re
+import shutil
 from pathlib import Path
 
 from typing import Any
@@ -97,6 +100,7 @@ class HDLBuilder(BuilderBase):
         ignore_version_check: bool = False,
         power_report: bool = False,
         utilization_report: bool = False,
+        no_cache: bool = False,
     ) -> dict[str, Any]:
         """
         Execute HDL build.
@@ -106,6 +110,7 @@ class HDLBuilder(BuilderBase):
             ignore_version_check: Ignore Vivado version mismatch
             power_report: Enable power utilization reports
             utilization_report: Enable resource utilization reports
+            no_cache: Disable build caching
         """
         # Get HDL project details from platform config
         # We expect the platform config to look like:
@@ -135,10 +140,52 @@ class HDLBuilder(BuilderBase):
             f"Starting HDL build for project '{hdl_project}' on carrier '{carrier}'..."
         )
 
-        # 1. Prepare source
+        # 1. Prepare source (needed for commit SHA)
         self.prepare_source()
+        commit_sha = self.repo.get_commit_sha()
 
-        # 2. Check toolchain
+        # 2. Check Cache
+        cache_dir = None
+        if not no_cache and not self.script_mode:
+            cache_key = self._get_cache_key(
+                commit_sha,
+                hdl_project,
+                carrier,
+                power_report=power_report,
+                utilization_report=utilization_report,
+            )
+            cache_base = Path.home() / ".adibuild" / "cache" / "hdl"
+            cache_dir = cache_base / cache_key
+
+            if cache_dir.exists():
+                try:
+                    self.logger.info(f"Found valid build cache at {cache_dir}")
+                    output_dir = self.get_output_dir()
+                    self.make_directory(output_dir)
+
+                    # Copy artifacts from cache to output directory
+                    artifacts = {"xsa": [], "bit": []}
+                    for f in cache_dir.glob("*"):
+                        if f.name == "cache_info.json":
+                            continue
+                        dest = output_dir / f.name
+                        shutil.copy2(f, dest)
+                        if f.suffix == ".xsa":
+                            artifacts["xsa"].append(str(dest))
+                        elif f.suffix == ".bit":
+                            artifacts["bit"].append(str(dest))
+
+                    self.logger.info("HDL build pulled from cache successfully")
+                    return {
+                        "artifacts": artifacts,
+                        "output_dir": str(output_dir),
+                        "cached": True,
+                    }
+                except Exception as e:
+                    self.logger.warning(f"Failed to pull from cache: {e}")
+                    # Fallback to normal build
+
+        # 3. Check toolchain
         # HDL builds require Vivado (or other tools).
         # The platform object should theoretically handle this validation?
         # LinuxBuilder calls self.platform.get_toolchain().
@@ -162,7 +209,7 @@ class HDLBuilder(BuilderBase):
             pass
             # BuildExecutor check_tools?
 
-        # 3. Build Project
+        # 4. Build Project
         project_dir = self.source_dir / "projects" / hdl_project / carrier
 
         if not self.script_mode and not project_dir.exists():
@@ -207,8 +254,32 @@ class HDLBuilder(BuilderBase):
         else:
             self.executor.make(target=None, extra_args=make_args, env=env)
 
-        # 4. Package Artifacts
+        # 5. Package Artifacts
         result = self.package_artifacts(project_dir, hdl_project, carrier)
+
+        # 6. Update Cache
+        if cache_dir and not self.script_mode:
+            self.logger.info(f"Updating build cache at {cache_dir}...")
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            output_dir = Path(result["output_dir"])
+            count = 0
+            for ext in ["*.xsa", "*.bit"]:
+                for f in output_dir.glob(ext):
+                    self.logger.debug(f"Caching {f} to {cache_dir}")
+                    shutil.copy2(f, cache_dir / f.name)
+                    count += 1
+            self.logger.info(f"Cached {count} artifacts")
+            # Store some metadata about the cache entry
+            cache_info = {
+                "project": hdl_project,
+                "carrier": carrier,
+                "commit": commit_sha,
+                "power_report": power_report,
+                "utilization_report": utilization_report,
+                "make_variables": platform_config.get("make_variables", {}),
+            }
+            (cache_dir / "cache_info.json").write_text(json.dumps(cache_info, indent=2))
+
         self.logger.info("HDL build completed successfully")
         return result
 
@@ -519,3 +590,27 @@ class HDLBuilder(BuilderBase):
 
         # Default
         return self.work_dir / f"hdl-{self.config.get_tag()}-{self.platform.name}"
+
+    def _get_cache_key(self, commit_sha: str, project: str, carrier: str, **kwargs) -> str:
+        """
+        Generate a unique cache key for the build.
+        """
+        platform_config = self.platform.config
+        make_vars = platform_config.get("make_variables", {})
+
+        # Components that affect the build output
+        key_data = {
+            "commit": commit_sha,
+            "project": project,
+            "carrier": carrier,
+            "make_variables": make_vars,
+            "build_args": kwargs,
+            "tool_version": self.docker_tool_version
+            or self.platform.config.get("tool_version"),
+            "runner": self.runner,
+        }
+
+        # Serialize and hash
+        key_str = json.dumps(key_data, sort_keys=True)
+        self.logger.debug(f"Cache key data: {key_str}")
+        return hashlib.sha256(key_str.encode()).hexdigest()

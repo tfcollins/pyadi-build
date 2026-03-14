@@ -265,3 +265,87 @@ platforms:
     content = script_file.read_text()
 
     assert "export ADI_GENERATE_UTILIZATION='1'" in content
+
+
+def test_hdl_build_caching(cli_runner, tmp_path, mocker):
+    """Test hdl build caching logic."""
+    # Ensure all Path.home() calls return the same tmp_path
+    mocker.patch("pathlib.Path.home", return_value=tmp_path)
+    
+    # Mock source preparation to return a path and set self.repo and self.source_dir
+    mock_repo = mocker.MagicMock()
+    mock_repo.get_commit_sha.return_value = "abcdef1234567890"
+    
+    def side_effect_prep(self):
+        self.repo = mock_repo
+        self.source_dir = tmp_path / "source"
+        return self.source_dir
+
+    mocker.patch(
+        "adibuild.projects.hdl.HDLBuilder.prepare_source",
+        side_effect=side_effect_prep,
+        autospec=True
+    )
+
+    # Mock toolchain and version checks
+    mocker.patch("adibuild.projects.hdl.HDLBuilder._check_vivado_version", return_value="0")
+    mocker.patch("adibuild.platforms.base.Platform.get_toolchain")
+    mocker.patch("adibuild.core.executor.BuildExecutor.make")
+    
+    # Mock package_artifacts to create real dummy files in the output directory
+    def side_effect_package(self, project_dir, hdl_project, carrier):
+        output_dir = self.get_output_dir()
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "system_top.bit").write_text("dummy bitstream")
+        (output_dir / "system_top.xsa").write_text("dummy xsa")
+        return {
+            "artifacts": {
+                "bit": [str(output_dir / "system_top.bit")],
+                "xsa": [str(output_dir / "system_top.xsa")],
+            },
+            "output_dir": str(output_dir),
+        }
+
+    mocker.patch(
+        "adibuild.projects.hdl.HDLBuilder.package_artifacts",
+        side_effect=side_effect_package,
+        autospec=True
+    )
+
+    # We need a real directory for the project to exist or mock the check
+    (tmp_path / "source" / "projects" / "fmcomms2" / "zed").mkdir(parents=True, exist_ok=True)
+
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(f"""
+project: hdl
+repository: https://github.com/analogdevicesinc/hdl.git
+tag: hdl_2023_r2
+build:
+  output_dir: {tmp_path / 'build'}
+platforms:
+  zed_fmcomms2:
+    arch: arm
+    hdl_project: fmcomms2
+    carrier: zed
+""")
+
+    # First build - should NOT be cached
+    result1 = cli_runner.invoke(
+        cli, ["--config", str(config_file), "hdl", "build", "-p", "zed_fmcomms2"]
+    )
+    assert result1.exit_code == 0
+    assert "HDL build pulled from cache" not in result1.output
+
+    # Check cache directory exists and contains files
+    cache_base = tmp_path / ".adibuild" / "cache" / "hdl"
+    assert cache_base.exists()
+    cache_dirs = list(cache_base.glob("*"))
+    assert len(cache_dirs) == 1
+    assert (cache_dirs[0] / "system_top.bit").exists()
+
+    # Second build - should BE cached
+    result2 = cli_runner.invoke(
+        cli, ["--config", str(config_file), "hdl", "build", "-p", "zed_fmcomms2"]
+    )
+    assert result2.exit_code == 0
+    assert "HDL build pulled from cache successfully" in result2.output

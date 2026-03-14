@@ -175,6 +175,7 @@ def hdl():
 @click.option(
     "--utilization-report", is_flag=True, help="Enable resource utilization reports"
 )
+@click.option("--no-cache", is_flag=True, help="Disable build caching")
 @click.pass_context
 def build_hdl(
     ctx,
@@ -193,6 +194,7 @@ def build_hdl(
     docker_image,
     power_report,
     utilization_report,
+    no_cache,
 ):
     """
     Build HDL project for specified platform.
@@ -289,6 +291,7 @@ def build_hdl(
             ignore_version_check=ignore_version_check,
             power_report=power_report,
             utilization_report=utilization_report,
+            no_cache=no_cache,
         )
 
         # Display summary (reuse or create new)

@@ -371,6 +371,7 @@ def build_hdl_project(
     tool_version: str = None,
     power_report: bool = False,
     utilization_report: bool = False,
+    no_cache: bool = False,
 ) -> str:
     """Build an HDL project.
 
@@ -388,6 +389,7 @@ def build_hdl_project(
         tool_version: Override Vivado version (e.g., 2023.2)
         power_report: Enable power utilization reports
         utilization_report: Enable resource utilization reports
+        no_cache: Disable build caching
     """
     try:
         if not platform and not (project and carrier):
@@ -452,6 +454,7 @@ def build_hdl_project(
             ignore_version_check=ignore_version_check,
             power_report=power_report,
             utilization_report=utilization_report,
+            no_cache=no_cache,
         )
 
         if generate_script:

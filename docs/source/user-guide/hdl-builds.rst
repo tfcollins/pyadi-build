@@ -137,8 +137,27 @@ Options
 
    Enable resource utilization reports. Sets `ADI_GENERATE_UTILIZATION=1`.
 
+.. option:: --no-cache
+
+   Disable build caching. Force a full build even if a cached result exists.
+
 Advanced Features
 -----------------
+
+Build Caching
+~~~~~~~~~~~~~
+
+HDL builds automatically cache results to speed up repeated builds. The cache is keyed by:
+
+- HDL repository commit SHA
+- Project and Carrier names
+- Make variables
+- Build options (power/utilization reports)
+- Tool version and runner type
+
+Cached artifacts are stored in ``~/.adibuild/cache/hdl/``. If a matching build is found, artifacts are pulled from the cache instead of running Vivado.
+
+To disable caching for a specific build, use the ``--no-cache`` flag.
 
 Version Checking
 ~~~~~~~~~~~~~~~~
