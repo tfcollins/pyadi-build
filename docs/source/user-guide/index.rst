@@ -91,6 +91,15 @@ for using pyadi-build as both a CLI tool and Python library.
 
       Building no-OS bare-metal firmware
 
+   .. grid-item-card:: Library Builds
+      :link: library-builds
+      :link-type: doc
+      :text-align: center
+
+      :octicon:`package;2em`
+
+      Building userspace libraries and applications
+
    .. grid-item-card:: MCP Server
       :link: mcp-server
       :link-type: doc
@@ -123,6 +132,9 @@ Topics Covered
 
 **HDL Builds**
    Guide for building HDL projects, including configuration and version management
+
+**Library Builds**
+   Detailed guide for building and installing userspace libraries and applications
 
 **MCP Server**
    Guide for using the Model Context Protocol server integration
@@ -162,5 +174,6 @@ Before using this guide, you should have:
    platforms
    hdl-builds
    noos-builds
+   library-builds
    boot-bin-generation
    build-outputs
