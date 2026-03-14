@@ -17,7 +17,7 @@
 - **Nox**: Flexible automation tool for running tests, linting, and multi-version builds.
 
 ## Browser Automation & Vivado Integration
-- **Playwright / Selenium / undetected-chromedriver**: Used for automating Vivado downloads and authenticated AMD account access.
+- **Playwright / Selenium / undetected-chromedriver / playwright-stealth**: Used for automating Vivado downloads and authenticated AMD account access with anti-bot evasions.
 
 ## Ecosystem & Extensions
 - **FastMCP (Optional)**: Integration with the Model Context Protocol for AI-enhanced workflows.
