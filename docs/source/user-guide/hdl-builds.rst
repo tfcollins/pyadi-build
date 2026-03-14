@@ -129,6 +129,10 @@ Options
 
    Generate a bash script (e.g., `build_hdl_arm.sh`) instead of executing the build.
 
+.. option:: --power-report
+
+   Enable power utilization reports. Sets `ADI_GENERATE_XPA=1`.
+
 Advanced Features
 -----------------
 

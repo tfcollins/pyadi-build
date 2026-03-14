@@ -171,6 +171,10 @@ Options:
 
    Generate a bash script instead of executing the build.
 
+.. option:: --power-report
+
+   Enable power utilization reports. Sets `ADI_GENERATE_XPA=1`.
+
 .. option:: --tool-version VERSION, -tv VERSION
 
    Override Vivado version used for host validation or Docker image selection.
