@@ -13,9 +13,9 @@
 - [x] Task: Develop Download Runner Docker Image [486dda7]
     - [x] Create `adibuild/docker/download_runner/Dockerfile` with Playwright, browsers, and stealth dependencies.
     - [x] Implement a Python entrypoint script for the container that handles the login and download flow.
-- [ ] Task: Implement Docker Container Orchestration
-    - [ ] Write tests for spinning up the download runner container.
-    - [ ] Implement the logic in `adibuild/core/docker.py` or a new module to manage ephemeral download containers.
+- [x] Task: Implement Docker Container Orchestration [7078305]
+    - [x] Write tests for spinning up the download runner container.
+    - [x] Implement the logic in `adibuild/core/docker.py` or a new module to manage ephemeral download containers.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Specialized Docker Browser Environment' (Protocol in workflow.md)
 
 ## Phase 3: Integration and Core Logic Refinement
