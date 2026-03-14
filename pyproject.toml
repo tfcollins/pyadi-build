@@ -42,6 +42,19 @@ vivado-browser = [
     "playwright>=1.48",
 ]
 
+vivado-stealth = [
+    "playwright>=1.48",
+    "playwright-stealth>=1.0.6",
+]
+
+vivado-selenium = [
+    "selenium>=4.10.0",
+    "webdriver-manager>=4.0.0",
+    "selenium-stealth>=1.0.6",
+    "undetected-chromedriver>=3.5.0",
+]
+
+
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",

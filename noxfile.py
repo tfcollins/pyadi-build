@@ -147,6 +147,44 @@ def tests_real_vivado_docker(session):
     )
 
 
+@nox.session(python=["3.11"])
+def amd_access(session):
+    """
+    Run the AMD account access integration test.
+    """
+    session.install(".[vivado-selenium,vivado-browser,vivado-stealth]", "pytest")
+    session.run("playwright", "install", "chromium")
+    session.run("pytest", "-v", "test/integration/test_amd_account_access.py")
+
+
+@nox.session(python=["3.11"])
+def session_extraction(session):
+    """
+    Run the session extraction proof of concept.
+    """
+    session.install(".[vivado-stealth]", "requests")
+    # Load credentials from config.sh
+    with open("config.sh") as f:
+        for line in f:
+            if line.startswith("export "):
+                key_val = line.strip().split("export ")[1].split("=")
+                key = key_val[0]
+                val = key_val[1].strip("'")
+                session.env[key] = val
+    
+    session.run("xvfb-run", "--auto-servernum", "--server-args=-screen 0 1920x1080x24", "python", "test_session_extraction.py")
+
+
+@nox.session(python=["3.11"])
+def selenium_poc(session):
+    """
+    Run the undetected-chromedriver and Selenium proof of concepts for AMD access.
+    """
+    session.install(".[vivado-selenium,vivado-stealth]")
+    session.run("xvfb-run", "--auto-servernum", "--server-args=-screen 0 1920x1080x24", "python", "test_uc_amd_v2.py")
+    session.run("xvfb-run", "--auto-servernum", "--server-args=-screen 0 1920x1080x24", "python", "test_pw_stealth_v2.py")
+
+
 @nox.session(python=PYTHON_VERSIONS)
 @nox.parametrize("platform", ["zynq", "zynqmp", "microblaze", "boot", "noos"])
 def tests_real_platform(session, platform):
