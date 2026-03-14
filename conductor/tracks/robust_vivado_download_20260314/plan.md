@@ -19,13 +19,13 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Specialized Docker Browser Environment' (Protocol in workflow.md)
 
 ## Phase 3: Integration and Core Logic Refinement
-- [ ] Task: Refactor `adibuild/core/vivado.py` for Modular Strategies
-    - [ ] Write failing tests for the new strategy selection logic.
-    - [ ] Implement the `VivadoDownloadStrategy` interface and concrete implementations for Docker, Stealth, and Session.
-    - [ ] Update `VivadoInstaller.download_installer` to use these strategies.
-- [ ] Task: Implement Robust Error Handling and Retries
-    - [ ] Write tests for various failure modes (timeout, blocking, invalid credentials).
-    - [ ] Implement retry logic with exponential backoff and strategy fallback.
+- [x] Task: Refactor `adibuild/core/vivado.py` for Modular Strategies [08d0c00]
+    - [x] Write failing tests for the new strategy selection logic.
+    - [x] Implement the `VivadoDownloadStrategy` interface and concrete implementations for Docker, Stealth, and Session.
+    - [x] Update `VivadoInstaller.download_installer` to use these strategies.
+- [x] Task: Implement Robust Error Handling and Retries [08d0c00]
+    - [x] Write tests for various failure modes (timeout, blocking, invalid credentials).
+    - [x] Implement retry logic with exponential backoff and strategy fallback.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Integration and Core Logic Refinement' (Protocol in workflow.md)
 
 ## Phase 4: Final Verification and Documentation
