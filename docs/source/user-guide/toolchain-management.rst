@@ -193,6 +193,41 @@ Selection Order
 
 Toolchains are selected in this order:
 
+.. mermaid::
+
+   graph TD
+       Start[Need Toolchain] --> Pref{Preferred in Config?}
+       Pref -- Yes --> CheckPref[Check if available]
+       Pref -- No --> CheckVivado[Check for Vivado/Vitis]
+       
+       CheckPref -- Found --> UsePref[Use Preferred]
+       CheckPref -- Not Found --> Fallback{Fallback in Config?}
+       
+       Fallback -- Yes --> CheckFallback[Try Fallback list]
+       Fallback -- No --> CheckVivado
+       
+       CheckVivado -- Found --> UseVivado[Use Vivado toolchain]
+       CheckVivado -- Not Found --> CheckArm[Check ARM GNU cached]
+       
+       CheckArm -- Found --> UseArm[Use cached ARM GNU]
+       CheckArm -- Not Found --> AutoDL{Auto-download enabled?}
+       
+       AutoDL -- Yes --> Download[Download ARM GNU]
+       AutoDL -- No --> CheckSystem[Check System PATH]
+       
+       Download --> UseArm
+       CheckSystem -- Found --> UseSystem[Use System toolchain]
+       CheckSystem -- Not Found --> Fail[Error: No toolchain]
+
+       style Start fill:#f9f,stroke:#333
+       style UsePref fill:#bf b,stroke:#333
+       style UseVivado fill:#bf b,stroke:#333
+       style UseArm fill:#bf b,stroke:#333
+       style UseSystem fill:#bf b,stroke:#333
+       style Fail fill:#f66,stroke:#333
+
+Toolchains are selected in this order:
+
 1. **Preferred toolchain** (from configuration)
 2. **First available fallback** (from configuration)
 3. **Auto-download** (ARM GNU if not disabled)

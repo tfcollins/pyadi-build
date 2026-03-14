@@ -178,6 +178,36 @@ Vivado Download Strategies
 
 To ensure reliable access to Vivado installers behind the AMD/Xilinx authentication wall, `pyadi-build` implements multiple modular download strategies:
 
+.. mermaid::
+
+   graph TD
+       Start[Start Download] --> Docker{Docker Available?}
+       Docker -- Yes --> DStrategy[DockerDownloadStrategy]
+       Docker -- No --> Session{Browser Extras?}
+       
+       DStrategy --> DSuccess{Success?}
+       DSuccess -- Yes --> End[Download Complete]
+       DSuccess -- No --> Session
+       
+       Session -- Yes --> SStrategy[SessionDownloadStrategy]
+       Session -- No --> Requests[RequestsDownloadStrategy]
+       
+       SStrategy --> SSuccess{Success?}
+       SSuccess -- Yes --> End
+       SSuccess -- No --> Browser[Playwright/Selenium]
+       
+       Browser --> BSuccess{Success?}
+       BSuccess -- Yes --> End
+       BSuccess -- No --> Requests
+       
+       Requests --> RSuccess{Success?}
+       RSuccess -- Yes --> End
+       RSuccess -- No --> Fail[Download Failed]
+
+       style Start fill:#f9f,stroke:#333
+       style End fill:#bf b,stroke:#333
+       style Fail fill:#f66,stroke:#333
+
 - **Docker Strategy**: Runs the download in a specialized ephemeral container pre-configured with browser dependencies and anti-bot evasions. This is the most robust method for headless CI environments.
 - **Session Extraction Strategy**: Performs an automated login via a browser (Playwright), extracts the authenticated session cookies, and uses them for a direct high-speed download via HTTP requests.
 - **Browser Strategies**: Uses Playwright or Selenium directly to drive the login and download process.

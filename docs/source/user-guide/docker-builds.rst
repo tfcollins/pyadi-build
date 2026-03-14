@@ -80,6 +80,25 @@ How the Runner Works
 
 When Docker mode is enabled, pyadi-build:
 
+.. mermaid::
+
+   sequenceDiagram
+       participant Host as Host Machine
+       participant CLI as adibuild CLI
+       participant Docker as Docker Daemon
+       participant Container as Vivado Container
+
+       Host->>CLI: adibuild hdl build --runner docker
+       CLI->>CLI: Resolve build image
+       CLI->>Docker: docker run -v host_src:container_src ...
+       Docker->>Container: Start container
+       Container->>Container: source settings64.sh
+       Container->>Container: make build
+       Container-->>Host: Write artifacts to mounted volume
+       Container->>Docker: Exit
+       Docker-->>CLI: Return status
+       CLI-->>Host: Show build summary
+
 - launches ``docker run`` for each build step
 - mounts the current workspace and ``~/.adibuild`` cache into the container
 - sources the Vivado ``settings64.sh`` script inside the container before executing the command
