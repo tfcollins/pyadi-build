@@ -151,8 +151,8 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
 
             return NoOSPlatform(platform_config)
 
-        # Check if it's a libad9361 or genalyzer (CMake userspace library) config
-        if config.get_project() in ("libad9361", "genalyzer"):
+        # Check if it's a libad9361, genalyzer, libtinyiiod or iio-emu (CMake userspace library) config
+        if config.get_project() in ("libad9361", "genalyzer", "libtinyiiod", "iio-emu"):
             from adibuild.platforms.lib import LibPlatform
 
             return LibPlatform(platform_config)

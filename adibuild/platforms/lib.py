@@ -76,6 +76,12 @@ class LibPlatform(Platform):
         return Path(path) if path else None
 
     @property
+    def tinyiiod_path(self) -> Path | None:
+        """Path to cross-compiled libtinyiiod, or None if not specified."""
+        path = self.config.get("tinyiiod_path")
+        return Path(path) if path else None
+
+    @property
     def sysroot(self) -> Path | None:
         """CMake sysroot path, or None if not specified."""
         path = self.config.get("sysroot")

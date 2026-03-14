@@ -1,0 +1,16 @@
+project: libtinyiiod
+tag: main
+
+build:
+  parallel_jobs: 8
+  output_dir: "./build"
+
+platforms:
+  native:
+    arch: native
+  arm:
+    arch: arm
+    cross_compile: "arm-linux-gnueabihf-"
+  arm64:
+    arch: arm64
+    cross_compile: "aarch64-linux-gnu-"
