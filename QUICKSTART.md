@@ -43,6 +43,12 @@ This will detect:
 
 Don't worry if none are found - ARM GNU toolchain will be auto-downloaded!
 
+Note: To use authenticated browser downloads for Vivado (e.g., in CI), ensure you install the required extras:
+```bash
+pip install "pyadi-build[vivado-browser,vivado-stealth]"
+playwright install chromium
+```
+
 ### 2. View Available Platforms
 
 ```bash

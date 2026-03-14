@@ -21,10 +21,16 @@ Python module to generate and run build commands for Analog Devices, Inc. (ADI) 
 pip install pyadi-build
 ```
 
-For authenticated Vivado downloads through browser fallback:
+For authenticated Vivado downloads through browser fallback or specialized Docker containers:
 
 ```bash
-pip install "pyadi-build[vivado-browser]"
+pip install "pyadi-build[vivado-browser,vivado-stealth]"
+```
+
+Or for Selenium-based automation:
+
+```bash
+pip install "pyadi-build[vivado-selenium]"
 ```
 
 For development:
