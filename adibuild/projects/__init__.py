@@ -5,6 +5,7 @@ from adibuild.projects.boot import BootBuilder, ZynqMPBootBuilder
 from adibuild.projects.genalyzer import GenalyzerBuilder
 from adibuild.projects.hdl import HDLBuilder
 from adibuild.projects.iio_emu import IIOEmuBuilder
+from adibuild.projects.iio_oscilloscope import IIOOscilloscopeBuilder
 from adibuild.projects.libad9361 import LibAD9361Builder
 from adibuild.projects.libtinyiiod import LibTinyIIODBuilder
 from adibuild.projects.linux import LinuxBuilder
@@ -18,6 +19,7 @@ __all__ = [
     "LibAD9361Builder",
     "LibTinyIIODBuilder",
     "IIOEmuBuilder",
+    "IIOOscilloscopeBuilder",
     "GenalyzerBuilder",
     "ATFBuilder",
     "UBootBuilder",

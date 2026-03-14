@@ -82,6 +82,12 @@ class LibPlatform(Platform):
         return Path(path) if path else None
 
     @property
+    def libad9361_path(self) -> Path | None:
+        """Path to cross-compiled libad9361, or None if not specified."""
+        path = self.config.get("libad9361_path")
+        return Path(path) if path else None
+
+    @property
     def sysroot(self) -> Path | None:
         """CMake sysroot path, or None if not specified."""
         path = self.config.get("sysroot")
