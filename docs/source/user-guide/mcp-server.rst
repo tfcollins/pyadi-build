@@ -62,6 +62,18 @@ Builds an HDL project for a specific project/carrier combination.
 - ``carrier`` (string): Carrier board name (e.g., ``zed``)
 - ``arch`` (string, optional): Architecture (default: ``unknown``)
 - ``clean`` (boolean, optional): Whether to clean before building (default: ``False``)
+- ``power_report`` (boolean, optional): Enable power utilization reports
+- ``utilization_report`` (boolean, optional): Enable resource utilization reports
+
+build_lib_project
+~~~~~~~~~~~~~~~~~
+Builds a CMake-based userspace library or application (libad9361, libtinyiiod, iio-emu, osc, or genalyzer).
+
+**Parameters:**
+
+- ``project_type`` (string): Project type name
+- ``platform`` (string): Target platform name (e.g., ``arm``, ``native``)
+- ``clean`` (boolean, optional): Whether to clean before building (default: ``False``)
 
 build_linux_platform
 ~~~~~~~~~~~~~~~~~~~~

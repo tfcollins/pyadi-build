@@ -1289,6 +1289,17 @@ First-Time Build
    # 3. Build kernel
    adibuild linux build -p zynqmp -t 2023_R2
 
+Userspace Project Build
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   # Build libad9361 for ARM
+   adibuild libad9361 build -p arm
+
+   # Build iio-emu natively
+   adibuild iio-emu build -p native
+
 Customized Kernel Build
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

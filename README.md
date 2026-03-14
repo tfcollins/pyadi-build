@@ -192,6 +192,9 @@ adibuild toolchain -p zynqmp
 # HDL in Docker
 adibuild hdl build -p zed_fmcomms2 --runner docker --tool-version 2023.2
 
+# HDL with reports
+adibuild hdl build -p zed_fmcomms2 --power-report --utilization-report
+
 # no-OS Xilinx in Docker
 adibuild noos build -p xilinx_ad9081 --runner docker --tool-version 2023.2
 

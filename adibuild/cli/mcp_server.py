@@ -16,7 +16,10 @@ from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
 from adibuild.projects.genalyzer import GenalyzerBuilder
 from adibuild.projects.hdl import HDLBuilder
+from adibuild.projects.iio_emu import IIOEmuBuilder
+from adibuild.projects.iio_oscilloscope import IIOOscilloscopeBuilder
 from adibuild.projects.libad9361 import LibAD9361Builder
+from adibuild.projects.libtinyiiod import LibTinyIIODBuilder
 from adibuild.projects.linux import LinuxBuilder
 from adibuild.projects.noos import NoOSBuilder
 
@@ -38,8 +41,14 @@ def _get_platform_instance(config: BuildConfig, platform_name: str):
 
         return NoOSPlatform(platform_config)
 
-    # Check if it's a libad9361 or genalyzer (CMake userspace library) config
-    if config.get_project() in ("libad9361", "genalyzer"):
+    # Check if it's a CMake userspace library/app config
+    if config.get_project() in (
+        "libad9361",
+        "genalyzer",
+        "libtinyiiod",
+        "iio-emu",
+        "iio-oscilloscope",
+    ):
         from adibuild.platforms.lib import LibPlatform
 
         return LibPlatform(platform_config)
@@ -117,7 +126,7 @@ def list_platforms(config_path: str = None, project_type: str = "linux") -> list
 
     Args:
         config_path: Path to configuration file
-        project_type: Project type (linux, hdl, noos, libad9361, genalyzer)
+        project_type: Project type (linux, hdl, noos, libad9361, libtinyiiod, iio-emu, iio-oscilloscope, genalyzer)
     """
     try:
         config = _load_config(config_path, project_type=project_type)
@@ -135,29 +144,40 @@ def build_lib_project(
     arch: str = None,
     cross_compile: str = None,
     libiio_path: str = None,
+    tinyiiod_path: str = None,
+    libad9361_path: str = None,
     fftw_path: str = None,
     clean: bool = False,
     jobs: int = None,
     generate_script: bool = False,
 ) -> str:
-    """Build a CMake-based userspace library (libad9361-iio or genalyzer).
+    """Build a CMake-based userspace library or application.
 
     Args:
-        project_type: Project type (libad9361 or genalyzer)
+        project_type: Project type (libad9361, libtinyiiod, iio-emu, iio-oscilloscope, or genalyzer)
         platform: Target platform (e.g. arm, arm64, native)
         tag: Git tag or branch
         config_path: Path to configuration file
         arch: Override target architecture
         cross_compile: Override cross-compiler prefix
-        libiio_path: Path to libiio (for libad9361)
+        libiio_path: Path to libiio (for libad9361, iio-emu, osc)
+        tinyiiod_path: Path to libtinyiiod (for iio-emu)
+        libad9361_path: Path to libad9361 (for osc)
         fftw_path: Path to FFTW3 (for genalyzer)
         clean: Whether to clean before building
         jobs: Number of parallel jobs
         generate_script: Generate bash script instead of executing build
     """
     try:
-        if project_type not in ("libad9361", "genalyzer"):
-            return "Error: project_type must be either 'libad9361' or 'genalyzer'"
+        valid_projects = (
+            "libad9361",
+            "libtinyiiod",
+            "iio-emu",
+            "iio-oscilloscope",
+            "genalyzer",
+        )
+        if project_type not in valid_projects:
+            return f"Error: project_type must be one of {valid_projects}"
 
         config = _load_config(config_path, platform, tag, project_type=project_type)
         platform_obj = _get_platform_instance(config, platform)
@@ -169,11 +189,23 @@ def build_lib_project(
             platform_obj.config["cross_compile"] = cross_compile
         if libiio_path:
             platform_obj.config["libiio_path"] = libiio_path
+        if tinyiiod_path:
+            platform_obj.config["tinyiiod_path"] = tinyiiod_path
+        if libad9361_path:
+            platform_obj.config["libad9361_path"] = libad9361_path
         if fftw_path:
             platform_obj.config["fftw_path"] = fftw_path
 
         if project_type == "libad9361":
             builder = LibAD9361Builder(config, platform_obj, script_mode=generate_script)
+        elif project_type == "libtinyiiod":
+            builder = LibTinyIIODBuilder(config, platform_obj, script_mode=generate_script)
+        elif project_type == "iio-emu":
+            builder = IIOEmuBuilder(config, platform_obj, script_mode=generate_script)
+        elif project_type == "iio-oscilloscope":
+            builder = IIOOscilloscopeBuilder(
+                config, platform_obj, script_mode=generate_script
+            )
         else:
             builder = GenalyzerBuilder(config, platform_obj, script_mode=generate_script)
 
@@ -337,6 +369,8 @@ def build_hdl_project(
     ignore_version_check: bool = False,
     generate_script: bool = False,
     tool_version: str = None,
+    power_report: bool = False,
+    utilization_report: bool = False,
 ) -> str:
     """Build an HDL project.
 
@@ -352,6 +386,8 @@ def build_hdl_project(
         ignore_version_check: Ignore Vivado version check
         generate_script: Generate bash script instead of executing build
         tool_version: Override Vivado version (e.g., 2023.2)
+        power_report: Enable power utilization reports
+        utilization_report: Enable resource utilization reports
     """
     try:
         if not platform and not (project and carrier):
@@ -412,7 +448,10 @@ def build_hdl_project(
         builder = HDLBuilder(config, platform_obj, script_mode=generate_script)
 
         result = builder.build(
-            clean_before=clean, ignore_version_check=ignore_version_check
+            clean_before=clean,
+            ignore_version_check=ignore_version_check,
+            power_report=power_report,
+            utilization_report=utilization_report,
         )
 
         if generate_script:
@@ -677,9 +716,7 @@ def validate_configuration(config_file: str) -> str:
     try:
         schema_path = (
             Path(__file__).parent.parent.parent
-            / "configs"
-            / "schema"
-            / "linux_config.schema.json"
+            / "configs" / "schema" / "linux_config.schema.json"
         )
 
         if not schema_path.exists():
