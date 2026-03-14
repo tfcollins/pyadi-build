@@ -9,14 +9,14 @@
     - [x] Verify that the exported session can perform a file download.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Exploration and Prototyping' (Protocol in workflow.md)
 
-## Phase 2: Specialized Docker Browser Environment
+## Phase 2: Specialized Docker Browser Environment [checkpoint: 4b1630d]
 - [x] Task: Develop Download Runner Docker Image [486dda7]
     - [x] Create `adibuild/docker/download_runner/Dockerfile` with Playwright, browsers, and stealth dependencies.
     - [x] Implement a Python entrypoint script for the container that handles the login and download flow.
 - [x] Task: Implement Docker Container Orchestration [7078305]
     - [x] Write tests for spinning up the download runner container.
     - [x] Implement the logic in `adibuild/core/docker.py` or a new module to manage ephemeral download containers.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Specialized Docker Browser Environment' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Specialized Docker Browser Environment' (Protocol in workflow.md)
 
 ## Phase 3: Integration and Core Logic Refinement
 - [ ] Task: Refactor `adibuild/core/vivado.py` for Modular Strategies
