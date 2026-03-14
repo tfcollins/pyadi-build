@@ -173,6 +173,18 @@ ARM GNU toolchains are automatically downloaded when:
 - System toolchain not installed
 - Ensures builds work out-of-the-box
 
+Vivado Download Strategies
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To ensure reliable access to Vivado installers behind the AMD/Xilinx authentication wall, `pyadi-build` implements multiple modular download strategies:
+
+- **Docker Strategy**: Runs the download in a specialized ephemeral container pre-configured with browser dependencies and anti-bot evasions. This is the most robust method for headless CI environments.
+- **Session Extraction Strategy**: Performs an automated login via a browser (Playwright), extracts the authenticated session cookies, and uses them for a direct high-speed download via HTTP requests.
+- **Browser Strategies**: Uses Playwright or Selenium directly to drive the login and download process.
+- **Requests Strategy**: Simple direct HTTP download for non-authenticated components.
+
+These strategies are managed by a top-level retry loop with exponential backoff to handle transient network or authentication service issues.
+
 Artifact Packaging
 ~~~~~~~~~~~~~~~~~~
 

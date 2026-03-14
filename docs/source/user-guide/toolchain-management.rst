@@ -502,6 +502,42 @@ Notes:
 - Credentials are read from ``AMD_USERNAME`` and ``AMD_PASSWORD`` or prompted interactively.
 - Authenticated browser fallback requires installing the optional ``vivado-browser`` extra.
 
+Robust Vivado Downloads
+~~~~~~~~~~~~~~~~~~~~~~~
+
+AMD/Xilinx requires authentication for Vivado web installer downloads. This can be challenging in headless or CI environments. `pyadi-build` provides multiple strategies to ensure reliable downloads:
+
+1. **Docker Strategy (Recommended for CI)**:
+   Runs the download process within a specialized ephemeral Docker container. This environment is pre-configured with all necessary browser dependencies and anti-bot evasions.
+   
+   **Requirements**:
+   - Docker installed and the current user in the `docker` group.
+   - Credentials set in `AMD_USERNAME` and `AMD_PASSWORD`.
+
+2. **Session Extraction Strategy**:
+   Automates a login via a headless browser (Playwright), extracts the authenticated session, and then performs a high-speed direct download using standard HTTP requests.
+   
+   **Requirements**:
+   - `vivado-browser` and `vivado-stealth` extras installed.
+   - Playwright browsers installed (`playwright install chromium`).
+
+3. **Browser Fallbacks**:
+   Directly drives Playwright or Selenium to perform the download.
+
+To use these features, ensure your environment is set up:
+
+.. code-block:: bash
+
+   # Install required extras
+   pip install "pyadi-build[vivado-browser,vivado-stealth]"
+   
+   # Install Playwright browsers
+   playwright install chromium
+   
+   # Set credentials
+   export AMD_USERNAME="your.email@example.com"
+   export AMD_PASSWORD="your-password"
+
 Reusable Vivado Docker Images
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -148,13 +148,23 @@ def tests_real_vivado_docker(session):
 
 
 @nox.session(python=["3.11"])
-def amd_access(session):
+def robust_download_integration(session):
     """
-    Run the AMD account access integration test.
+    Run the robust download integration tests.
     """
-    session.install(".[vivado-selenium,vivado-browser,vivado-stealth]", "pytest")
+    session.install(".[vivado-selenium,vivado-browser,vivado-stealth]", "pytest", "pytest-mock", "requests")
     session.run("playwright", "install", "chromium")
-    session.run("pytest", "-v", "test/integration/test_amd_account_access.py")
+    
+    # Load credentials from config.sh
+    with open("config.sh") as f:
+        for line in f:
+            if line.startswith("export "):
+                parts = line.strip().split("export ")[1].split("=")
+                key = parts[0]
+                val = parts[1].strip("'")
+                session.env[key] = val
+    
+    session.run("xvfb-run", "--auto-servernum", "--server-args=-screen 0 1920x1080x24", "pytest", "-v", "test/integration/test_robust_download.py")
 
 
 @nox.session(python=["3.11"])
