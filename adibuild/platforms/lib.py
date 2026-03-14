@@ -2,6 +2,7 @@
 
 import shutil
 from pathlib import Path
+from typing import Any
 
 from adibuild.core.toolchain import ToolchainInfo, select_toolchain
 from adibuild.platforms.base import Platform, PlatformError
@@ -45,7 +46,7 @@ class LibPlatform(Platform):
         toolchain (dict, optional): Toolchain preferences ``{preferred, fallback}``.
     """
 
-    def __init__(self, config: dict):
+    def __init__(self, config: dict[str, Any]):
         super().__init__(config)
         arch = config.get("arch", "native")
         if arch not in VALID_LIB_ARCHS:

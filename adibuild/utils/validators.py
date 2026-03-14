@@ -71,7 +71,7 @@ def validate_tag(tag: str) -> str:
 
 
 def validate_path(
-    path: Path, must_exist: bool = False, must_be_dir: bool = False
+    path: str | Path, must_exist: bool = False, must_be_dir: bool = False
 ) -> Path:
     """
     Validate file system path.

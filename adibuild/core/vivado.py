@@ -19,7 +19,7 @@ try:
 except ImportError:
     By = None
 
-from typing import Any, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 from adibuild.core.toolchain import ToolchainError, ToolchainInfo
 from adibuild.utils.logger import get_logger
@@ -192,21 +192,21 @@ class SessionDownloadStrategy:
         # 1. Login and extract session using Playwright (most reliable for login)
         self.logger.info("Extracting authenticated AMD session via Playwright")
         pw_strategy = PlaywrightDownloadStrategy()
-        
+
         # We need a way to get the session without performing the full download
         # I'll add a helper method to PlaywrightDownloadStrategy or just use it here
         # For now, I'll use a simplified extraction logic here or refactor PlaywrightDownloadStrategy
-        
+
         # Refactoring PlaywrightDownloadStrategy to expose session extraction would be better.
         # But for this task, I'll implement a standalone extraction.
-        
+
         with pw_strategy._sync_playwright() as playwright:
             browser = playwright.chromium.launch(**pw_strategy._launch_options())
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
             )
             page = context.new_page()
-            
+
             try:
                 from playwright_stealth import Stealth
                 Stealth().apply_stealth_sync(page)
@@ -218,7 +218,7 @@ class SessionDownloadStrategy:
                 page, auth_url, "session-extraction-login", credentials=credentials
             )
             pw_strategy._login_if_needed(page, credentials)
-            
+
             # Extract session
             session = pw_strategy._session_from_browser_context(context, page)
             browser.close()
@@ -513,10 +513,10 @@ class SeleniumDownloadStrategy:
         self._ec = EC
         self._wait = WebDriverWait
         self.logger = get_logger("adibuild.vivado.selenium")
-        
+
         # Priority: constructor arg > env var > default home dir
         self.screenshot_dir = (
-            screenshot_dir 
+            screenshot_dir
             or Path(os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR", ""))
             if os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR")
             else Path.home() / ".adibuild" / "toolchains" / "vivado" / "debug"
@@ -564,7 +564,7 @@ class SeleniumDownloadStrategy:
 
         # Selenium 4.6+ handles driver management automatically
         driver = self._webdriver.Chrome(options=options)
-        
+
         # Apply selenium-stealth if available
         try:
             from selenium_stealth import stealth
@@ -591,23 +591,23 @@ class SeleniumDownloadStrategy:
             auth_url = f"https://account.amd.com/en/forms/downloads/xef.html?filename={release.filename}"
             self.logger.info(f"Opening AMD bootstrap page {auth_url}")
             driver.get(auth_url)
-            
+
             self._login_if_needed(driver, credentials)
-            
+
             # Form should be on the current page after login
             self._fill_form_if_needed(driver)
-            
+
             self.logger.info("Waiting for installer download to complete")
             # For Selenium, we might need to wait for the file to appear in destination.parent
             # or just wait a reasonable time if we can't detect it easily.
             try:
                 # Give it up to 10 minutes to start the download
                 self._wait_for_download(driver, destination.parent, release.filename, timeout=600)
-                
+
                 # Check for completion (up to 3 hours for 10-20GB installer)
                 self.logger.info("Waiting for installer download to complete (this may take a long time)")
                 self._wait_for_download_completion(driver, destination.parent, release.filename, timeout=10800)
-                
+
                 target = destination
                 # Check if it was saved with a different name
                 if not target.exists():
@@ -642,11 +642,10 @@ class SeleniumDownloadStrategy:
 
     def _login_if_needed(self, driver, credentials: VivadoCredentials) -> None:
         wait = self._wait(driver, 45)
-        from selenium.webdriver.common.keys import Keys
         try:
             # Username and Password
             self._take_screenshot(driver, "selenium-login-start")
-            
+
             self.logger.info(f"Filling and submitting login form for {credentials.username}")
             driver.execute_script(f"""
                 const user = "{credentials.username}";
@@ -670,7 +669,7 @@ class SeleniumDownloadStrategy:
                 }}
             """)
             time.sleep(10)
-            
+
             # Stay signed in?
             try:
                 stay_signed_in = wait.until(self._ec.element_to_be_clickable((self._by.ID, "idSIButton9")))
@@ -678,11 +677,11 @@ class SeleniumDownloadStrategy:
                 time.sleep(2)
             except:
                 pass
-                
+
         except Exception as e:
             self.logger.warning(f"Login failed or not needed: {e}")
             self._take_screenshot(driver, "selenium-login-error")
-                
+
             # Stay signed in?
             try:
                 stay_signed_in = wait.until(self._ec.element_to_be_clickable((self._by.ID, "idSIButton9")))
@@ -694,7 +693,7 @@ class SeleniumDownloadStrategy:
     def _fill_form_if_needed(self, driver) -> None:
         self.logger.info("Checking for AMD export control form")
         time.sleep(5)
-        
+
         # Dismiss cookie banner if present
         try:
             banner_btn = driver.find_element(self._by.ID, "onetrust-accept-btn-handler")
@@ -706,7 +705,7 @@ class SeleniumDownloadStrategy:
             pass
 
         self._take_screenshot(driver, "selenium-before-form")
-        
+
         # Aggressive form filling
         form_fields = {
             "First_Name": "Travis",
@@ -722,11 +721,11 @@ class SeleniumDownloadStrategy:
             "Email": "travis.collins@analog.com",
             "Phone": "9786585555",
         }
-        
+
         try:
             # 1. Fill in main frame using send_keys where possible
             from selenium.webdriver.support.ui import Select
-            
+
             # Special handling for Country and State as they often have dependent logic
             try:
                 country_el = driver.find_element(self._by.NAME, "Country")
@@ -735,7 +734,7 @@ class SeleniumDownloadStrategy:
                 except: s.select_by_visible_text("United States")
                 time.sleep(1)
             except: pass
-            
+
             try:
                 state_el = driver.find_element(self._by.NAME, "State")
                 s = Select(state_el)
@@ -757,7 +756,7 @@ class SeleniumDownloadStrategy:
                                     break
                             if el: break
                         except: continue
-                    
+
                     if el:
                         if el.tag_name == "select":
                             from selenium.webdriver.support.ui import Select
@@ -777,7 +776,7 @@ class SeleniumDownloadStrategy:
 
             # 2. Also try aggressive JS fill as fallback/reinforcement
             self._fill_frame(driver, form_fields)
-            
+
             # 3. Check and fill in all iframes
             iframes = driver.find_elements(self._by.TAG_NAME, "iframe")
             self.logger.info(f"Found {len(iframes)} iframes on page")
@@ -794,7 +793,7 @@ class SeleniumDownloadStrategy:
 
             # Attempt submission from wherever the form was found
             self._take_screenshot(driver, "selenium-form-filled")
-            
+
             # Log what we filled
             try:
                 inputs = driver.execute_script("""
@@ -811,16 +810,16 @@ class SeleniumDownloadStrategy:
 
             self._submit_form(driver)
             time.sleep(10)
-            
+
             self.logger.info(f"Page state after submission: URL={driver.current_url} Title='{driver.title}'")
-            
+
             # Check for new windows
             if len(driver.window_handles) > 1:
                 self.logger.info(f"Found {len(driver.window_handles)} windows/tabs")
                 driver.switch_to.window(driver.window_handles[-1])
                 self.logger.info(f"Switched to window: {driver.current_url}")
                 self._take_screenshot(driver, "selenium-new-window")
-                
+
             # Check for errors after submission
             try:
                 errors = driver.find_elements(self._by.CSS_SELECTOR, ".error, .errormsg, .alert-danger, [id*='error']")
@@ -881,7 +880,7 @@ class SeleniumDownloadStrategy:
             ("xpath", "//button[contains(text(), 'Download')]"),
             ("xpath", "//input[contains(@value, 'Download')]"),
         )
-        
+
         def try_submit(d):
             # Try finding the element and clicking it natively
             for by, selector in submit_selectors:
@@ -893,7 +892,7 @@ class SeleniumDownloadStrategy:
                         return True
                 except:
                     continue
-            
+
             # Fallback to JS click
             try:
                 d.execute_script("""
@@ -954,7 +953,7 @@ class SeleniumDownloadStrategy:
             # Periodic screenshot during wait
             if int(time.time() - start_time) % 300 < 5:
                 self._take_screenshot(driver, "selenium-download-waiting")
-                
+
             files = list(directory.iterdir())
             downloading = False
             found = False
@@ -964,11 +963,11 @@ class SeleniumDownloadStrategy:
                         downloading = True
                     else:
                         found = True
-            
+
             if found and not downloading:
                 self.logger.info(f"Download completed for {filename}")
                 return
-            
+
             time.sleep(10)
         raise VivadoDownloadError(f"Download did not complete after {timeout}s")
 
@@ -1027,10 +1026,10 @@ class PlaywrightDownloadStrategy:
         self._playwright_timeout_error = PlaywrightTimeoutError
         self._sync_playwright = sync_playwright
         self.logger = get_logger("adibuild.vivado.browser")
-        
+
         # Priority: constructor arg > env var > default home dir
         self.screenshot_dir = (
-            screenshot_dir 
+            screenshot_dir
             or Path(os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR", ""))
             if os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR")
             else Path.home() / ".adibuild" / "toolchains" / "vivado" / "debug"
@@ -1090,16 +1089,16 @@ class PlaywrightDownloadStrategy:
         try:
             # Dismiss banners that might block fields
             self._dismiss_cookie_banners(page)
-            
+
             # Wait a bit for the form to actually appear
             page.wait_for_timeout(5000)
-            
+
             self.logger.info(f"Checking for AMD export control form at {page.url}")
-            
+
             # Log all visible inputs to help debug
             try:
                 all_inputs = page.locator("input, select").all()
-                visible_names = [f"{i.get_attribute('name') or i.get_attribute('id') or 'none'}({i.get_attribute('type') or 'select'})" 
+                visible_names = [f"{i.get_attribute('name') or i.get_attribute('id') or 'none'}({i.get_attribute('type') or 'select'})"
                                  for i in all_inputs if i.is_visible()]
                 self.logger.info(f"Visible inputs on page: {visible_names}")
             except Exception:
@@ -1122,7 +1121,7 @@ class PlaywrightDownloadStrategy:
             }
 
             filled_any = False
-            
+
             # Try to find and fill fields in the main page and all frames
             for frame in page.frames:
                 # Use JS to fill values directly
@@ -1162,7 +1161,7 @@ class PlaywrightDownloadStrategy:
                     if frame.evaluate(js_fill):
                         self.logger.info(f"Filled form fields via aggressive JS in frame {frame.name or 'main'}")
                         filled_any = True
-                        
+
                         # Use Playwright click for checkboxes to trigger events correctly
                         try:
                             checkboxes = frame.locator("input[type='checkbox']").all()
@@ -1179,7 +1178,7 @@ class PlaywrightDownloadStrategy:
                     self._take_screenshot(page, "download-form-filled")
                     # Submit the form
                     self._dismiss_cookie_banners(page)
-                    
+
                     try:
                         self.logger.info(f"Submitting AMD download form via JS in frame {frame.name or 'main'}")
                         # Setup download listener
@@ -1201,10 +1200,10 @@ class PlaywrightDownloadStrategy:
                     except Exception as e:
                         self.logger.info(f"Aggressive JS submission did not trigger download: {e}. Trying UI click.")
                         self._take_screenshot(page, "download-submission-js-failed")
-                        
+
                         submit_selectors = (
-                            "input[type='submit']", 
-                            "button[type='submit']", 
+                            "input[type='submit']",
+                            "button[type='submit']",
                             "#submit",
                             "input[value='Download']",
                             "button:has-text('Download')"
@@ -1228,7 +1227,7 @@ class PlaywrightDownloadStrategy:
                             except Exception as e2:
                                 self.logger.info(f"UI click did not trigger download: {e2}")
                                 self._take_screenshot(page, "download-submission-failed")
-                                
+
                                 # Check for error messages on page
                                 try:
                                     errors = frame.locator(".error, .errormsg, .alert-danger, [id*='error']").all()
@@ -1237,7 +1236,7 @@ class PlaywrightDownloadStrategy:
                                         self.logger.warning(f"Detected potential form errors: {err_texts}")
                                 except Exception:
                                     pass
-                                    
+
                                 try:
                                     page.wait_for_load_state("domcontentloaded", timeout=60000)
                                 except Exception:
@@ -1298,7 +1297,7 @@ class PlaywrightDownloadStrategy:
                 self._login_if_needed(page, credentials)
             except Exception as e:
                 self.logger.warning(f"Initial navigation/login was not clean, but we will check for download form: {e}")
-            
+
             self.logger.info("Waiting for browser-authenticated AMD installer download to start")
             # Use a list to store the download object from the event handler
             downloads = []
@@ -1306,7 +1305,7 @@ class PlaywrightDownloadStrategy:
 
             # 1. Try filling the form (often triggers download on submit)
             self._fill_download_form_if_needed(page)
-            
+
             # 2. If not triggered by form, try to find a link that looks like the installer
             if not downloads:
                 self.logger.info("Checking for download links on page")
@@ -1325,7 +1324,7 @@ class PlaywrightDownloadStrategy:
             start_wait = time.time()
             while not downloads and time.time() - start_wait < 60:
                 page.wait_for_timeout(1000)
-            
+
             if not downloads:
                  raise VivadoDownloadError("Could not trigger or detect Vivado download start after 60s")
 
@@ -1376,7 +1375,7 @@ class PlaywrightDownloadStrategy:
         """Fill common AMD/Microsoft-style login forms with human-like delays."""
         try:
             self.logger.info(f"Checking for login forms at {page.url} (title='{page.title()}')")
-            
+
             # Step 1: Username
             email_locator = self._first_visible(page, self.EMAIL_SELECTORS)
             if email_locator:
@@ -1400,7 +1399,7 @@ class PlaywrightDownloadStrategy:
                     "Detected AMD login password prompt; submitting password"
                 )
                 self._take_screenshot(page, "login-password-prompt")
-                
+
                 # If username is also visible here, fill it too if not already done
                 # (Some SAML/Okta forms show both at once)
                 if not email_locator:
@@ -1412,7 +1411,7 @@ class PlaywrightDownloadStrategy:
                 password_locator.fill(credentials.password)
                 page.wait_for_timeout(500 + (int(os.urandom(1)[0]) % 1000))
                 self._click_first(page, self.SUBMIT_SELECTORS)
-                
+
                 # After password, we might see a "Stay signed in?" prompt (Microsoft)
                 # or just the final redirect.
                 page.wait_for_timeout(2000 + (int(os.urandom(1)[0]) % 2000))
@@ -1458,11 +1457,11 @@ class PlaywrightDownloadStrategy:
                         page.goto(url, wait_until="commit", timeout=120000)
                     except:
                         pass
-                    
+
                     self.logger.info("Waiting 10s for page to render...")
                     page.wait_for_timeout(10000)
                     self._take_screenshot(page, "login-navigation-start")
-                    
+
                     # Wait for one of the email selectors or a general sign-in marker
                     if credentials:
                         try:
@@ -1480,10 +1479,10 @@ class PlaywrightDownloadStrategy:
                                     page.keyboard.insert_text(credentials.username)
                                 except:
                                     page.keyboard.type(credentials.username, delay=50)
-                                
+
                                 page.keyboard.press("Enter")
                                 page.wait_for_timeout(2000)
-                                
+
                                 # Wait for password
                                 pwd_el = page.wait_for_selector(
                                     "input[name='password'], input[type='password'], #i0118, input[name='credentials.passcode']",
@@ -1497,7 +1496,7 @@ class PlaywrightDownloadStrategy:
                                         page.keyboard.insert_text(credentials.password)
                                     except:
                                         page.keyboard.type(credentials.password, delay=50)
-                                    
+
                                     page.keyboard.press("Enter")
                                     page.wait_for_timeout(5000)
 
@@ -1512,7 +1511,7 @@ class PlaywrightDownloadStrategy:
                                 self.logger.info(f"Visible inputs: {[i.get_attribute('name') or i.get_attribute('id') for i in inputs if i.is_visible()]}")
                             except Exception:
                                 pass
-                            
+
                             # Last ditch: log the body text
                             try:
                                 body_text = page.locator("body").inner_text()
@@ -2080,7 +2079,7 @@ class VivadoInstaller:
         redact_output: bool = False,
     ) -> subprocess.CompletedProcess:
         self.logger.info(f"Running command: {' '.join(shlex_quote(arg) for arg in cmd)}")
-        
+
         # We use Popen to stream output for long-running installer steps
         process = subprocess.Popen(
             cmd,
@@ -2124,7 +2123,7 @@ class VivadoInstaller:
                 f"{' '.join(shlex_quote(arg) for arg in cmd)}\n"
                 f"stdout: {err_stdout}"
             )
-        
+
         if redact_output:
             if stdout.strip():
                 self.logger.info("Command output redacted")

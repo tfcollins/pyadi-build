@@ -3,6 +3,7 @@
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
 import click
 
@@ -49,7 +50,7 @@ def _load_vivado_credentials(non_interactive: bool):
 
 def _resolve_docker_runner(
     config: BuildConfig,
-    platform_config: dict | None,
+    platform_config: dict[str, Any] | None,
     runner: str | None,
     docker_image: str | None,
     tool_version: str | None,
@@ -67,7 +68,10 @@ def _resolve_docker_runner(
     )
 
     if not resolved_tool_version:
-        resolved_tool_version = tag_to_tool_version(tag or config.get_tag())
+        # tag_to_tool_version expects a str, so only call if tag or config.get_tag() is not None
+        current_tag = tag or config.get_tag()
+        if current_tag:
+            resolved_tool_version = tag_to_tool_version(current_tag)
 
     if resolved_runner == "docker":
         if not resolved_tool_version:

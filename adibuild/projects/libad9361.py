@@ -5,6 +5,8 @@ import os
 import shutil
 from pathlib import Path
 
+from typing import Any
+
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
@@ -131,7 +133,7 @@ class LibAD9361Builder(BuilderBase):
         self.logger.info("Running cmake configure...")
         self.executor.cmake(cmake_args, build_dir=build_dir)
 
-    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict:
+    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict[str, Any]:
         """
         Configure and build libad9361-iio.
 

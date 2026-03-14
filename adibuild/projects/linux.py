@@ -4,6 +4,7 @@ import json
 import time
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
@@ -311,7 +312,7 @@ class LinuxBuilder(BuilderBase):
         clean_before: bool = False,
         dtbs_only: bool = False,
         custom_config: Path | None = None,
-    ) -> dict[str, any]:
+    ) -> dict[str, Any]:
         """
         Execute full kernel build pipeline.
 
@@ -323,7 +324,7 @@ class LinuxBuilder(BuilderBase):
         Returns:
             Dictionary with build results
         """
-        self.logger.info("Starting Linux kernel build...")
+        self.logger.info("Starting Linux kernel build pipeline")
         build_start = time.time()
 
         # Validate environment
@@ -341,7 +342,7 @@ class LinuxBuilder(BuilderBase):
         self.configure(custom_config=custom_config)
 
         # Build kernel
-        kernel_image = None
+        kernel_image: Path | list[Path] | None = None
         if not dtbs_only:
             kernel_image = self.build_kernel()
 
@@ -353,7 +354,9 @@ class LinuxBuilder(BuilderBase):
 
         build_duration = time.time() - build_start
 
-        self.logger.info(f"Build completed successfully in {build_duration:.1f}s")
+        self.logger.info(
+            f"Linux kernel build pipeline completed successfully in {build_duration:.1f}s"
+        )
 
         return {
             "success": True,

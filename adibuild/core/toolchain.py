@@ -227,11 +227,15 @@ class VivadoToolchain(Toolchain):
             raise ToolchainError("Vivado toolchain not detected")
 
         if arch == "arm":
-            return toolchain_info.cross_compile_arm32
+            val = toolchain_info.cross_compile_arm32
         elif arch == "arm64":
-            return toolchain_info.cross_compile_arm64
+            val = toolchain_info.cross_compile_arm64
         else:
             raise ToolchainError(f"Unsupported architecture: {arch}")
+
+        if val is None:
+            raise ToolchainError(f"Cross-compiler for {arch} not found in Vivado")
+        return val
 
     def install(
         self,
@@ -456,7 +460,7 @@ class ArmToolchain(Toolchain):
             return extract_dir
 
         # Try each URL until one succeeds
-        last_error = None
+        last_error: Exception | None = None
         for url in urls:
             self.logger.info(f"Downloading from {url}")
 
@@ -684,40 +688,40 @@ def select_toolchain(
 
         try:
             if tc_type == "vivado":
-                tc = VivadoToolchain(
+                vivado_tc = VivadoToolchain(
                     preferred_version=tool_version,
                     strict_version=strict_version,
                 )
-                info = tc.detect()
+                info = vivado_tc.detect()
                 if info:
                     logger.info(f"Selected Vivado toolchain version {info.version}")
                     return info
 
             elif tc_type == "arm":
-                tc = ArmToolchain()
-                info = tc.detect()
+                arm_tc = ArmToolchain()
+                info = arm_tc.detect()
                 if info:
                     logger.info(f"Selected ARM GNU toolchain version {info.version}")
                     return info
                 else:
                     # Try to download
                     logger.info("ARM GNU toolchain not found, downloading...")
-                    info = tc.download(tool_version)
+                    info = arm_tc.download(tool_version)
                     logger.info(
                         f"Downloaded and selected ARM GNU toolchain version {info.version}"
                     )
                     return info
 
             elif tc_type == "system":
-                tc = SystemToolchain()
-                info = tc.detect()
+                system_tc = SystemToolchain()
+                info = system_tc.detect()
                 if info:
                     logger.info(f"Selected system toolchain version {info.version}")
                     return info
 
             elif tc_type == "bare_metal":
-                tc = BareMetalToolchain()
-                info = tc.detect()
+                bare_metal_tc = BareMetalToolchain()
+                info = bare_metal_tc.detect()
                 if info:
                     logger.info(f"Selected bare-metal toolchain version {info.version}")
                     return info

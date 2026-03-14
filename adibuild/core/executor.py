@@ -212,8 +212,8 @@ class BuildExecutor:
             )
 
         # Prepare output capture
-        stdout_lines = []
-        stderr_lines = []
+        stdout_lines: list[str] = []
+        stderr_lines: list[str] = []
 
         # Open log file if specified
         log_handle = None
@@ -240,26 +240,28 @@ class BuildExecutor:
 
             # Stream and capture output
             if stream_output:
-                for line in process.stdout:
-                    line = line.rstrip()
-                    if capture_output:
-                        stdout_lines.append(line)
+                if process.stdout:
+                    for line in process.stdout:
+                        line = line.rstrip()
+                        if capture_output:
+                            stdout_lines.append(line)
 
-                    # Color-code errors and warnings
-                    styled_line = self._style_output_line(line)
-                    self.console.print(styled_line, highlight=False)
+                        # Color-code errors and warnings
+                        styled_line = self._style_output_line(line)
+                        self.console.print(styled_line, highlight=False)
 
-                    # Write to log file
-                    if log_handle:
-                        log_handle.write(line + "\n")
-                        log_handle.flush()
+                        # Write to log file
+                        if log_handle:
+                            log_handle.write(line + "\n")
+                            log_handle.flush()
             else:
                 # Just capture without streaming
-                stdout = process.stdout.read()
-                if capture_output:
-                    stdout_lines = stdout.splitlines()
-                if log_handle:
-                    log_handle.write(stdout)
+                if process.stdout:
+                    stdout = process.stdout.read()
+                    if capture_output:
+                        stdout_lines = stdout.splitlines()
+                    if log_handle:
+                        log_handle.write(stdout)
 
             # Wait for process to complete
             return_code = process.wait()

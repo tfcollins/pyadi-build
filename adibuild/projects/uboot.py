@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+from typing import Any
+
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
@@ -147,7 +149,7 @@ class UBootBuilder(BuilderBase):
         clean_before: bool = False,
         jobs: int | None = None,
         env_overrides: dict[str, str] | None = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Build U-Boot (u-boot.elf)."""
         self.prepare_source()
 

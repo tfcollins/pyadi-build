@@ -2,6 +2,7 @@
 
 import shutil
 from pathlib import Path
+from typing import Any
 
 import git
 
@@ -85,7 +86,7 @@ class GitRepository:
         self.local_path.parent.mkdir(parents=True, exist_ok=True)
 
         try:
-            kwargs = {}
+            kwargs: dict[str, Any] = {}
             if depth:
                 kwargs["depth"] = depth
             if branch:

@@ -1,12 +1,14 @@
 """Xilinx Zynq (ARM32) platform implementation."""
 
+from typing import Any
+
 from adibuild.platforms.base import Platform
 
 
 class ZynqPlatform(Platform):
     """Xilinx Zynq (ARM32) platform configuration."""
 
-    def __init__(self, config: dict[str, any]):
+    def __init__(self, config: dict[str, Any]):
         """
         Initialize ZynqPlatform.
 

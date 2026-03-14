@@ -78,6 +78,9 @@ class BuilderBase(ABC):
         log_file = self.work_dir / f"build-{self.platform.arch}.log"
         docker_config = None
         if self.runner == "docker":
+            # self.docker_image is guaranteed to be set if runner is docker
+            assert self.docker_image is not None
+            assert self.docker_tool_version is not None
             docker_config = build_docker_execution_config(
                 self.config._data,
                 image=self.docker_image,
@@ -188,14 +191,19 @@ class BuilderBase(ABC):
 
         # Check basic build tools
         if self.runner == "docker":
+            self.logger.debug("Checking for docker CLI...")
             if not shutil.which("docker"):
                 raise BuildError(
                     "Docker runner requested but the 'docker' CLI is not available"
                 )
+            self.logger.info("Docker CLI found")
         else:
+            self.logger.debug("Checking for local build tools: make, gcc, git...")
             self.executor.check_tools(["make", "gcc", "git"])
+            self.logger.info("Basic build tools (make, gcc, git) found")
 
         # Validate platform and toolchain
+        self.logger.debug("Validating platform-specific toolchain...")
         self.platform.validate_toolchain()
 
         self.logger.info("Environment validation passed")

@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+from typing import Any
+
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
@@ -80,7 +82,7 @@ class NoOSBuilder(BuilderBase):
             "no-OS configuration is handled during build via make variables."
         )
 
-    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict:
+    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict[str, Any]:
         """
         Execute no-OS build.
 

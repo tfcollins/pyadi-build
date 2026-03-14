@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import pytest
+
 from adibuild import __version__
 from adibuild.cli.helpers import (
     create_default_config,
@@ -16,7 +18,7 @@ from adibuild.cli.helpers import (
     print_warning,
     validate_config_file,
 )
-from adibuild.core.config import BuildConfig
+from adibuild.core.config import BuildConfig, ConfigurationError
 from adibuild.core.toolchain import ToolchainInfo
 from adibuild.platforms.zynq import ZynqPlatform
 from adibuild.platforms.zynqmp import ZynqMPPlatform
@@ -154,8 +156,9 @@ def test_load_config_with_overrides_file_not_found(mocker):
     """Test load_config_with_overrides when file not found."""
     mock_exit = mocker.patch("sys.exit")
 
-    # Try to load non-existent file
-    load_config_with_overrides("/nonexistent/config.yaml", "zynqmp", None)
+    # Try to load non-existent file - now raises ConfigurationError
+    with pytest.raises(ConfigurationError):
+        load_config_with_overrides("/nonexistent/config.yaml", "zynqmp", None)
 
     # Should call sys.exit due to print_error
     mock_exit.assert_called_once_with(1)
@@ -221,7 +224,9 @@ def test_get_platform_instance_invalid(mocker):
     config = BuildConfig.from_dict(config_data)
     mock_exit = mocker.patch("sys.exit")
 
-    get_platform_instance(config, "invalid")
+    # Now raises ConfigurationError
+    with pytest.raises(ConfigurationError):
+        get_platform_instance(config, "invalid")
 
     # Should call sys.exit due to print_error
     mock_exit.assert_called_once_with(1)

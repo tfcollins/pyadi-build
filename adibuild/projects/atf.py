@@ -3,6 +3,8 @@
 import shutil
 from pathlib import Path
 
+from typing import Any
+
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
@@ -71,7 +73,7 @@ class ATFBuilder(BuilderBase):
         """ATF configuration is handled via make variables."""
         self.logger.info("ATF configuration is handled during build.")
 
-    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict:
+    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict[str, Any]:
         """Build ATF (bl31.elf)."""
         self.prepare_source()
 

@@ -1,12 +1,14 @@
 """Xilinx ZynqMP (ARM64) platform implementation."""
 
+from typing import Any
+
 from adibuild.platforms.base import Platform
 
 
 class ZynqMPPlatform(Platform):
     """Xilinx ZynqMP (ARM64) platform configuration."""
 
-    def __init__(self, config: dict[str, any]):
+    def __init__(self, config: dict[str, Any]):
         """
         Initialize ZynqMPPlatform.
 

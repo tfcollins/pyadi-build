@@ -2,6 +2,8 @@ import os
 import re
 from pathlib import Path
 
+from typing import Any
+
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
@@ -91,7 +93,7 @@ class HDLBuilder(BuilderBase):
 
     def build(
         self, clean_before: bool = False, ignore_version_check: bool = False
-    ) -> dict:
+    ) -> dict[str, Any]:
         """
         Execute HDL build.
 
@@ -194,7 +196,9 @@ class HDLBuilder(BuilderBase):
             self.executor.make(target=None, extra_args=make_args, env=env)
 
         # 4. Package Artifacts
-        return self.package_artifacts(project_dir, hdl_project, carrier)
+        result = self.package_artifacts(project_dir, hdl_project, carrier)
+        self.logger.info("HDL build completed successfully")
+        return result
 
     def build_win(self, project_dir: Path, env: dict[str, str] | None = None) -> None:
         """

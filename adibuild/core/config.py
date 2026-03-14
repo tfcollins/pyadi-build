@@ -166,7 +166,7 @@ class BuildConfig:
             Configuration value or default
         """
         keys = key.split(".")
-        value = self._data
+        value: Any = self._data
 
         for k in keys:
             if isinstance(value, dict) and k in value:
@@ -185,7 +185,7 @@ class BuildConfig:
             value: Value to set
         """
         keys = key.split(".")
-        data = self._data
+        data: dict[str, Any] = self._data
 
         for k in keys[:-1]:
             if k not in data:

@@ -1,12 +1,14 @@
 """Xilinx MicroBlaze (Virtex) platform implementation."""
 
+from typing import Any
+
 from adibuild.platforms.base import Platform
 
 
 class MicroBlazePlatform(Platform):
     """Xilinx MicroBlaze platform for Virtex FPGAs."""
 
-    def __init__(self, config: dict[str, any]):
+    def __init__(self, config: dict[str, Any]):
         """
         Initialize MicroBlazePlatform.
 

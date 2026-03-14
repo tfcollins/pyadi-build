@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+from typing import Any
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -53,27 +54,27 @@ class BuildLogger:
             file_handler.setFormatter(file_formatter)
             self.logger.addHandler(file_handler)
 
-    def debug(self, msg: str, *args, **kwargs):
+    def debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Log debug message."""
         self.logger.debug(msg, *args, **kwargs)
 
-    def info(self, msg: str, *args, **kwargs):
+    def info(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Log info message."""
         self.logger.info(msg, *args, **kwargs)
 
-    def warning(self, msg: str, *args, **kwargs):
+    def warning(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Log warning message."""
         self.logger.warning(msg, *args, **kwargs)
 
-    def error(self, msg: str, *args, **kwargs):
+    def error(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Log error message."""
         self.logger.error(msg, *args, **kwargs)
 
-    def critical(self, msg: str, *args, **kwargs):
+    def critical(self, msg: str, *args: Any, **kwargs: Any) -> None:
         """Log critical message."""
         self.logger.critical(msg, *args, **kwargs)
 
-    def set_level(self, level: int):
+    def set_level(self, level: int) -> None:
         """Set logging level."""
         self.logger.setLevel(level)
         for handler in self.logger.handlers:

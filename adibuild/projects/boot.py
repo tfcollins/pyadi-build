@@ -3,6 +3,8 @@
 import shutil
 from pathlib import Path
 
+from typing import Any
+
 from adibuild.core.builder import BuilderBase
 from adibuild.core.config import BuildConfig
 from adibuild.core.executor import BuildError
@@ -49,7 +51,7 @@ class BootBuilder(BuilderBase):
         """Configuration handled during component builds."""
         pass
 
-    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict:
+    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict[str, Any]:
         """
         Build all components and generate BOOT.BIN.
         """
@@ -121,19 +123,35 @@ class BootBuilder(BuilderBase):
             "output_dir": str(output_dir),
         }
 
-    def _ensure_components(self, hw_file: str | None, jobs: int | None = None) -> dict:
+    def _ensure_components(self, hw_file: str | None, jobs: int | None = None) -> dict[str, Any]:
         """Ensure all required boot components are present."""
         platform_name = self.platform.__class__.__name__
-        components = {}
+        components: dict[str, Any] = {}
 
         if "ZynqPlatform" == platform_name:
-            components["fsbl"] = self._ensure_fsbl(hw_file)
+            if hw_file:
+                components["fsbl"] = self._ensure_fsbl(hw_file)
+            else:
+                custom_fsbl = self.config.get("boot.fsbl_path")
+                if not custom_fsbl:
+                    raise BuildError("Zynq FSBL generation requires a hardware file (.xsa)")
+                components["fsbl"] = Path(custom_fsbl)
+
             components["uboot"] = self._ensure_uboot(jobs=jobs)
             components["bitstream"] = self._find_bitstream()
 
         elif "ZynqMPPlatform" == platform_name:
-            components["fsbl"] = self._ensure_fsbl(hw_file)
-            components["pmufw"] = self._ensure_pmufw(hw_file)
+            if hw_file:
+                components["fsbl"] = self._ensure_fsbl(hw_file)
+                components["pmufw"] = self._ensure_pmufw(hw_file)
+            else:
+                custom_fsbl = self.config.get("boot.fsbl_path")
+                custom_pmufw = self.config.get("boot.pmufw_path")
+                if not (custom_fsbl and custom_pmufw):
+                    raise BuildError("ZynqMP FSBL/PMUFW generation requires a hardware file (.xsa)")
+                components["fsbl"] = Path(custom_fsbl)
+                components["pmufw"] = Path(custom_pmufw)
+
             components["atf"] = self._ensure_atf(jobs=jobs)
             components["uboot"] = self._ensure_uboot(
                 jobs=jobs, atf_path=components["atf"]
@@ -175,7 +193,7 @@ class BootBuilder(BuilderBase):
 
     def _ensure_fsbl(self, xsa_path: str) -> Path:
         """Generate FSBL from XSA using XSCT if not provided."""
-        custom_fsbl = self.config.get("boot.fsbl_path")
+        custom_fsbl: str | None = self.config.get("boot.fsbl_path")
         if custom_fsbl:
             return Path(custom_fsbl)
 
@@ -206,7 +224,7 @@ class BootBuilder(BuilderBase):
 
     def _ensure_pmufw(self, xsa_path: str) -> Path:
         """Generate PMUFW from XSA using XSCT if not provided."""
-        custom_pmufw = self.config.get("boot.pmufw_path")
+        custom_pmufw: str | None = self.config.get("boot.pmufw_path")
         if custom_pmufw:
             return Path(custom_pmufw)
 

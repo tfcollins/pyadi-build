@@ -52,7 +52,7 @@ class DockerExecutionConfig:
     ) -> list[str]:
         """Build the docker run command for the requested build step."""
         effective_cwd = cwd or self.workdir
-        docker_cmd = ["docker", "run", "--rm", "-w", str(effective_cwd)]
+        docker_cmd: list[str] = ["docker", "run", "--rm", "-w", str(effective_cwd)]
 
         if self.user:
             docker_cmd.extend(["--user", self.user])
@@ -63,7 +63,7 @@ class DockerExecutionConfig:
                 spec += ":ro"
             docker_cmd.extend(["-v", spec])
 
-        full_env = {"HOME": str(self.home_dir)}
+        full_env: dict[str, str] = {"HOME": str(self.home_dir)}
         full_env.update(self.extra_env)
         if env:
             full_env.update(env)
@@ -201,9 +201,7 @@ class DockerDownloadRunner:
         dest_dir = destination.parent
         dest_dir.mkdir(parents=True, exist_ok=True)
 
-        self.logger.info(
-            "Starting containerized download for Vivado %s", release.version
-        )
+        self.logger.info("Starting containerized download for Vivado %s", release.version)
 
         # Map destination directory to /downloads in container
         cmd = [

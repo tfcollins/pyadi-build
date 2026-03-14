@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Any
 
 from adibuild.core.docker import container_vivado_toolchain
 from adibuild.core.toolchain import ToolchainInfo, select_toolchain
@@ -17,7 +18,7 @@ class PlatformError(Exception):
 class Platform(ABC):
     """Abstract base class for hardware platforms."""
 
-    def __init__(self, config: dict[str, any]):
+    def __init__(self, config: dict[str, Any]):
         """
         Initialize Platform.
 

@@ -73,7 +73,7 @@ def print_warning(message: str):
 
 
 def load_config_with_overrides(
-    config_file: str | None,
+    config_file: str | Path | None,
     platform: str | None,
     tag: str | None,
     project_type: str = "linux",
@@ -92,7 +92,7 @@ def load_config_with_overrides(
     """
     try:
         if config_file:
-            config = BuildConfig.from_yaml(config_file)
+            config = BuildConfig.from_yaml(Path(config_file))
         else:
             # Try to load default configs
             config_dir = Path(__file__).parent.parent.parent / "configs" / project_type
@@ -124,6 +124,8 @@ def load_config_with_overrides(
 
     except Exception as e:
         print_error(f"Failed to load configuration: {e}")
+        # print_error calls sys.exit(1), but mypy needs a return or raise
+        raise
 
 
 def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
@@ -184,6 +186,8 @@ def get_platform_instance(config: BuildConfig, platform_name: str) -> Platform:
 
     except Exception as e:
         print_error(f"Failed to create platform: {e}")
+        # print_error calls sys.exit(1), but mypy needs a return or raise
+        raise
 
 
 def display_build_summary(result: dict, platform: Platform):
