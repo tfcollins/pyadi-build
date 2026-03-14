@@ -1,0 +1,8 @@
+{
+  "track_id": "robust_vivado_download_20260314",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-03-14T12:00:00Z",
+  "updated_at": "2026-03-14T12:00:00Z",
+  "description": "fix the vivado download feature. explore various methods that would workaround redirects and automation defeating mechanisms on the site. even consider spinning up docker containers that are built for this purpose"
+}

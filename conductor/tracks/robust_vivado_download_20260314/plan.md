@@ -1,0 +1,38 @@
+# Implementation Plan - Fix Vivado Download Feature
+
+## Phase 1: Exploration and Prototyping
+- [ ] Task: Research and Prototype Stealth Automation
+    - [ ] Create a standalone test script to verify `playwright-stealth` against `account.amd.com`.
+    - [ ] Create a standalone test script to verify `undetected-chromedriver` against `account.amd.com`.
+- [ ] Task: Prototype Session Extraction
+    - [ ] Implement a script that logs in via Playwright and exports cookies/session to a `requests.Session`.
+    - [ ] Verify that the exported session can perform a file download.
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Exploration and Prototyping' (Protocol in workflow.md)
+
+## Phase 2: Specialized Docker Browser Environment
+- [ ] Task: Develop Download Runner Docker Image
+    - [ ] Create `adibuild/docker/download_runner/Dockerfile` with Playwright, browsers, and stealth dependencies.
+    - [ ] Implement a Python entrypoint script for the container that handles the login and download flow.
+- [ ] Task: Implement Docker Container Orchestration
+    - [ ] Write tests for spinning up the download runner container.
+    - [ ] Implement the logic in `adibuild/core/docker.py` or a new module to manage ephemeral download containers.
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: Specialized Docker Browser Environment' (Protocol in workflow.md)
+
+## Phase 3: Integration and Core Logic Refinement
+- [ ] Task: Refactor `adibuild/core/vivado.py` for Modular Strategies
+    - [ ] Write failing tests for the new strategy selection logic.
+    - [ ] Implement the `VivadoDownloadStrategy` interface and concrete implementations for Docker, Stealth, and Session.
+    - [ ] Update `VivadoInstaller.download_installer` to use these strategies.
+- [ ] Task: Implement Robust Error Handling and Retries
+    - [ ] Write tests for various failure modes (timeout, blocking, invalid credentials).
+    - [ ] Implement retry logic with exponential backoff and strategy fallback.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Integration and Core Logic Refinement' (Protocol in workflow.md)
+
+## Phase 4: Final Verification and Documentation
+- [ ] Task: Comprehensive Integration Testing
+    - [ ] Run full download flow tests in a headless CI environment.
+    - [ ] Verify success across multiple runs.
+- [ ] Task: Documentation and Cleanup
+    - [ ] Update the developer guide with the new download architecture.
+    - [ ] Document Docker requirements for the download feature.
+- [ ] Task: Conductor - User Manual Verification 'Phase 4: Final Verification and Documentation' (Protocol in workflow.md)
