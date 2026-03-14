@@ -168,6 +168,80 @@ def build_docker_execution_config(
     )
 
 
+class DockerDownloadRunner:
+    """Manage ephemeral Docker containers for Vivado downloads."""
+
+    def __init__(self, image_tag: str = "adibuild/vivado-download-runner"):
+        self.image_tag = image_tag
+        self.logger = get_logger("adibuild.docker.download")
+        self.docker_dir = Path(__file__).parent.parent / "docker" / "download_runner"
+
+    def build_runner_image(self) -> None:
+        """Build the download runner Docker image."""
+        self.logger.info("Building download runner Docker image: %s", self.image_tag)
+        cmd = [
+            "docker",
+            "build",
+            "-t",
+            self.image_tag,
+            str(self.docker_dir),
+        ]
+        subprocess.run(cmd, check=True)
+
+    def download(
+        self,
+        version: str,
+        destination: Path,
+        credentials: VivadoCredentials,
+    ) -> Path:
+        """Run the download in an ephemeral Docker container."""
+        self.build_runner_image()
+
+        release = VivadoInstaller().resolve_release(version)
+        dest_dir = destination.parent
+        dest_dir.mkdir(parents=True, exist_ok=True)
+
+        self.logger.info(
+            "Starting containerized download for Vivado %s", release.version
+        )
+
+        # Map destination directory to /downloads in container
+        cmd = [
+            "docker",
+            "run",
+            "--rm",
+            "-e",
+            f"AMD_USERNAME={credentials.username}",
+            "-e",
+            f"AMD_PASSWORD={credentials.password}",
+            "-e",
+            f"VIVADO_FILENAME={release.filename}",
+            "-e",
+            f"VIVADO_DOWNLOAD_URL={release.download_url}",
+            "-v",
+            f"{dest_dir.resolve()}:/downloads",
+            self.image_tag,
+        ]
+
+        try:
+            subprocess.run(cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            raise DockerError(f"Containerized download failed: {e}") from e
+
+        downloaded_path = dest_dir / release.filename
+        if not downloaded_path.exists():
+            # Check if it was saved under a different name or failed silently
+            raise DockerError(
+                f"Download reported success but file not found at {downloaded_path}"
+            )
+
+        # If destination was a specific filename different from release.filename, rename it
+        if downloaded_path.resolve() != destination.resolve():
+            downloaded_path.rename(destination)
+
+        return destination
+
+
 class VivadoDockerImageManager:
     """Build and inspect reusable Docker images with Vivado installed."""
 
