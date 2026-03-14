@@ -209,6 +209,7 @@ class SessionDownloadStrategy:
 
             try:
                 from playwright_stealth import Stealth
+
                 Stealth().apply_stealth_sync(page)
             except ImportError:
                 pass
@@ -499,7 +500,7 @@ class SeleniumDownloadStrategy:
             from selenium.webdriver.chrome.options import Options
             from selenium.webdriver.chrome.service import Service
             from selenium.webdriver.common.by import By
-            from selenium.webdriver.support import expected_conditions as EC
+            from selenium.webdriver.support import expected_conditions as ec
             from selenium.webdriver.support.ui import WebDriverWait
         except ImportError as exc:
             raise VivadoDownloadError(
@@ -510,14 +511,13 @@ class SeleniumDownloadStrategy:
         self._chrome_options = Options
         self._chrome_service = Service
         self._by = By
-        self._ec = EC
+        self._ec = ec
         self._wait = WebDriverWait
         self.logger = get_logger("adibuild.vivado.selenium")
 
         # Priority: constructor arg > env var > default home dir
         self.screenshot_dir = (
-            screenshot_dir
-            or Path(os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR", ""))
+            screenshot_dir or Path(os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR", ""))
             if os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR")
             else Path.home() / ".adibuild" / "toolchains" / "vivado" / "debug"
         )
@@ -568,7 +568,9 @@ class SeleniumDownloadStrategy:
         # Apply selenium-stealth if available
         try:
             from selenium_stealth import stealth
-            stealth(driver,
+
+            stealth(
+                driver,
                 languages=["en-US", "en"],
                 vendor="Google Inc.",
                 platform="Linux x86_64",
@@ -581,10 +583,10 @@ class SeleniumDownloadStrategy:
             pass
 
         # Set download behavior for headless mode
-        driver.execute_cdp_cmd("Page.setDownloadBehavior", {
-            "behavior": "allow",
-            "downloadPath": str(destination.parent)
-        })
+        driver.execute_cdp_cmd(
+            "Page.setDownloadBehavior",
+            {"behavior": "allow", "downloadPath": str(destination.parent)},
+        )
 
         try:
             # Using the actual bootstrap URL is more reliable for triggering the right login flow
@@ -602,11 +604,17 @@ class SeleniumDownloadStrategy:
             # or just wait a reasonable time if we can't detect it easily.
             try:
                 # Give it up to 10 minutes to start the download
-                self._wait_for_download(driver, destination.parent, release.filename, timeout=600)
+                self._wait_for_download(
+                    driver, destination.parent, release.filename, timeout=600
+                )
 
                 # Check for completion (up to 3 hours for 10-20GB installer)
-                self.logger.info("Waiting for installer download to complete (this may take a long time)")
-                self._wait_for_download_completion(driver, destination.parent, release.filename, timeout=10800)
+                self.logger.info(
+                    "Waiting for installer download to complete (this may take a long time)"
+                )
+                self._wait_for_download_completion(
+                    driver, destination.parent, release.filename, timeout=10800
+                )
 
                 target = destination
                 # Check if it was saved with a different name
@@ -620,7 +628,9 @@ class SeleniumDownloadStrategy:
                 self.logger.warning(f"Browser download failed or timed out: {e}")
                 self.logger.info("Trying direct download with cookies as fallback")
                 session = self._session_from_webdriver(driver)
-                return RequestsDownloadStrategy(session=session).download(release, destination)
+                return RequestsDownloadStrategy(session=session).download(
+                    release, destination
+                )
 
         finally:
             driver.quit()
@@ -646,14 +656,16 @@ class SeleniumDownloadStrategy:
             # Username and Password
             self._take_screenshot(driver, "selenium-login-start")
 
-            self.logger.info(f"Filling and submitting login form for {credentials.username}")
+            self.logger.info(
+                f"Filling and submitting login form for {credentials.username}"
+            )
             driver.execute_script(f"""
                 const user = "{credentials.username}";
                 const pass = "{credentials.password}";
                 const userEl = document.getElementsByName('identifier')[0] || document.querySelector('input[type="email"]');
                 const passEl = document.getElementsByName('credentials.passcode')[0] || document.querySelector('input[type="password"]');
                 const btn = document.querySelector('input[type="submit"], button[type="submit"], #submit');
-                
+
                 if (userEl) {{
                     userEl.value = user;
                     userEl.dispatchEvent(new Event('input', {{ bubbles: true }}));
@@ -672,10 +684,12 @@ class SeleniumDownloadStrategy:
 
             # Stay signed in?
             try:
-                stay_signed_in = wait.until(self._ec.element_to_be_clickable((self._by.ID, "idSIButton9")))
+                stay_signed_in = wait.until(
+                    self._ec.element_to_be_clickable((self._by.ID, "idSIButton9"))
+                )
                 stay_signed_in.click()
                 time.sleep(2)
-            except:
+            except Exception:
                 pass
 
         except Exception as e:
@@ -684,10 +698,12 @@ class SeleniumDownloadStrategy:
 
             # Stay signed in?
             try:
-                stay_signed_in = wait.until(self._ec.element_to_be_clickable((self._by.ID, "idSIButton9")))
+                stay_signed_in = wait.until(
+                    self._ec.element_to_be_clickable((self._by.ID, "idSIButton9"))
+                )
                 stay_signed_in.click()
                 time.sleep(2)
-            except:
+            except Exception:
                 pass
 
     def _fill_form_if_needed(self, driver) -> None:
@@ -701,7 +717,7 @@ class SeleniumDownloadStrategy:
                 self.logger.info("Dismissing cookie banner")
                 banner_btn.click()
                 time.sleep(2)
-        except:
+        except Exception:
             pass
 
         self._take_screenshot(driver, "selenium-before-form")
@@ -730,18 +746,24 @@ class SeleniumDownloadStrategy:
             try:
                 country_el = driver.find_element(self._by.NAME, "Country")
                 s = Select(country_el)
-                try: s.select_by_value("US")
-                except: s.select_by_visible_text("United States")
+                try:
+                    s.select_by_value("US")
+                except Exception:
+                    s.select_by_visible_text("United States")
                 time.sleep(1)
-            except: pass
+            except Exception:
+                pass
 
             try:
                 state_el = driver.find_element(self._by.NAME, "State")
                 s = Select(state_el)
-                try: s.select_by_value("MA")
-                except: s.select_by_visible_text("Massachusetts")
+                try:
+                    s.select_by_value("MA")
+                except Exception:
+                    s.select_by_visible_text("Massachusetts")
                 time.sleep(1)
-            except: pass
+            except Exception:
+                pass
 
             for name, value in form_fields.items():
                 try:
@@ -754,20 +776,24 @@ class SeleniumDownloadStrategy:
                                 if f.is_displayed():
                                     el = f
                                     break
-                            if el: break
-                        except: continue
+                            if el:
+                                break
+                        except Exception:
+                            continue
 
                     if el:
                         if el.tag_name == "select":
                             from selenium.webdriver.support.ui import Select
+
                             s = Select(el)
                             try:
                                 s.select_by_visible_text(value)
-                            except:
+                            except Exception:
                                 try:
                                     s.select_by_value(value)
-                                except:
-                                    if len(s.options) > 1: s.select_by_index(1)
+                                except Exception:
+                                    if len(s.options) > 1:
+                                        s.select_by_index(1)
                         else:
                             el.clear()
                             el.send_keys(value)
@@ -805,13 +831,15 @@ class SeleniumDownloadStrategy:
                     })).filter(i => i.visible);
                 """)
                 self.logger.info(f"Visible form fields after filling: {inputs}")
-            except:
+            except Exception:
                 pass
 
             self._submit_form(driver)
             time.sleep(10)
 
-            self.logger.info(f"Page state after submission: URL={driver.current_url} Title='{driver.title}'")
+            self.logger.info(
+                f"Page state after submission: URL={driver.current_url} Title='{driver.title}'"
+            )
 
             # Check for new windows
             if len(driver.window_handles) > 1:
@@ -822,12 +850,17 @@ class SeleniumDownloadStrategy:
 
             # Check for errors after submission
             try:
-                errors = driver.find_elements(self._by.CSS_SELECTOR, ".error, .errormsg, .alert-danger, [id*='error']")
+                errors = driver.find_elements(
+                    self._by.CSS_SELECTOR,
+                    ".error, .errormsg, .alert-danger, [id*='error']",
+                )
                 if errors:
                     err_texts = [e.text for e in errors if e.is_displayed()]
                     if err_texts:
-                        self.logger.warning(f"Detected potential form errors after submission: {err_texts}")
-            except:
+                        self.logger.warning(
+                            f"Detected potential form errors after submission: {err_texts}"
+                        )
+            except Exception:
                 pass
 
             self._take_screenshot(driver, "selenium-after-form-submit")
@@ -843,8 +876,8 @@ class SeleniumDownloadStrategy:
                 const elements = document.querySelectorAll(`[name="${{name}}"], [id="${{name}}"]`);
                 elements.forEach(el => {{
                     if (el.tagName === 'SELECT') {{
-                        const option = Array.from(el.options).find(opt => 
-                            opt.text.toLowerCase().includes(value.toLowerCase()) || 
+                        const option = Array.from(el.options).find(opt =>
+                            opt.text.toLowerCase().includes(value.toLowerCase()) ||
                             opt.value.toLowerCase().includes(value.toLowerCase())
                         );
                         if (option) el.value = option.value;
@@ -857,7 +890,7 @@ class SeleniumDownloadStrategy:
                     filled = true;
                 }});
             }}
-            
+
             // Also click all checkboxes
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(cb => {{
@@ -866,7 +899,7 @@ class SeleniumDownloadStrategy:
                     filled = true;
                 }}
             }});
-            
+
             return filled;
         """)
 
@@ -890,7 +923,7 @@ class SeleniumDownloadStrategy:
                         self.logger.info(f"Clicking submit button: {selector}")
                         btn.click()
                         return True
-                except:
+                except Exception:
                     continue
 
             # Fallback to JS click
@@ -909,7 +942,7 @@ class SeleniumDownloadStrategy:
                     return false;
                 """)
                 return True
-            except:
+            except Exception:
                 return False
 
         self.logger.info("Attempting form submission in main frame")
@@ -928,13 +961,17 @@ class SeleniumDownloadStrategy:
                     driver.switch_to.default_content()
                     return
                 driver.switch_to.default_content()
-            except:
+            except Exception:
                 driver.switch_to.default_content()
 
-    def _wait_for_download(self, driver, directory: Path, filename: str, timeout: int) -> None:
+    def _wait_for_download(
+        self, driver, directory: Path, filename: str, timeout: int
+    ) -> None:
         """Wait for the download to START (file appears in directory)."""
         start_time = time.time()
-        self.logger.info(f"Monitoring {directory} for {filename} to appear (timeout {timeout}s)")
+        self.logger.info(
+            f"Monitoring {directory} for {filename} to appear (timeout {timeout}s)"
+        )
         while time.time() - start_time < timeout:
             files = list(directory.iterdir())
             if files:
@@ -945,10 +982,14 @@ class SeleniumDownloadStrategy:
             time.sleep(5)
         raise VivadoDownloadError(f"Download did not start after {timeout}s")
 
-    def _wait_for_download_completion(self, driver, directory: Path, filename: str, timeout: int) -> None:
+    def _wait_for_download_completion(
+        self, driver, directory: Path, filename: str, timeout: int
+    ) -> None:
         """Wait for the download to FINISH (no .crdownload or .tmp files)."""
         start_time = time.time()
-        self.logger.info(f"Monitoring {directory} for {filename} to complete (timeout {timeout}s)")
+        self.logger.info(
+            f"Monitoring {directory} for {filename} to complete (timeout {timeout}s)"
+        )
         while time.time() - start_time < timeout:
             # Periodic screenshot during wait
             if int(time.time() - start_time) % 300 < 5:
@@ -977,7 +1018,7 @@ class SeleniumDownloadStrategy:
                 element = driver.find_element(by, selector)
                 if element.is_displayed():
                     return element
-            except:
+            except Exception:
                 continue
         return None
 
@@ -1029,8 +1070,7 @@ class PlaywrightDownloadStrategy:
 
         # Priority: constructor arg > env var > default home dir
         self.screenshot_dir = (
-            screenshot_dir
-            or Path(os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR", ""))
+            screenshot_dir or Path(os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR", ""))
             if os.environ.get("ADIBUILD_VIVADO_DEBUG_DIR")
             else Path.home() / ".adibuild" / "toolchains" / "vivado" / "debug"
         )
@@ -1098,8 +1138,11 @@ class PlaywrightDownloadStrategy:
             # Log all visible inputs to help debug
             try:
                 all_inputs = page.locator("input, select").all()
-                visible_names = [f"{i.get_attribute('name') or i.get_attribute('id') or 'none'}({i.get_attribute('type') or 'select'})"
-                                 for i in all_inputs if i.is_visible()]
+                visible_names = [
+                    f"{i.get_attribute('name') or i.get_attribute('id') or 'none'}({i.get_attribute('type') or 'select'})"
+                    for i in all_inputs
+                    if i.is_visible()
+                ]
                 self.logger.info(f"Visible inputs on page: {visible_names}")
             except Exception:
                 pass
@@ -1130,14 +1173,14 @@ class PlaywrightDownloadStrategy:
                         () => {{
                             const fields = {json.dumps(form_fields)};
                             let filled = false;
-                            
+
                             // 1. Fill by Name/ID
                             for (const [name, value] of Object.entries(fields)) {{
                                 const elements = document.querySelectorAll(`[name="${{name}}"], [id="${{name}}"], [id*="${{name}}"]`);
                                 elements.forEach(el => {{
                                     if (el.tagName === 'SELECT') {{
-                                        const option = Array.from(el.options).find(opt => 
-                                            opt.text.toLowerCase().includes(value.toLowerCase()) || 
+                                        const option = Array.from(el.options).find(opt =>
+                                            opt.text.toLowerCase().includes(value.toLowerCase()) ||
                                             opt.value.toLowerCase().includes(value.toLowerCase())
                                         );
                                         if (option) {{
@@ -1153,13 +1196,15 @@ class PlaywrightDownloadStrategy:
                                     filled = true;
                                 }});
                             }}
-                            
+
                             // 2. Aggressive Checkbox/Radio checking (will be followed by click in Playwright)
                             return filled;
                         }}
                     """
                     if frame.evaluate(js_fill):
-                        self.logger.info(f"Filled form fields via aggressive JS in frame {frame.name or 'main'}")
+                        self.logger.info(
+                            f"Filled form fields via aggressive JS in frame {frame.name or 'main'}"
+                        )
                         filled_any = True
 
                         # Use Playwright click for checkboxes to trigger events correctly
@@ -1172,7 +1217,9 @@ class PlaywrightDownloadStrategy:
                         except Exception:
                             pass
                 except Exception as e:
-                    self.logger.warning(f"Error filling form via aggressive JS in frame {frame.name or 'main'}: {e}")
+                    self.logger.warning(
+                        f"Error filling form via aggressive JS in frame {frame.name or 'main'}: {e}"
+                    )
 
                 if filled_any:
                     self._take_screenshot(page, "download-form-filled")
@@ -1180,7 +1227,9 @@ class PlaywrightDownloadStrategy:
                     self._dismiss_cookie_banners(page)
 
                     try:
-                        self.logger.info(f"Submitting AMD download form via JS in frame {frame.name or 'main'}")
+                        self.logger.info(
+                            f"Submitting AMD download form via JS in frame {frame.name or 'main'}"
+                        )
                         # Setup download listener
                         with page.expect_download(timeout=120000) as download_info:
                             # Try multiple JS submission styles
@@ -1195,10 +1244,14 @@ class PlaywrightDownloadStrategy:
                                     }
                                 }
                             """)
-                        self.logger.info("Download triggered by aggressive form submission (JS)")
+                        self.logger.info(
+                            "Download triggered by aggressive form submission (JS)"
+                        )
                         return download_info.value
                     except Exception as e:
-                        self.logger.info(f"Aggressive JS submission did not trigger download: {e}. Trying UI click.")
+                        self.logger.info(
+                            f"Aggressive JS submission did not trigger download: {e}. Trying UI click."
+                        )
                         self._take_screenshot(page, "download-submission-js-failed")
 
                         submit_selectors = (
@@ -1206,7 +1259,7 @@ class PlaywrightDownloadStrategy:
                             "button[type='submit']",
                             "#submit",
                             "input[value='Download']",
-                            "button:has-text('Download')"
+                            "button:has-text('Download')",
                         )
                         submit = None
                         for sel in submit_selectors:
@@ -1220,25 +1273,41 @@ class PlaywrightDownloadStrategy:
 
                         if submit:
                             try:
-                                with page.expect_download(timeout=120000) as download_info:
+                                with page.expect_download(
+                                    timeout=120000
+                                ) as download_info:
                                     submit.click(force=True)
-                                self.logger.info("Download triggered by form submission (click with force)")
+                                self.logger.info(
+                                    "Download triggered by form submission (click with force)"
+                                )
                                 return download_info.value
                             except Exception as e2:
-                                self.logger.info(f"UI click did not trigger download: {e2}")
+                                self.logger.info(
+                                    f"UI click did not trigger download: {e2}"
+                                )
                                 self._take_screenshot(page, "download-submission-failed")
 
                                 # Check for error messages on page
                                 try:
-                                    errors = frame.locator(".error, .errormsg, .alert-danger, [id*='error']").all()
+                                    errors = frame.locator(
+                                        ".error, .errormsg, .alert-danger, [id*='error']"
+                                    ).all()
                                     if errors:
-                                        err_texts = [e.inner_text() for e in errors if e.is_visible()]
-                                        self.logger.warning(f"Detected potential form errors: {err_texts}")
+                                        err_texts = [
+                                            e.inner_text()
+                                            for e in errors
+                                            if e.is_visible()
+                                        ]
+                                        self.logger.warning(
+                                            f"Detected potential form errors: {err_texts}"
+                                        )
                                 except Exception:
                                     pass
 
                                 try:
-                                    page.wait_for_load_state("domcontentloaded", timeout=60000)
+                                    page.wait_for_load_state(
+                                        "domcontentloaded", timeout=60000
+                                    )
                                 except Exception:
                                     pass
                     # If we filled fields in this frame, we probably don't need to check others
@@ -1275,6 +1344,7 @@ class PlaywrightDownloadStrategy:
             # Apply playwright-stealth if available
             try:
                 from playwright_stealth import stealth
+
                 stealth(page)
                 self.logger.info("Applied playwright-stealth to the page")
             except ImportError:
@@ -1296,9 +1366,13 @@ class PlaywrightDownloadStrategy:
                 )
                 self._login_if_needed(page, credentials)
             except Exception as e:
-                self.logger.warning(f"Initial navigation/login was not clean, but we will check for download form: {e}")
+                self.logger.warning(
+                    f"Initial navigation/login was not clean, but we will check for download form: {e}"
+                )
 
-            self.logger.info("Waiting for browser-authenticated AMD installer download to start")
+            self.logger.info(
+                "Waiting for browser-authenticated AMD installer download to start"
+            )
             # Use a list to store the download object from the event handler
             downloads = []
             page.on("download", lambda d: downloads.append(d))
@@ -1309,14 +1383,20 @@ class PlaywrightDownloadStrategy:
             # 2. If not triggered by form, try to find a link that looks like the installer
             if not downloads:
                 self.logger.info("Checking for download links on page")
-                link = page.locator(f"a[href*='{release.filename}'], a:has-text('{release.version}'), a:has-text('Linux Self-extracting')").first
+                link = page.locator(
+                    f"a[href*='{release.filename}'], a:has-text('{release.version}'), a:has-text('Linux Self-extracting')"
+                ).first
                 if link.count() > 0 and link.is_visible():
-                    self.logger.info(f"Clicking download link: {link.get_attribute('href')}")
+                    self.logger.info(
+                        f"Clicking download link: {link.get_attribute('href')}"
+                    )
                     link.click()
 
             # 3. Last resort: direct navigation
             if not downloads:
-                self.logger.info(f"Triggering download via direct navigation to {release.download_url}")
+                self.logger.info(
+                    f"Triggering download via direct navigation to {release.download_url}"
+                )
                 page.wait_for_timeout(10000)
                 page.goto(release.download_url, wait_until="commit", timeout=120000)
 
@@ -1326,7 +1406,9 @@ class PlaywrightDownloadStrategy:
                 page.wait_for_timeout(1000)
 
             if not downloads:
-                 raise VivadoDownloadError("Could not trigger or detect Vivado download start after 60s")
+                raise VivadoDownloadError(
+                    "Could not trigger or detect Vivado download start after 60s"
+                )
 
             download = downloads[0]
             suggested_name = download.suggested_filename or release.filename
@@ -1374,7 +1456,9 @@ class PlaywrightDownloadStrategy:
     ) -> None:
         """Fill common AMD/Microsoft-style login forms with human-like delays."""
         try:
-            self.logger.info(f"Checking for login forms at {page.url} (title='{page.title()}')")
+            self.logger.info(
+                f"Checking for login forms at {page.url} (title='{page.title()}')"
+            )
 
             # Step 1: Username
             email_locator = self._first_visible(page, self.EMAIL_SELECTORS)
@@ -1403,9 +1487,9 @@ class PlaywrightDownloadStrategy:
                 # If username is also visible here, fill it too if not already done
                 # (Some SAML/Okta forms show both at once)
                 if not email_locator:
-                     e_loc = self._first_visible(page, self.EMAIL_SELECTORS)
-                     if e_loc:
-                         e_loc.fill(credentials.username)
+                    e_loc = self._first_visible(page, self.EMAIL_SELECTORS)
+                    if e_loc:
+                        e_loc.fill(credentials.username)
 
                 page.wait_for_timeout(1000 + (int(os.urandom(1)[0]) % 2000))
                 password_locator.fill(credentials.password)
@@ -1415,7 +1499,9 @@ class PlaywrightDownloadStrategy:
                 # After password, we might see a "Stay signed in?" prompt (Microsoft)
                 # or just the final redirect.
                 page.wait_for_timeout(2000 + (int(os.urandom(1)[0]) % 2000))
-                stay_signed_in = self._first_visible(page, ("input[value='Yes']", "#idSIButton9"))
+                stay_signed_in = self._first_visible(
+                    page, ("input[value='Yes']", "#idSIButton9")
+                )
                 if stay_signed_in:
                     self.logger.info("Detected 'Stay signed in?' prompt; clicking Yes")
                     stay_signed_in.click()
@@ -1455,7 +1541,7 @@ class PlaywrightDownloadStrategy:
                     # We start the navigation and then wait for either the timeout or the element
                     try:
                         page.goto(url, wait_until="commit", timeout=120000)
-                    except:
+                    except Exception:
                         pass
 
                     self.logger.info("Waiting 10s for page to render...")
@@ -1465,11 +1551,13 @@ class PlaywrightDownloadStrategy:
                     # Wait for one of the email selectors or a general sign-in marker
                     if credentials:
                         try:
-                            self.logger.info("Waiting for email field or redirect to settle...")
+                            self.logger.info(
+                                "Waiting for email field or redirect to settle..."
+                            )
                             email_el = page.wait_for_selector(
                                 "input[name='loginfmt'], input[type='email'], #i0116, input[name='identifier']",
                                 state="visible",
-                                timeout=60000
+                                timeout=60000,
                             )
                             if email_el:
                                 self.logger.info(f"Filling email: {credentials.username}")
@@ -1477,7 +1565,7 @@ class PlaywrightDownloadStrategy:
                                 # Use insert_text to bypass some event listeners
                                 try:
                                     page.keyboard.insert_text(credentials.username)
-                                except:
+                                except Exception:
                                     page.keyboard.type(credentials.username, delay=50)
 
                                 page.keyboard.press("Enter")
@@ -1487,28 +1575,32 @@ class PlaywrightDownloadStrategy:
                                 pwd_el = page.wait_for_selector(
                                     "input[name='password'], input[type='password'], #i0118, input[name='credentials.passcode']",
                                     state="visible",
-                                    timeout=60000
+                                    timeout=60000,
                                 )
                                 if pwd_el:
                                     self.logger.info("Filling password")
                                     pwd_el.click()
                                     try:
                                         page.keyboard.insert_text(credentials.password)
-                                    except:
+                                    except Exception:
                                         page.keyboard.type(credentials.password, delay=50)
 
                                     page.keyboard.press("Enter")
                                     page.wait_for_timeout(5000)
 
                         except Exception as e:
-                            self.logger.warning(f"Did not see standard login fields yet: {e}")
+                            self.logger.warning(
+                                f"Did not see standard login fields yet: {e}"
+                            )
                             self.logger.info(f"Current URL: {page.url}")
                             self.logger.info(f"Current Title: {page.title()}")
                             self._take_screenshot(page, "login-wait-fail")
                             # Try to log what it DOES see
                             try:
                                 inputs = page.locator("input").all()
-                                self.logger.info(f"Visible inputs: {[i.get_attribute('name') or i.get_attribute('id') for i in inputs if i.is_visible()]}")
+                                self.logger.info(
+                                    f"Visible inputs: {[i.get_attribute('name') or i.get_attribute('id') for i in inputs if i.is_visible()]}"
+                                )
                             except Exception:
                                 pass
 
@@ -1516,7 +1608,9 @@ class PlaywrightDownloadStrategy:
                             try:
                                 body_text = page.locator("body").inner_text()
                                 # Only log first 500 chars
-                                self.logger.info(f"Page body text snippet: {body_text[:500]}...")
+                                self.logger.info(
+                                    f"Page body text snippet: {body_text[:500]}..."
+                                )
                             except Exception:
                                 pass
 
@@ -1650,6 +1744,7 @@ class VivadoInstaller:
         for attempt in range(1, max_attempts + 1):
             try:
                 from adibuild.core.docker import DockerError
+
                 if attempt > 1:
                     self.logger.info(
                         f"Retrying Vivado download (attempt {attempt}/{max_attempts})"
@@ -1681,6 +1776,7 @@ class VivadoInstaller:
         # Try Docker first (most robust)
         try:
             from adibuild.core.docker import DockerError
+
             if self._prefer_browser_download(release, credentials):
                 self.logger.info("Using Docker for authenticated download")
                 installer_path = DockerDownloadStrategy().download(
@@ -1739,6 +1835,7 @@ class VivadoInstaller:
             # Try Docker first in fallback too if credentials provided
             try:
                 from adibuild.core.docker import DockerError
+
                 return DockerDownloadStrategy().download(
                     release, installer_path, credentials
                 )
@@ -2107,9 +2204,9 @@ class VivadoInstaller:
             for line in process.stdout:
                 stdout_lines.append(line)
                 if "error" in line.lower() or "fail" in line.lower():
-                     # Log errors even in redacted mode if possible (risky for creds though)
-                     # For now, let's just keep it simple and not log anything if redacted
-                     pass
+                    # Log errors even in redacted mode if possible (risky for creds though)
+                    # For now, let's just keep it simple and not log anything if redacted
+                    pass
 
         return_code = process.wait()
         stdout = "\n".join(stdout_lines)

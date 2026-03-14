@@ -294,10 +294,9 @@ def build_hdl(
             no_cache=no_cache,
         )
 
-        # Display summary (reuse or create new)
-        # display_build_summary is tailored for Linux (dtbs etc), but we can adapt it or make generic
-        # For now, just print success.
-        print_success(f"HDL Build completed. Artifacts in: {result['output_dir']}")
+        # Display summary
+        message = result.get("message", "HDL Build completed.")
+        print_success(f"{message} Artifacts in: {result['output_dir']}")
 
     except BuildError as e:
         print_error(f"Build failed: {e}")
@@ -705,7 +704,9 @@ def build_iio_oscilloscope(
         if libiio_path:
             platform_obj.config["libiio_path"] = libiio_path
 
-        builder = IIOOscilloscopeBuilder(config, platform_obj, script_mode=generate_script)
+        builder = IIOOscilloscopeBuilder(
+            config, platform_obj, script_mode=generate_script
+        )
         result = builder.build(clean_before=clean, jobs=jobs)
 
         if generate_script:

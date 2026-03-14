@@ -498,13 +498,14 @@ def test_playwright_download_bootstraps_login_before_authenticated_http(mocker, 
     fake_download_info = mocker.Mock()
     fake_download_info.value = fake_download
     fake_page.expect_download.return_value.__enter__.return_value = fake_download_info
-    
+
     # Mock page.on to trigger download event immediately
     def mock_on(event, callback):
         if event == "download":
             callback(fake_download)
+
     fake_page.on.side_effect = mock_on
-    
+
     fake_context = mocker.Mock()
     fake_context.new_page.return_value = fake_page
     fake_browser = mocker.Mock()
@@ -519,7 +520,7 @@ def test_playwright_download_bootstraps_login_before_authenticated_http(mocker, 
 
     # We skip direct_download in this test because it returns the file from save_as
     # but we need to mock the download behavior
-    
+
     result = strategy.download(release, destination, credentials)
 
     # It renames to suggested filename if different
@@ -530,6 +531,6 @@ def test_playwright_download_bootstraps_login_before_authenticated_http(mocker, 
     assert call_args[1] == strategy._auth_bootstrap_url(release)
     assert call_args[2] == "browser-login-navigation"
     assert goto.call_args[1]["credentials"] == credentials
-    
+
     login.assert_called_once_with(fake_page, credentials)
     fake_download.save_as.assert_called_once_with(str(expected_target))

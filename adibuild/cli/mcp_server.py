@@ -199,7 +199,9 @@ def build_lib_project(
         if project_type == "libad9361":
             builder = LibAD9361Builder(config, platform_obj, script_mode=generate_script)
         elif project_type == "libtinyiiod":
-            builder = LibTinyIIODBuilder(config, platform_obj, script_mode=generate_script)
+            builder = LibTinyIIODBuilder(
+                config, platform_obj, script_mode=generate_script
+            )
         elif project_type == "iio-emu":
             builder = IIOEmuBuilder(config, platform_obj, script_mode=generate_script)
         elif project_type == "iio-oscilloscope":
@@ -719,7 +721,9 @@ def validate_configuration(config_file: str) -> str:
     try:
         schema_path = (
             Path(__file__).parent.parent.parent
-            / "configs" / "schema" / "linux_config.schema.json"
+            / "configs"
+            / "schema"
+            / "linux_config.schema.json"
         )
 
         if not schema_path.exists():

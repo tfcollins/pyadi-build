@@ -2,7 +2,6 @@
 
 import shutil
 from pathlib import Path
-
 from typing import Any
 
 from adibuild.core.builder import BuilderBase
@@ -51,7 +50,9 @@ class BootBuilder(BuilderBase):
         """Configuration handled during component builds."""
         pass
 
-    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict[str, Any]:
+    def build(
+        self, clean_before: bool = False, jobs: int | None = None
+    ) -> dict[str, Any]:
         """
         Build all components and generate BOOT.BIN.
         """
@@ -123,7 +124,9 @@ class BootBuilder(BuilderBase):
             "output_dir": str(output_dir),
         }
 
-    def _ensure_components(self, hw_file: str | None, jobs: int | None = None) -> dict[str, Any]:
+    def _ensure_components(
+        self, hw_file: str | None, jobs: int | None = None
+    ) -> dict[str, Any]:
         """Ensure all required boot components are present."""
         platform_name = self.platform.__class__.__name__
         components: dict[str, Any] = {}
@@ -134,7 +137,9 @@ class BootBuilder(BuilderBase):
             else:
                 custom_fsbl = self.config.get("boot.fsbl_path")
                 if not custom_fsbl:
-                    raise BuildError("Zynq FSBL generation requires a hardware file (.xsa)")
+                    raise BuildError(
+                        "Zynq FSBL generation requires a hardware file (.xsa)"
+                    )
                 components["fsbl"] = Path(custom_fsbl)
 
             components["uboot"] = self._ensure_uboot(jobs=jobs)
@@ -148,7 +153,9 @@ class BootBuilder(BuilderBase):
                 custom_fsbl = self.config.get("boot.fsbl_path")
                 custom_pmufw = self.config.get("boot.pmufw_path")
                 if not (custom_fsbl and custom_pmufw):
-                    raise BuildError("ZynqMP FSBL/PMUFW generation requires a hardware file (.xsa)")
+                    raise BuildError(
+                        "ZynqMP FSBL/PMUFW generation requires a hardware file (.xsa)"
+                    )
                 components["fsbl"] = Path(custom_fsbl)
                 components["pmufw"] = Path(custom_pmufw)
 

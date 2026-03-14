@@ -4,7 +4,6 @@ import json
 import os
 import shutil
 from pathlib import Path
-
 from typing import Any
 
 from adibuild.core.builder import BuilderBase
@@ -136,7 +135,9 @@ class GenalyzerBuilder(BuilderBase):
         self.logger.info("Running cmake configure...")
         self.executor.cmake(cmake_args, build_dir=build_dir)
 
-    def build(self, clean_before: bool = False, jobs: int | None = None) -> dict[str, Any]:
+    def build(
+        self, clean_before: bool = False, jobs: int | None = None
+    ) -> dict[str, Any]:
         """
         Configure and build genalyzer.
 

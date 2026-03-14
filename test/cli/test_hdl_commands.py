@@ -271,11 +271,11 @@ def test_hdl_build_caching(cli_runner, tmp_path, mocker):
     """Test hdl build caching logic."""
     # Ensure all Path.home() calls return the same tmp_path
     mocker.patch("pathlib.Path.home", return_value=tmp_path)
-    
+
     # Mock source preparation to return a path and set self.repo and self.source_dir
     mock_repo = mocker.MagicMock()
     mock_repo.get_commit_sha.return_value = "abcdef1234567890"
-    
+
     def side_effect_prep(self):
         self.repo = mock_repo
         self.source_dir = tmp_path / "source"
@@ -284,14 +284,16 @@ def test_hdl_build_caching(cli_runner, tmp_path, mocker):
     mocker.patch(
         "adibuild.projects.hdl.HDLBuilder.prepare_source",
         side_effect=side_effect_prep,
-        autospec=True
+        autospec=True,
     )
 
     # Mock toolchain and version checks
-    mocker.patch("adibuild.projects.hdl.HDLBuilder._check_vivado_version", return_value="0")
+    mocker.patch(
+        "adibuild.projects.hdl.HDLBuilder._check_vivado_version", return_value="0"
+    )
     mocker.patch("adibuild.platforms.base.Platform.get_toolchain")
     mocker.patch("adibuild.core.executor.BuildExecutor.make")
-    
+
     # Mock package_artifacts to create real dummy files in the output directory
     def side_effect_package(self, project_dir, hdl_project, carrier):
         output_dir = self.get_output_dir()
@@ -309,11 +311,13 @@ def test_hdl_build_caching(cli_runner, tmp_path, mocker):
     mocker.patch(
         "adibuild.projects.hdl.HDLBuilder.package_artifacts",
         side_effect=side_effect_package,
-        autospec=True
+        autospec=True,
     )
 
     # We need a real directory for the project to exist or mock the check
-    (tmp_path / "source" / "projects" / "fmcomms2" / "zed").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "source" / "projects" / "fmcomms2" / "zed").mkdir(
+        parents=True, exist_ok=True
+    )
 
     config_file = tmp_path / "config.yaml"
     config_file.write_text(f"""
@@ -349,3 +353,19 @@ platforms:
     )
     assert result2.exit_code == 0
     assert "HDL build pulled from cache successfully" in result2.output
+
+    # Third build with --no-cache - should NOT be cached
+    result3 = cli_runner.invoke(
+        cli,
+        [
+            "--config",
+            str(config_file),
+            "hdl",
+            "build",
+            "-p",
+            "zed_fmcomms2",
+            "--no-cache",
+        ],
+    )
+    assert result3.exit_code == 0
+    assert "HDL build pulled from cache" not in result3.output

@@ -1,7 +1,6 @@
 """U-Boot bootloader builder."""
 
 from pathlib import Path
-
 from typing import Any
 
 from adibuild.core.builder import BuilderBase

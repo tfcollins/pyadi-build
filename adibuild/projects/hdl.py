@@ -4,7 +4,6 @@ import os
 import re
 import shutil
 from pathlib import Path
-
 from typing import Any
 
 from adibuild.core.builder import BuilderBase
@@ -180,6 +179,7 @@ class HDLBuilder(BuilderBase):
                         "artifacts": artifacts,
                         "output_dir": str(output_dir),
                         "cached": True,
+                        "message": "HDL build pulled from cache successfully.",
                     }
                 except Exception as e:
                     self.logger.warning(f"Failed to pull from cache: {e}")
@@ -591,7 +591,9 @@ class HDLBuilder(BuilderBase):
         # Default
         return self.work_dir / f"hdl-{self.config.get_tag()}-{self.platform.name}"
 
-    def _get_cache_key(self, commit_sha: str, project: str, carrier: str, **kwargs) -> str:
+    def _get_cache_key(
+        self, commit_sha: str, project: str, carrier: str, **kwargs
+    ) -> str:
         """
         Generate a unique cache key for the build.
         """

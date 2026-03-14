@@ -11,7 +11,8 @@ def test_generate_script_zynqmp(cli_runner, tmp_path, mocker):
 
     # Run the build command with --generate-script and -v for logging
     result = cli_runner.invoke(
-        cli, ["-v", "linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--generate-script"]
+        cli,
+        ["-v", "linux", "build", "-p", "zynqmp", "-t", "2023_R2", "--generate-script"],
     )
 
     assert result.exit_code == 0, f"Command failed: {result.output}"

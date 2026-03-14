@@ -1,6 +1,5 @@
 """Tests for iio-emu and libtinyiiod CLI commands."""
 
-import pytest
 from adibuild.cli.main import cli
 from adibuild.core.config import BuildConfig
 
@@ -42,15 +41,15 @@ def test_build_libtinyiiod_mock(cli_runner, mocker, tmp_path):
     mock_builder = mocker.patch("adibuild.cli.main.LibTinyIIODBuilder")
 
     # Setup mock returns
-    mock_config = BuildConfig.from_dict({
-        "project": "libtinyiiod",
-        "tag": "main",
-        "platforms": {
-            "native": {"arch": "native"}
+    mock_config = BuildConfig.from_dict(
+        {
+            "project": "libtinyiiod",
+            "tag": "main",
+            "platforms": {"native": {"arch": "native"}},
         }
-    })
+    )
     mock_load_config.return_value = mock_config
-    
+
     mock_platform = mocker.MagicMock()
     mock_platform.arch = "native"
     mock_get_platform.return_value = mock_platform
@@ -59,7 +58,7 @@ def test_build_libtinyiiod_mock(cli_runner, mocker, tmp_path):
     mock_builder.return_value = mock_builder_instance
     mock_builder_instance.build.return_value = {
         "artifacts": ["libtinyiiod.so"],
-        "output_dir": "/tmp/build"
+        "output_dir": "/tmp/build",
     }
 
     result = cli_runner.invoke(cli, ["libtinyiiod", "build", "-p", "native"])
@@ -76,15 +75,11 @@ def test_build_iio_emu_mock(cli_runner, mocker, tmp_path):
     mock_builder = mocker.patch("adibuild.cli.main.IIOEmuBuilder")
 
     # Setup mock returns
-    mock_config = BuildConfig.from_dict({
-        "project": "iio-emu",
-        "tag": "main",
-        "platforms": {
-            "native": {"arch": "native"}
-        }
-    })
+    mock_config = BuildConfig.from_dict(
+        {"project": "iio-emu", "tag": "main", "platforms": {"native": {"arch": "native"}}}
+    )
     mock_load_config.return_value = mock_config
-    
+
     mock_platform = mocker.MagicMock()
     mock_platform.arch = "native"
     mock_get_platform.return_value = mock_platform
@@ -93,7 +88,7 @@ def test_build_iio_emu_mock(cli_runner, mocker, tmp_path):
     mock_builder.return_value = mock_builder_instance
     mock_builder_instance.build.return_value = {
         "artifacts": ["iio-emu"],
-        "output_dir": "/tmp/build"
+        "output_dir": "/tmp/build",
     }
 
     result = cli_runner.invoke(cli, ["iio-emu", "build", "-p", "native"])
@@ -110,15 +105,15 @@ def test_build_iio_oscilloscope_mock(cli_runner, mocker, tmp_path):
     mock_builder = mocker.patch("adibuild.cli.main.IIOOscilloscopeBuilder")
 
     # Setup mock returns
-    mock_config = BuildConfig.from_dict({
-        "project": "iio-oscilloscope",
-        "tag": "main",
-        "platforms": {
-            "native": {"arch": "native"}
+    mock_config = BuildConfig.from_dict(
+        {
+            "project": "iio-oscilloscope",
+            "tag": "main",
+            "platforms": {"native": {"arch": "native"}},
         }
-    })
+    )
     mock_load_config.return_value = mock_config
-    
+
     mock_platform = mocker.MagicMock()
     mock_platform.arch = "native"
     mock_get_platform.return_value = mock_platform
@@ -127,7 +122,7 @@ def test_build_iio_oscilloscope_mock(cli_runner, mocker, tmp_path):
     mock_builder.return_value = mock_builder_instance
     mock_builder_instance.build.return_value = {
         "artifacts": ["iio-oscilloscope"],
-        "output_dir": "/tmp/build"
+        "output_dir": "/tmp/build",
     }
 
     result = cli_runner.invoke(cli, ["osc", "build", "-p", "native"])
